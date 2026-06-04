@@ -1,194 +1,140 @@
 import React, { useState } from 'react';
 
-export default function MateriaisAuxiliares({ materiais, setOrcamento, quantidadePostes }) {
-  const [novoMaterial, setNovoMaterial] = useState({
-    grupo: 'CA',
-    tipo: '',
-    kgPorMetro: '',
-    metragem: ''
-  });
+const S = {
+  card:  { background: '#fff', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', marginBottom: '20px' },
+  title: { fontFamily: "'Montserrat',sans-serif", fontSize: '15px', fontWeight: 700, color: '#007A3D', borderBottom: '2px solid #E7F4EE', paddingBottom: '12px', marginBottom: '20px', marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.05em' },
+  label: { display: 'block', fontFamily: "'Open Sans',sans-serif", fontSize: '12px', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' },
+  input: { width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #E0E0E0', fontSize: '14px', color: '#333', outline: 'none', boxSizing: 'border-box', fontFamily: "'Open Sans',sans-serif", background: '#fff', transition: 'border-color 0.2s' },
+};
+const onFocus = e => { e.target.style.borderColor = '#00A859'; };
+const onBlur  = e => { e.target.style.borderColor = '#E0E0E0'; };
 
-  const adicionarMaterial = () => {
-    if (!novoMaterial.tipo || !novoMaterial.kgPorMetro || !novoMaterial.metragem) {
-      alert('Preencha todos os campos');
-      return;
-    }
+const thStyle = (align = 'left') => ({
+  padding: '10px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase',
+  letterSpacing: '0.06em', color: '#fff', background: '#007A3D', textAlign: align, whiteSpace: 'nowrap',
+});
+const tdStyle = (align = 'left', bold = false) => ({
+  padding: '10px 14px', fontSize: '13px', color: bold ? '#222' : '#555',
+  fontWeight: bold ? 700 : 400, textAlign: align, borderBottom: '1px solid #F0F0F0',
+  fontFamily: "'Open Sans',sans-serif", fontVariantNumeric: 'tabular-nums',
+});
 
-    const kgPorMetro = parseFloat(novoMaterial.kgPorMetro);
-    const metragem = parseFloat(novoMaterial.metragem);
-    const pesoTotal = kgPorMetro * metragem;
-    const percentual = novoMaterial.grupo === 'CA' ? 1.05 : 1.03;
-    const pesoComAcrescimo = pesoTotal * percentual;
+function TabelaCabos({ itens, acrescimo, remover }) {
+  const [hovered, setHovered] = useState(null);
+  if (itens.length === 0)
+    return <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', color: '#BBB', padding: '16px 0' }}>Nenhum cabo adicionado.</p>;
+  return (
+    <div style={{ overflowX: 'auto', margin: '0 -24px' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th style={thStyle()}>Tipo</th>
+            <th style={thStyle('right')}>kg/m</th>
+            <th style={thStyle('right')}>Metragem (m)</th>
+            <th style={thStyle('right')}>Peso Total (kg)</th>
+            <th style={thStyle('right')}>Peso c/ {acrescimo}% (kg)</th>
+            <th style={thStyle('center')}></th>
+          </tr>
+        </thead>
+        <tbody>
+          {itens.map((m, idx) => {
+            const bg = hovered === m.id ? '#F5FBF8' : idx % 2 === 0 ? '#fff' : '#FAFAFA';
+            return (
+              <tr key={m.id} style={{ background: bg, transition: 'background 0.1s' }}
+                onMouseEnter={() => setHovered(m.id)} onMouseLeave={() => setHovered(null)}>
+                <td style={tdStyle()}>{m.tipo}</td>
+                <td style={tdStyle('right')}>{m.kgPorMetro.toFixed(3)}</td>
+                <td style={tdStyle('right')}>{m.metragem.toFixed(2)}</td>
+                <td style={tdStyle('right')}>{m.pesoTotal.toFixed(2)}</td>
+                <td style={tdStyle('right', true)}>{m.pesoComAcrescimo.toFixed(2)}</td>
+                <td style={{ ...tdStyle('center'), borderBottom: '1px solid #F0F0F0' }}>
+                  <button onClick={() => remover(m.id)}
+                    style={{ background: 'none', border: 'none', color: '#CCC', fontSize: '13px', cursor: 'pointer', padding: '4px 8px', borderRadius: '4px', fontFamily: "'Open Sans',sans-serif" }}
+                    onMouseEnter={e => { e.currentTarget.style.color = '#c0392b'; e.currentTarget.style.background = '#FFF0EE'; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = '#CCC';    e.currentTarget.style.background = 'none'; }}>
+                    Remover
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
+export default function MateriaisAuxiliares({ materiais, setOrcamento }) {
+  const [novo, setNovo] = useState({ grupo: 'CA', tipo: '', kgPorMetro: '', metragem: '' });
+
+  const adicionar = () => {
+    if (!novo.tipo || !novo.kgPorMetro || !novo.metragem) { alert('Preencha todos os campos'); return; }
+    const kgPorMetro       = parseFloat(novo.kgPorMetro);
+    const metragem         = parseFloat(novo.metragem);
+    const pesoTotal        = kgPorMetro * metragem;
+    const pesoComAcrescimo = pesoTotal * (novo.grupo === 'CA' ? 1.05 : 1.03);
     setOrcamento(prev => ({
       ...prev,
-      materiaisAuxiliares: [...prev.materiaisAuxiliares, {
-        id: Date.now(),
-        grupo: novoMaterial.grupo,
-        tipo: novoMaterial.tipo,
-        kgPorMetro,
-        metragem,
-        pesoTotal,
-        pesoComAcrescimo
-      }]
+      materiaisAuxiliares: [...prev.materiaisAuxiliares, { id: Date.now(), grupo: novo.grupo, tipo: novo.tipo, kgPorMetro, metragem, pesoTotal, pesoComAcrescimo }],
     }));
-
-    setNovoMaterial({ grupo: 'CA', tipo: '', kgPorMetro: '', metragem: '' });
+    setNovo({ grupo: 'CA', tipo: '', kgPorMetro: '', metragem: '' });
   };
 
-  const removerMaterial = (id) => {
-    setOrcamento(prev => ({
-      ...prev,
-      materiaisAuxiliares: prev.materiaisAuxiliares.filter(m => m.id !== id)
-    }));
-  };
+  const remover = id => setOrcamento(prev => ({ ...prev, materiaisAuxiliares: prev.materiaisAuxiliares.filter(m => m.id !== id) }));
 
-  const materiaisCA = materiais.filter(m => m.grupo === 'CA');
-  const materiaisCAA = materiais.filter(m => m.grupo === 'CAA');
+  const cabosCA  = materiais.filter(m => m.grupo === 'CA');
+  const cabosCAA = materiais.filter(m => m.grupo === 'CAA');
 
   return (
-    <div className="card">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">
-        🔌 Materiais Auxiliares
-      </h2>
-
-      {/* Formulário de Novo Material */}
-      <div className="bg-gray-50 p-4 rounded-lg mb-6">
-        <h3 className="font-semibold mb-3 text-gray-700">Adicionar Material</h3>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-          <select
-            value={novoMaterial.grupo}
-            onChange={(e) => setNovoMaterial({ ...novoMaterial, grupo: e.target.value })}
-            className="input-field"
-          >
-            <option value="CA">CA (Cabo de Alumínio)</option>
-            <option value="CAA">CAA (Cabo de Alumínio com Alma de Aço)</option>
-          </select>
-
-          <input
-            type="text"
-            value={novoMaterial.tipo}
-            onChange={(e) => setNovoMaterial({ ...novoMaterial, tipo: e.target.value })}
-            className="input-field"
-            placeholder="Tipo (ex: CA4, CAA336)"
-          />
-
-          <input
-            type="number"
-            step="0.001"
-            value={novoMaterial.kgPorMetro}
-            onChange={(e) => setNovoMaterial({ ...novoMaterial, kgPorMetro: e.target.value })}
-            className="input-field"
-            placeholder="kg/m"
-          />
-
-          <input
-            type="number"
-            value={novoMaterial.metragem}
-            onChange={(e) => setNovoMaterial({ ...novoMaterial, metragem: e.target.value })}
-            className="input-field"
-            placeholder="Metragem (m)"
-          />
-
-          <button onClick={adicionarMaterial} className="btn-primary">
-            ➕ Adicionar
-          </button>
+    <div>
+      {/* ── Formulário ── */}
+      <div style={S.card}>
+        <h2 style={S.title}>Materiais Auxiliares</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1fr 2fr auto', gap: '12px', alignItems: 'end' }}>
+          <div>
+            <label style={S.label}>Grupo</label>
+            <select value={novo.grupo} onChange={e => setNovo({ ...novo, grupo: e.target.value })}
+              style={{ ...S.input, appearance: 'none' }} onFocus={onFocus} onBlur={onBlur}>
+              <option value="CA">CA — Cabo de Alumínio</option>
+              <option value="CAA">CAA — Cabo de Alumínio c/ Alma de Aço</option>
+            </select>
+          </div>
+          <div>
+            <label style={S.label}>Tipo</label>
+            <input type="text" value={novo.tipo} onChange={e => setNovo({ ...novo, tipo: e.target.value })}
+              placeholder="Ex: CA4, CAA336" style={S.input} onFocus={onFocus} onBlur={onBlur} />
+          </div>
+          <div>
+            <label style={S.label}>kg/m</label>
+            <input type="number" step="0.001" value={novo.kgPorMetro} onChange={e => setNovo({ ...novo, kgPorMetro: e.target.value })}
+              placeholder="0.000" style={S.input} onFocus={onFocus} onBlur={onBlur} />
+          </div>
+          <div>
+            <label style={S.label}>Metragem (m)</label>
+            <input type="number" value={novo.metragem} onChange={e => setNovo({ ...novo, metragem: e.target.value })}
+              placeholder="0" style={S.input} onFocus={onFocus} onBlur={onBlur} />
+          </div>
+          <div style={{ paddingTop: '18px' }}>
+            <button onClick={adicionar}
+              style={{ background: '#00A859', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Open Sans',sans-serif", height: '42px', whiteSpace: 'nowrap' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#007A3D'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#00A859'; }}>
+              + Adicionar
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Tabela de Cabos CA */}
-      <div className="mb-6">
-        <h3 className="font-bold text-lg mb-3 text-gray-700">Cabos CA (Acréscimo 5%)</h3>
-        {materiaisCA.length === 0 ? (
-          <p className="text-gray-500 text-sm">Nenhum cabo CA adicionado</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-3 py-2 text-left">Tipo</th>
-                  <th className="px-3 py-2 text-right">kg/m</th>
-                  <th className="px-3 py-2 text-right">Metragem (m)</th>
-                  <th className="px-3 py-2 text-right">Peso Total (kg)</th>
-                  <th className="px-3 py-2 text-right">Peso c/ 5% (kg)</th>
-                  <th className="px-3 py-2 text-center">Ação</th>
-                </tr>
-              </thead>
-              <tbody>
-                {materiaisCA.map(m => (
-                  <tr key={m.id} className="border-b">
-                    <td className="px-3 py-2">{m.tipo}</td>
-                    <td className="px-3 py-2 text-right">{m.kgPorMetro.toFixed(3)}</td>
-                    <td className="px-3 py-2 text-right">{m.metragem.toFixed(2)}</td>
-                    <td className="px-3 py-2 text-right">{m.pesoTotal.toFixed(2)}</td>
-                    <td className="px-3 py-2 text-right font-bold">{m.pesoComAcrescimo.toFixed(2)}</td>
-                    <td className="px-3 py-2 text-center">
-                      <button
-                        onClick={() => removerMaterial(m.id)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        🗑️
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      {/* ── Cabos CA ── */}
+      <div style={S.card}>
+        <h2 style={S.title}>Cabos CA <span style={{ fontSize: '12px', fontWeight: 400, color: '#AAA', textTransform: 'none', letterSpacing: 0 }}>(Acréscimo 5%)</span></h2>
+        <TabelaCabos itens={cabosCA} acrescimo={5} remover={remover} />
       </div>
 
-      {/* Tabela de Cabos CAA */}
-      <div className="mb-6">
-        <h3 className="font-bold text-lg mb-3 text-gray-700">Cabos CAA (Acréscimo 3%)</h3>
-        {materiaisCAA.length === 0 ? (
-          <p className="text-gray-500 text-sm">Nenhum cabo CAA adicionado</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-3 py-2 text-left">Tipo</th>
-                  <th className="px-3 py-2 text-right">kg/m</th>
-                  <th className="px-3 py-2 text-right">Metragem (m)</th>
-                  <th className="px-3 py-2 text-right">Peso Total (kg)</th>
-                  <th className="px-3 py-2 text-right">Peso c/ 3% (kg)</th>
-                  <th className="px-3 py-2 text-center">Ação</th>
-                </tr>
-              </thead>
-              <tbody>
-                {materiaisCAA.map(m => (
-                  <tr key={m.id} className="border-b">
-                    <td className="px-3 py-2">{m.tipo}</td>
-                    <td className="px-3 py-2 text-right">{m.kgPorMetro.toFixed(3)}</td>
-                    <td className="px-3 py-2 text-right">{m.metragem.toFixed(2)}</td>
-                    <td className="px-3 py-2 text-right">{m.pesoTotal.toFixed(2)}</td>
-                    <td className="px-3 py-2 text-right font-bold">{m.pesoComAcrescimo.toFixed(2)}</td>
-                    <td className="px-3 py-2 text-center">
-                      <button
-                        onClick={() => removerMaterial(m.id)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        🗑️
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Cálculo de Postes */}
-      <div className="border rounded-lg p-4 bg-blue-50">
-        <h3 className="font-bold text-lg mb-2 text-blue-800">📏 Cálculo de Postes</h3>
-        <p className="text-sm text-gray-600 mb-2">
-          Regra: 1 poste a cada 40 metros
-        </p>
-        <div className="text-2xl font-bold text-blue-600">
-          {quantidadePostes.toFixed(2)} postes
-        </div>
+      {/* ── Cabos CAA ── */}
+      <div style={S.card}>
+        <h2 style={S.title}>Cabos CAA <span style={{ fontSize: '12px', fontWeight: 400, color: '#AAA', textTransform: 'none', letterSpacing: 0 }}>(Acréscimo 3%)</span></h2>
+        <TabelaCabos itens={cabosCAA} acrescimo={3} remover={remover} />
       </div>
     </div>
   );

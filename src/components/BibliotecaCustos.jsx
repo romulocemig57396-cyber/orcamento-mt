@@ -1,95 +1,109 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  TABELA_CUSTOS, 
-  ANOS_DISPONIVEIS, 
-  getCategorias, 
+import {
+  TABELA_CUSTOS,
+  ANOS_DISPONIVEIS,
+  getCategorias,
   getSubcategorias,
   buscarItens,
   getValorPorAno,
-  formatarValor 
+  formatarValor,
 } from '../data/tabelaCustos';
 
+/* ── Estilos base ── */
+const inputStyle = {
+  width: '100%',
+  padding: '10px 14px',
+  borderRadius: '8px',
+  border: '1.5px solid #E0E0E0',
+  fontSize: '14px',
+  fontFamily: "'Open Sans', sans-serif",
+  color: '#333',
+  background: '#fff',
+  outline: 'none',
+  boxSizing: 'border-box',
+  transition: 'border-color 0.2s',
+};
+
+const selectStyle = {
+  ...inputStyle,
+  appearance: 'none',
+  WebkitAppearance: 'none',
+};
+
+const onFocus = e => { e.target.style.borderColor = '#00A859'; };
+const onBlur  = e => { e.target.style.borderColor = '#E0E0E0'; };
+
+const labelStyle = {
+  display: 'block',
+  fontFamily: "'Open Sans', sans-serif",
+  fontSize: '11px',
+  fontWeight: 700,
+  textTransform: 'uppercase',
+  letterSpacing: '0.06em',
+  color: '#666',
+  marginBottom: '6px',
+};
+
 export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoReferencia }) {
-  const [textoBusca, setTextoBusca] = useState('');
-  const [categoriaFiltro, setCategoriaFiltro] = useState('');
+  const [textoBusca, setTextoBusca]             = useState('');
+  const [categoriaFiltro, setCategoriaFiltro]   = useState('');
   const [subcategoriaFiltro, setSubcategoriaFiltro] = useState('');
-  const [itemSelecionado, setItemSelecionado] = useState(null);
-  const [modalAberto, setModalAberto] = useState(false);
-  const [quantidade, setQuantidade] = useState('');
+  const [itemSelecionado, setItemSelecionado]   = useState(null);
+  const [modalAberto, setModalAberto]           = useState(false);
+  const [quantidade, setQuantidade]             = useState('');
   const [categoriaDestino, setCategoriaDestino] = useState('cti');
-  const [percentualCemig, setPercentualCemig] = useState('');
+  const [percentualCemig, setPercentualCemig]   = useState('');
+  const [distanciaKm, setDistanciaKm]           = useState('');
+  const [hoveredRow, setHoveredRow]             = useState(null);
 
-  // Filtrar itens
   const itensFiltrados = useMemo(() => {
-    let itens = TABELA_CUSTOS;
-
-    // Filtro por texto
-    if (textoBusca) {
-      itens = buscarItens(textoBusca);
-    }
-
-    // Filtro por categoria
-    if (categoriaFiltro) {
-      itens = itens.filter(item => item.categoria === categoriaFiltro);
-    }
-
-    // Filtro por subcategoria
-    if (subcategoriaFiltro) {
-      itens = itens.filter(item => item.subcategoria === subcategoriaFiltro);
-    }
-
+    let itens = textoBusca ? buscarItens(textoBusca) : TABELA_CUSTOS;
+    if (categoriaFiltro)    itens = itens.filter(i => i.categoria    === categoriaFiltro);
+    if (subcategoriaFiltro) itens = itens.filter(i => i.subcategoria === subcategoriaFiltro);
     return itens;
   }, [textoBusca, categoriaFiltro, subcategoriaFiltro]);
 
-  const categorias = getCategorias();
+  const categorias    = getCategorias();
   const subcategorias = categoriaFiltro ? getSubcategorias(categoriaFiltro) : [];
 
-  const abrirModal = (item) => {
+  const abrirModal = item => {
     setItemSelecionado(item);
     setModalAberto(true);
     setQuantidade('');
+    setDistanciaKm('');
     setCategoriaDestino('cti');
     setPercentualCemig('');
   };
 
-  const fecharModal = () => {
-    setModalAberto(false);
-    setItemSelecionado(null);
-  };
+  const fecharModal = () => { setModalAberto(false); setItemSelecionado(null); };
 
   const adicionarAoOrcamento = () => {
     if (!itemSelecionado || !quantidade || parseFloat(quantidade) <= 0) {
       alert('Preencha a quantidade corretamente');
       return;
     }
-
     if (categoriaDestino === 'pp' && (!percentualCemig || percentualCemig < 0 || percentualCemig > 100)) {
       alert('Para categoria PP, informe o % CEMIG (0-100)');
       return;
     }
-
-    const unitario = getValorPorAno(itemSelecionado, anoReferencia, 'unitario');
-    const valorTotal = unitario * parseFloat(quantidade);
-
-    const novoItem = {
-      id: Date.now(),
-      descricao: `${itemSelecionado.tipo} (${parseFloat(quantidade)} ${itemSelecionado.unidade})`,
-      categoria: categoriaDestino,
-      valor: valorTotal,
-      percentualCemig: categoriaDestino === 'pp' ? parseFloat(percentualCemig) : 0,
-      origem: 'biblioteca',
-      itemOrigem: itemSelecionado.id,
-      quantidade: parseFloat(quantidade),
-      unidade: itemSelecionado.unidade,
-      valorUnitario: unitario,
-    };
-
+    const unitario   = getValorPorAno(itemSelecionado, anoReferencia, 'unitario');
+    const valorTotal = unitario * parseFloat(quantidade) * 1000;
     setOrcamento(prev => ({
       ...prev,
-      itensObra: [...prev.itensObra, novoItem]
+      itensObra: [...prev.itensObra, {
+        id: Date.now(),
+        descricao: itemSelecionado.tipo,
+        categoria: categoriaDestino,
+        valor: valorTotal,
+        percentualCemig: categoriaDestino === 'pp' ? parseFloat(percentualCemig) : 0,
+        origem: 'biblioteca',
+        itemOrigem: itemSelecionado.id,
+        quantidade: parseFloat(quantidade),
+        unidade: itemSelecionado.unidade,
+        valorUnitario: unitario * 1000,
+      }],
     }));
-
-    alert(`✅ Item adicionado ao orçamento: ${novoItem.descricao}`);
+    alert(`Item adicionado ao orçamento: ${itemSelecionado.tipo}`);
     fecharModal();
   };
 
@@ -100,24 +114,46 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
   };
 
   return (
-    <div className="card">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">
-        📚 Biblioteca de Custos
-      </h2>
+    <div>
 
-      {/* Seletor de Ano de Referência */}
-      <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <label className="label font-bold text-blue-800">Ano de Referência:</label>
-        <div className="flex gap-3 mt-2">
+      {/* ── Cabeçalho ── */}
+      <div style={{ marginBottom: '20px' }}>
+        <h2 style={{
+          fontFamily: "'Montserrat', sans-serif",
+          fontSize: '20px', fontWeight: 700,
+          color: '#007A3D', margin: '0 0 4px 0',
+        }}>
+          Biblioteca de Custos
+        </h2>
+        <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '13px', color: '#999', margin: 0 }}>
+          Tabela oficial de custos unitários para orçamento de obras em MT
+        </p>
+      </div>
+
+      {/* ── Ano de Referência ── */}
+      <div style={{
+        background: '#fff', borderRadius: '12px',
+        border: '1px solid #E0E0E0', padding: '16px 20px',
+        marginBottom: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+      }}>
+        <p style={labelStyle}>Ano de Referência</p>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           {ANOS_DISPONIVEIS.map(ano => (
             <button
               key={ano.ano}
               onClick={() => setAnoReferencia(ano.ano)}
-              className={`px-4 py-2 rounded-md font-semibold transition-colors ${
-                anoReferencia === ano.ano
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-blue-600 border border-blue-300 hover:bg-blue-50'
-              }`}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '20px',
+                fontSize: '13px',
+                fontWeight: 600,
+                fontFamily: "'Open Sans', sans-serif",
+                border: '1.5px solid #00A859',
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+                background: anoReferencia === ano.ano ? '#007A3D' : '#fff',
+                color:      anoReferencia === ano.ano ? '#fff'    : '#007A3D',
+              }}
             >
               {ano.label}
             </button>
@@ -125,227 +161,392 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
         </div>
       </div>
 
-      {/* Filtros */}
-      <div className="bg-gray-50 p-4 rounded-lg mb-4">
-        <h3 className="font-semibold mb-3 text-gray-700">🔍 Filtros</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <div className="md:col-span-2">
+      {/* ── Filtros ── */}
+      <div style={{
+        background: '#fff', borderRadius: '12px',
+        border: '1px solid #E0E0E0', padding: '16px 20px',
+        marginBottom: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+      }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+          <div>
+            <label style={labelStyle}>Buscar</label>
             <input
               type="text"
               value={textoBusca}
-              onChange={(e) => setTextoBusca(e.target.value)}
-              className="input-field"
+              onChange={e => setTextoBusca(e.target.value)}
+              style={inputStyle}
               placeholder="Buscar por nome..."
+              onFocus={onFocus}
+              onBlur={onBlur}
             />
           </div>
-
           <div>
+            <label style={labelStyle}>Categoria</label>
             <select
               value={categoriaFiltro}
-              onChange={(e) => {
-                setCategoriaFiltro(e.target.value);
-                setSubcategoriaFiltro('');
-              }}
-              className="input-field"
+              onChange={e => { setCategoriaFiltro(e.target.value); setSubcategoriaFiltro(''); }}
+              style={selectStyle}
+              onFocus={onFocus}
+              onBlur={onBlur}
             >
-              <option value="">Todas as categorias</option>
-              {categorias.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
+              <option value="">Todas</option>
+              {categorias.map(cat => <option key={cat} value={cat}>{cat}</option>)}
             </select>
           </div>
-
           <div>
+            <label style={labelStyle}>Subcategoria</label>
             <select
               value={subcategoriaFiltro}
-              onChange={(e) => setSubcategoriaFiltro(e.target.value)}
-              className="input-field"
+              onChange={e => setSubcategoriaFiltro(e.target.value)}
+              style={{ ...selectStyle, opacity: !categoriaFiltro ? 0.5 : 1 }}
               disabled={!categoriaFiltro}
+              onFocus={onFocus}
+              onBlur={onBlur}
             >
-              <option value="">Todas as subcategorias</option>
-              {subcategorias.map(sub => (
-                <option key={sub} value={sub}>{sub}</option>
-              ))}
+              <option value="">Todas</option>
+              {subcategorias.map(sub => <option key={sub} value={sub}>{sub}</option>)}
             </select>
           </div>
         </div>
 
-        <div className="mt-3 flex justify-between items-center">
-          <p className="text-sm text-gray-600">
-            {itensFiltrados.length} {itensFiltrados.length === 1 ? 'item encontrado' : 'itens encontrados'}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '13px', color: '#888', margin: 0 }}>
+            <strong style={{ color: '#007A3D' }}>{itensFiltrados.length}</strong>{' '}
+            {itensFiltrados.length === 1 ? 'item encontrado' : 'itens encontrados'}
           </p>
-          <button onClick={limparFiltros} className="text-sm text-blue-600 hover:text-blue-800">
+          <button
+            onClick={limparFiltros}
+            style={{
+              padding: '8px 16px', borderRadius: '8px',
+              border: '1px solid #CCC', background: '#fff',
+              color: '#555', fontSize: '13px',
+              fontFamily: "'Open Sans', sans-serif",
+              cursor: 'pointer', transition: 'background 0.15s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#F5F5F5'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#fff'; }}
+          >
             Limpar filtros
           </button>
         </div>
       </div>
 
-      {/* Tabela de Itens */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-100 sticky top-0">
-            <tr>
-              <th className="px-3 py-2 text-left">Categoria</th>
-              <th className="px-3 py-2 text-left">Tipo</th>
-              <th className="px-3 py-2 text-center">Unid.</th>
-              <th className="px-3 py-2 text-right">Material</th>
-              <th className="px-3 py-2 text-right">Mão Obra</th>
-              <th className="px-3 py-2 text-right">US Constr.</th>
-              <th className="px-3 py-2 text-right">Total (R$ mil)</th>
-              <th className="px-3 py-2 text-center">Ação</th>
-            </tr>
-          </thead>
-          <tbody>
-            {itensFiltrados.length === 0 ? (
-              <tr>
-                <td colSpan="8" className="text-center py-8 text-gray-500">
-                  Nenhum item encontrado com os filtros aplicados
-                </td>
+      {/* ── Tabela ── */}
+      <div style={{
+        background: '#fff', borderRadius: '12px',
+        border: '1px solid #E0E0E0',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+        overflow: 'hidden',
+      }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Open Sans', sans-serif" }}>
+            <thead>
+              <tr style={{ background: '#007A3D' }}>
+                {['Categoria', 'Tipo', 'Unid.', 'Material', 'Mão Obra', 'US Constr.', 'Total (R$ mil)', 'Ação'].map(col => (
+                  <th key={col} style={{
+                    padding: '10px 14px',
+                    fontSize: '12px', fontWeight: 700,
+                    textTransform: 'uppercase',
+                    color: '#fff',
+                    textAlign: ['Material', 'Mão Obra', 'US Constr.', 'Total (R$ mil)'].includes(col) ? 'right'
+                            : col === 'Unid.' || col === 'Ação' ? 'center' : 'left',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {col}
+                  </th>
+                ))}
               </tr>
-            ) : (
-              itensFiltrados.map(item => {
-                const material = getValorPorAno(item, anoReferencia, 'material');
-                const maoObra = getValorPorAno(item, anoReferencia, 'maoObra');
-                const usConstr = getValorPorAno(item, anoReferencia, 'usConstr');
-                const unitario = getValorPorAno(item, anoReferencia, 'unitario');
+            </thead>
+            <tbody>
+              {itensFiltrados.length === 0 ? (
+                <tr>
+                  <td colSpan={8} style={{ padding: '40px', textAlign: 'center', color: '#999', fontSize: '14px' }}>
+                    Nenhum item encontrado com os filtros aplicados
+                  </td>
+                </tr>
+              ) : (
+                itensFiltrados.map((item, idx) => {
+                  const material = getValorPorAno(item, anoReferencia, 'material');
+                  const maoObra  = getValorPorAno(item, anoReferencia, 'maoObra');
+                  const usConstr = getValorPorAno(item, anoReferencia, 'usConstr');
+                  const unitario = getValorPorAno(item, anoReferencia, 'unitario');
+                  const isHovered = hoveredRow === item.id;
+                  const rowBg = isHovered ? '#E7F4EE' : idx % 2 === 0 ? '#fff' : '#F9F9F9';
 
-                return (
-                  <tr key={item.id} className="border-b hover:bg-blue-50">
-                    <td className="px-3 py-2">
-                      <div className="text-xs text-gray-500">{item.categoria}</div>
-                      {item.subcategoria && (
-                        <div className="text-xs text-gray-400">{item.subcategoria}</div>
-                      )}
-                    </td>
-                    <td className="px-3 py-2 font-medium">{item.tipo}</td>
-                    <td className="px-3 py-2 text-center text-gray-600">{item.unidade}</td>
-                    <td className="px-3 py-2 text-right">{formatarValor(material)}</td>
-                    <td className="px-3 py-2 text-right">{formatarValor(maoObra)}</td>
-                    <td className="px-3 py-2 text-right">{formatarValor(usConstr)}</td>
-                    <td className="px-3 py-2 text-right font-bold text-blue-600">
-                      {formatarValor(unitario)}
-                    </td>
-                    <td className="px-3 py-2 text-center">
-                      <button
-                        onClick={() => abrirModal(item)}
-                        className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700"
-                      >
-                        ➕ Adicionar
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                  return (
+                    <tr
+                      key={item.id}
+                      style={{ background: rowBg, transition: 'background 0.1s' }}
+                      onMouseEnter={() => setHoveredRow(item.id)}
+                      onMouseLeave={() => setHoveredRow(null)}
+                    >
+                      <td style={{ padding: '10px 14px', fontSize: '13px', borderBottom: '1px solid #F0F0F0' }}>
+                        <div style={{ color: '#444', fontWeight: 500 }}>{item.categoria}</div>
+                        {item.subcategoria && (
+                          <div style={{ color: '#AAA', fontSize: '11px', marginTop: '1px' }}>{item.subcategoria}</div>
+                        )}
+                      </td>
+                      <td style={{ padding: '10px 14px', fontSize: '13px', fontWeight: 500, color: '#222', borderBottom: '1px solid #F0F0F0' }}>
+                        {item.tipo}
+                      </td>
+                      <td style={{ padding: '10px 14px', fontSize: '13px', textAlign: 'center', color: '#666', borderBottom: '1px solid #F0F0F0' }}>
+                        {item.unidade}
+                      </td>
+                      {[material, maoObra, usConstr].map((val, i) => (
+                        <td key={i} style={{ padding: '10px 14px', fontSize: '13px', textAlign: 'right', color: '#555', borderBottom: '1px solid #F0F0F0', fontVariantNumeric: 'tabular-nums' }}>
+                          {formatarValor(val)}
+                        </td>
+                      ))}
+                      <td style={{ padding: '10px 14px', fontSize: '13px', textAlign: 'right', fontWeight: 700, color: '#007A3D', borderBottom: '1px solid #F0F0F0', fontVariantNumeric: 'tabular-nums' }}>
+                        {formatarValor(unitario)}
+                      </td>
+                      <td style={{ padding: '10px 14px', textAlign: 'center', borderBottom: '1px solid #F0F0F0' }}>
+                        <button
+                          onClick={() => abrirModal(item)}
+                          style={{
+                            background: '#00A859', color: '#fff',
+                            border: 'none', padding: '6px 14px',
+                            borderRadius: '6px', fontSize: '12px',
+                            fontWeight: 600, cursor: 'pointer',
+                            fontFamily: "'Open Sans', sans-serif",
+                            transition: 'background 0.15s',
+                            whiteSpace: 'nowrap',
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.background = '#007A3D'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = '#00A859'; }}
+                        >
+                          + Adicionar
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Modal de Adição */}
+      {/* ── Dica de uso ── */}
+      <div style={{
+        marginTop: '16px', padding: '14px 16px',
+        background: '#E7F4EE', borderRadius: '10px',
+        border: '1px solid #B8E6CC',
+      }}>
+        <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '12px', color: '#005C2E', margin: 0, lineHeight: 1.6 }}>
+          <strong>Como usar:</strong> selecione o ano de referência → filtre o item desejado → clique em "+ Adicionar" → informe quantidade e categoria → o item é incluído automaticamente nos Itens de Obra.
+        </p>
+      </div>
+
+      {/* ── Modal ── */}
       {modalAberto && itemSelecionado && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold mb-4 text-gray-800">
+        <div
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(0,0,0,0.45)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 999, padding: '16px',
+          }}
+          onClick={e => { if (e.target === e.currentTarget) fecharModal(); }}
+        >
+          <div style={{
+            background: '#fff', borderRadius: '14px',
+            padding: '28px', width: '100%', maxWidth: '440px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+          }}>
+            <h3 style={{
+              fontFamily: "'Montserrat', sans-serif",
+              fontSize: '16px', fontWeight: 800,
+              color: '#007A3D', margin: '0 0 16px 0',
+            }}>
               Adicionar ao Orçamento
             </h3>
 
-            <div className="mb-4 p-3 bg-gray-50 rounded">
-              <p className="font-semibold text-gray-700">{itemSelecionado.tipo}</p>
-              <p className="text-sm text-gray-600">
-                {itemSelecionado.categoria} {itemSelecionado.subcategoria && `→ ${itemSelecionado.subcategoria}`}
+            {/* Info do item */}
+            <div style={{
+              background: '#F5FBF8', borderRadius: '8px',
+              padding: '12px 14px', marginBottom: '20px',
+              border: '1px solid #C8E6D6',
+            }}>
+              <p style={{ fontFamily: "'Open Sans', sans-serif", fontWeight: 600, color: '#222', fontSize: '14px', margin: '0 0 2px 0' }}>
+                {itemSelecionado.tipo}
               </p>
-              <p className="text-lg font-bold text-blue-600 mt-2">
-                R$ {formatarValor(getValorPorAno(itemSelecionado, anoReferencia, 'unitario'))} mil / {itemSelecionado.unidade}
+              <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '12px', color: '#888', margin: '0 0 8px 0' }}>
+                {itemSelecionado.categoria}{itemSelecionado.subcategoria ? ` › ${itemSelecionado.subcategoria}` : ''}
+              </p>
+              <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 800, color: '#007A3D', margin: 0 }}>
+                R$ {formatarValor(getValorPorAno(itemSelecionado, anoReferencia, 'unitario'))} mil
+                <span style={{ fontSize: '12px', fontWeight: 400, color: '#888', marginLeft: '4px' }}>/ {itemSelecionado.unidade}</span>
               </p>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="label">Quantidade ({itemSelecionado.unidade})</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={quantidade}
-                  onChange={(e) => setQuantidade(e.target.value)}
-                  className="input-field"
-                  placeholder="Ex: 14.84"
-                  autoFocus
-                />
-              </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+
+              {/* ── Campo de quantidade (condicional por unidade) ── */}
+              {itemSelecionado.unidade === 'poste' ? (
+                /* Conversor km → postes */
+                <div style={{ background: '#F0F9F4', borderRadius: '10px', padding: '14px', border: '1px solid #C8E6D6' }}>
+                  <p style={{ ...labelStyle, color: '#007A3D', marginBottom: '10px' }}>
+                    Conversor de Distância — 1 poste = 40 m
+                  </p>
+
+                  {/* Input km */}
+                  <div style={{ marginBottom: '10px' }}>
+                    <label style={{ ...labelStyle, marginBottom: '4px' }}>Distância (km)</label>
+                    <input
+                      type="number"
+                      step="0.001"
+                      min="0"
+                      value={distanciaKm}
+                      onChange={e => {
+                        const km = e.target.value;
+                        setDistanciaKm(km);
+                        const postes = km ? Math.round(parseFloat(km) * 1000 / 40) : '';
+                        setQuantidade(postes !== '' ? String(postes) : '');
+                      }}
+                      style={{ ...inputStyle, borderColor: '#B8E6CC' }}
+                      placeholder="Ex: 14.840"
+                      autoFocus
+                      onFocus={e => { e.target.style.borderColor = '#00A859'; }}
+                      onBlur={e  => { e.target.style.borderColor = '#B8E6CC'; }}
+                    />
+                  </div>
+
+                  {/* Resultado em postes */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ ...labelStyle, marginBottom: '4px' }}>Quantidade (postes)</label>
+                      <input
+                        type="number"
+                        step="1"
+                        min="0"
+                        value={quantidade}
+                        onChange={e => {
+                          const postes = e.target.value;
+                          setQuantidade(postes);
+                          const km = postes ? (parseFloat(postes) * 40 / 1000) : '';
+                          setDistanciaKm(km !== '' ? km.toFixed(3) : '');
+                        }}
+                        style={{ ...inputStyle, borderColor: '#B8E6CC' }}
+                        placeholder="0"
+                        onFocus={e => { e.target.style.borderColor = '#00A859'; }}
+                        onBlur={e  => { e.target.style.borderColor = '#B8E6CC'; }}
+                      />
+                    </div>
+                    {quantidade && parseFloat(quantidade) > 0 && (
+                      <div style={{ flexShrink: 0, paddingTop: '18px', textAlign: 'center' }}>
+                        <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '22px', fontWeight: 800, color: '#007A3D', margin: 0, lineHeight: 1 }}>
+                          {parseInt(quantidade, 10)}
+                        </p>
+                        <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '11px', color: '#888', margin: '2px 0 0 0' }}>postes</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                /* Input normal para km, ponto, un, etc. */
+                <div>
+                  <label style={labelStyle}>Quantidade ({itemSelecionado.unidade})</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={quantidade}
+                    onChange={e => setQuantidade(e.target.value)}
+                    style={inputStyle}
+                    placeholder="Ex: 14.84"
+                    autoFocus
+                    onFocus={onFocus}
+                    onBlur={onBlur}
+                  />
+                </div>
+              )}
 
               <div>
-                <label className="label">Categoria de Destino</label>
+                <label style={labelStyle}>Categoria de Destino</label>
                 <select
                   value={categoriaDestino}
-                  onChange={(e) => setCategoriaDestino(e.target.value)}
-                  className="input-field"
+                  onChange={e => setCategoriaDestino(e.target.value)}
+                  style={selectStyle}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
                 >
-                  <option value="cti">CTI - Cond. Téc. Interessado</option>
-                  <option value="ctc">CTC - Cond. Téc. CEMIG</option>
-                  <option value="pp">PP - Proporcionalidade</option>
+                  <option value="cti">CTI — Cond. Téc. Interessado</option>
+                  <option value="ctc">CTC — Cond. Téc. CEMIG</option>
+                  <option value="pp">PP — Proporcionalidade</option>
                   <option value="parcela_reg">Parcela Regulatória</option>
                 </select>
               </div>
 
               {categoriaDestino === 'pp' && (
                 <div>
-                  <label className="label">% CEMIG (Proporcionalidade)</label>
+                  <label style={labelStyle}>% CEMIG (Proporcionalidade)</label>
                   <input
                     type="number"
                     step="0.01"
                     min="0"
                     max="100"
                     value={percentualCemig}
-                    onChange={(e) => setPercentualCemig(e.target.value)}
-                    className="input-field"
+                    onChange={e => setPercentualCemig(e.target.value)}
+                    style={inputStyle}
                     placeholder="Ex: 29"
+                    onFocus={onFocus}
+                    onBlur={onBlur}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    % que a CEMIG paga. O resto vai para Parcela Regulatória.
+                  <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '11px', color: '#999', margin: '4px 0 0 0' }}>
+                    % que a CEMIG paga. O restante vai para Parcela Regulatória.
                   </p>
                 </div>
               )}
 
-              {quantidade && (
-                <div className="p-3 bg-green-50 rounded border border-green-200">
-                  <p className="text-sm font-semibold text-green-800">Valor Total:</p>
-                  <p className="text-2xl font-bold text-green-600">
+              {quantidade && parseFloat(quantidade) > 0 && (
+                <div style={{
+                  padding: '12px 14px', background: '#E7F4EE',
+                  borderRadius: '8px', border: '1px solid #B8E6CC',
+                }}>
+                  <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '12px', color: '#666', margin: '0 0 2px 0' }}>Valor Total</p>
+                  <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '22px', fontWeight: 800, color: '#007A3D', margin: 0 }}>
                     R$ {formatarValor(getValorPorAno(itemSelecionado, anoReferencia, 'unitario') * parseFloat(quantidade))} mil
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="flex gap-3 mt-6">
+            <div style={{ display: 'flex', gap: '10px', marginTop: '24px' }}>
               <button
                 onClick={fecharModal}
-                className="btn-secondary flex-1"
+                style={{
+                  flex: 1, padding: '11px', borderRadius: '100px',
+                  border: '1.5px solid #DDD', background: '#fff',
+                  color: '#555', fontSize: '13px', fontWeight: 600,
+                  fontFamily: "'Open Sans', sans-serif", cursor: 'pointer',
+                  transition: 'background 0.15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#F5F5F5'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#fff'; }}
               >
                 Cancelar
               </button>
               <button
                 onClick={adicionarAoOrcamento}
-                className="btn-success flex-1"
+                style={{
+                  flex: 1, padding: '11px', borderRadius: '100px',
+                  border: 'none', background: '#00A859',
+                  color: '#fff', fontSize: '13px', fontWeight: 700,
+                  fontFamily: "'Open Sans', sans-serif", cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,168,89,0.3)',
+                  transition: 'background 0.15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#007A3D'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#00A859'; }}
               >
-                ✅ Adicionar
+                Adicionar ao Orçamento
               </button>
             </div>
           </div>
         </div>
       )}
 
-      <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <h4 className="font-semibold text-blue-800 mb-2">ℹ️ Como usar:</h4>
-        <ul className="text-sm text-blue-700 space-y-1">
-          <li>1. Selecione o <strong>ano de referência</strong> dos custos</li>
-          <li>2. Use os <strong>filtros</strong> para encontrar o item desejado</li>
-          <li>3. Clique em <strong>"Adicionar"</strong> no item</li>
-          <li>4. Informe a <strong>quantidade</strong> e a <strong>categoria</strong></li>
-          <li>5. O item será adicionado automaticamente aos Itens de Obra</li>
-        </ul>
-      </div>
     </div>
   );
 }

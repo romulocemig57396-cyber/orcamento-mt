@@ -16,12 +16,10 @@ export const exportarExcel = (orcamento) => {
     ['Tipo de Atendimento', orcamento.tipoAtendimento],
     ['Tensão (kV)', orcamento.tensaoKv],
     ['Carga Atual (kW)', orcamento.cargaAtual || 0],
-    ['Carga Futura (kW)', orcamento.cargaFutura],
+    ['Demanda Futura (kW)', orcamento.demandaFutura],
     ['MUSD (kW)', orcamento.musd],
     ['Município', orcamento.municipio],
     ['Local', orcamento.localUnidade],
-    ['Extensão de Rede (m)', orcamento.extensaoRede || 0],
-    ['Tipo de Rede', orcamento.tipoRede],
     [''],
     ['CUSTOS DE OBRA'],
     ['Item', 'Descrição', 'Categoria', 'Valor'],
@@ -80,9 +78,6 @@ export const exportarExcel = (orcamento) => {
         .filter(m => m.grupo === 'CAA')
         .map(m => [m.tipo, m.kgPorMetro, m.metragem, m.pesoTotal, m.pesoComAcrescimo]),
       [''],
-      ['POSTES'],
-      ['Metragem (m)', 'Quantidade de Postes'],
-      [orcamento.extensaoRede || 0, orcamento.quantidadePostes || 0],
     ];
     
     const ws2 = XLSX.utils.aoa_to_sheet(dadosAuxiliares);
@@ -117,10 +112,8 @@ export const exportarPDF = (orcamento) => {
     `Município: ${orcamento.municipio}`,
     `Tipo de Atendimento: ${orcamento.tipoAtendimento}`,
     `Tensão: ${orcamento.tensaoKv} kV`,
-    `Carga Futura: ${orcamento.cargaFutura} kW`,
+    `Demanda Futura: ${orcamento.demandaFutura} kW`,
     `MUSD: ${orcamento.musd} kW`,
-    `Extensão de Rede: ${orcamento.extensaoRede || 0} m`,
-    `Tipo de Rede: ${orcamento.tipoRede}`,
   ];
   
   dadosAtendimento.forEach(linha => {

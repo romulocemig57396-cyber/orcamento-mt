@@ -14,7 +14,7 @@ export const validarCamposObrigatorios = (dados) => {
     erros.push('Tensão deve ser maior que zero');
   }
 
-  if (!dados.cargaFutura || dados.cargaFutura <= 0) {
+  if (!dados.demandaFutura || dados.demandaFutura <= 0) {
     erros.push('Carga futura é obrigatória e deve ser maior que zero');
   }
 
@@ -31,7 +31,7 @@ export const validarConsistenciaMatematica = (dados) => {
   const avisos = [];
 
   // Carga futura >= carga atual
-  if (dados.cargaFutura < (dados.cargaAtual || 0)) {
+  if (dados.demandaFutura < (dados.cargaAtual || 0)) {
     erros.push('Carga futura não pode ser menor que carga atual');
   }
 

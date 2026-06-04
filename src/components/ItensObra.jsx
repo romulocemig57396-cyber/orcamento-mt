@@ -1,261 +1,281 @@
 import React, { useState } from 'react';
 import { formatarMoeda } from '../utils/calculos';
 
+const S = {
+  card: { background: '#fff', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', marginBottom: '20px' },
+  title: { fontFamily: "'Montserrat',sans-serif", fontSize: '15px', fontWeight: 700, color: '#007A3D', borderBottom: '2px solid #E7F4EE', paddingBottom: '12px', marginBottom: '20px', marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.05em' },
+  label: { display: 'block', fontFamily: "'Open Sans',sans-serif", fontSize: '12px', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' },
+  input: { width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #E0E0E0', fontSize: '14px', color: '#333', outline: 'none', boxSizing: 'border-box', fontFamily: "'Open Sans',sans-serif", background: '#fff', transition: 'border-color 0.2s' },
+};
+
+const onFocus = e => { e.target.style.borderColor = '#00A859'; e.target.style.boxShadow = '0 0 0 3px rgba(0,168,89,0.1)'; };
+const onBlur  = e => { e.target.style.borderColor = '#E0E0E0'; e.target.style.boxShadow = 'none'; };
+
+const CATEGORIA_META = {
+  cti:         { label: 'CTI', style: { background: '#E8F7EE', color: '#007A3D', border: '1px solid #B8E6CC' } },
+  ctc:         { label: 'CTC', style: { background: '#FFFBE6', color: '#8B6D00', border: '1px solid #FFE57A' } },
+  pp:          { label: 'PP',  style: { background: '#E8F5E9', color: '#2E7D32', border: '1px solid #A5D6A7' } },
+  parcela_reg: { label: 'REG', style: { background: '#F3E5F5', color: '#6A1B9A', border: '1px solid #CE93D8' } },
+};
+
+const BADGE_BASE = { padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, fontFamily: "'Open Sans',sans-serif", display: 'inline-flex', alignItems: 'center' };
+
 export default function ItensObra({ itens, setOrcamento }) {
-  const [novoItem, setNovoItem] = useState({
-    descricao: '',
-    categoria: 'cti',
-    valor: '',
-    percentualCemig: ''
-  });
+  const [novo, setNovo] = useState({ descricao: '', categoria: 'cti', valor: '', percentualCemig: '', quantidade: '', unidade: 'km', distanciaKm: '' });
+  const [hoveredRow, setHoveredRow] = useState(null);
 
-  const adicionarItem = () => {
-    if (!novoItem.descricao || !novoItem.valor) {
-      alert('Preencha descrição e valor');
-      return;
+  const adicionar = () => {
+    if (!novo.descricao || !novo.valor) { alert('Preencha descrição e valor'); return; }
+    if (novo.categoria === 'pp' && (!novo.percentualCemig || novo.percentualCemig < 0 || novo.percentualCemig > 100)) {
+      alert('Para itens PP, informe o % CEMIG (0-100)'); return;
     }
-
-    // Se for PP, validar percentual CEMIG
-    if (novoItem.categoria === 'pp' && (!novoItem.percentualCemig || novoItem.percentualCemig < 0 || novoItem.percentualCemig > 100)) {
-      alert('Para itens PP, informe o % CEMIG (0-100)');
-      return;
-    }
-
     setOrcamento(prev => ({
       ...prev,
       itensObra: [...prev.itensObra, {
         id: Date.now(),
-        descricao: novoItem.descricao,
-        categoria: novoItem.categoria,
-        valor: parseFloat(novoItem.valor),
-        percentualCemig: novoItem.categoria === 'pp' ? parseFloat(novoItem.percentualCemig) : 0
-      }]
+        descricao: novo.descricao,
+        categoria: novo.categoria,
+        valor: parseFloat(novo.valor),
+        percentualCemig: novo.categoria === 'pp' ? parseFloat(novo.percentualCemig) : 0,
+        quantidade: novo.quantidade ? parseFloat(novo.quantidade) : null,
+        unidade: novo.unidade || '',
+      }],
     }));
-
-    setNovoItem({ descricao: '', categoria: 'cti', valor: '', percentualCemig: '' });
+    setNovo({ descricao: '', categoria: 'cti', valor: '', percentualCemig: '', quantidade: '', unidade: 'km', distanciaKm: '' });
   };
 
-  const removerItem = (id) => {
-    setOrcamento(prev => ({
-      ...prev,
-      itensObra: prev.itensObra.filter(item => item.id !== id)
-    }));
-  };
+  const remover  = id => setOrcamento(prev => ({ ...prev, itensObra: prev.itensObra.filter(i => i.id !== id) }));
+  const editar   = (id, field, value) => setOrcamento(prev => ({ ...prev, itensObra: prev.itensObra.map(i => i.id === id ? { ...i, [field]: value } : i) }));
 
-  const editarItem = (id, field, value) => {
-    setOrcamento(prev => ({
-      ...prev,
-      itensObra: prev.itensObra.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    }));
-  };
+  const detalhe  = item => item.categoria === 'pp'
+    ? { cemig: item.valor * (item.percentualCemig / 100), cliente: item.valor * (1 - item.percentualCemig / 100), show: true }
+    : { cemig: 0, cliente: item.valor, show: false };
 
-  const getCategoriaLabel = (cat) => {
-    const labels = {
-      'cti': 'CTI - Cond. Téc. Interessado',
-      'ctc': 'CTC - Cond. Téc. CEMIG',
-      'pp': 'PP - Proporcionalidade',
-      'parcela_reg': 'Parcela Regulatória'
-    };
-    return labels[cat] || cat;
-  };
-
-  const getCategoriaColor = (cat) => {
-    const colors = {
-      'cti': 'bg-blue-100 text-blue-800',
-      'ctc': 'bg-yellow-100 text-yellow-800',
-      'pp': 'bg-green-100 text-green-800',
-      'parcela_reg': 'bg-purple-100 text-purple-800'
-    };
-    return colors[cat] || 'bg-gray-100 text-gray-800';
-  };
-
-  const calcularDetalhesItem = (item) => {
-    if (item.categoria === 'pp') {
-      const valorCemig = item.valor * (item.percentualCemig / 100);
-      const valorCliente = item.valor * (1 - item.percentualCemig / 100);
-      return { valorCemig, valorCliente, mostrarDetalhes: true };
-    }
-    return { valorCemig: 0, valorCliente: item.valor, mostrarDetalhes: false };
-  };
+  const th = (txt, align = 'left') => ({
+    padding: '10px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase',
+    letterSpacing: '0.06em', color: '#fff', background: '#007A3D', textAlign: align, whiteSpace: 'nowrap',
+  });
 
   return (
-    <div className="card">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">
-        💰 Itens de Obra
-      </h2>
+    <div>
+      {/* ── Adicionar Item ── */}
+      <div style={S.card}>
+        <h2 style={S.title}>Adicionar Item</h2>
 
-      {/* Formulário de Novo Item */}
-      <div className="bg-gray-50 p-4 rounded-lg mb-4">
-        <h3 className="font-semibold mb-3 text-gray-700">Adicionar Novo Item</h3>
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-          <div className="md:col-span-5">
-            <input
-              type="text"
-              value={novoItem.descricao}
-              onChange={(e) => setNovoItem({ ...novoItem, descricao: e.target.value })}
-              className="input-field"
-              placeholder="Descrição do item"
-            />
+        <div style={{ display: 'grid', gridTemplateColumns: '4fr 2.5fr 1fr 1.5fr 1.5fr auto', gap: '12px', alignItems: 'end' }}>
+          <div>
+            <label style={S.label}>Descrição</label>
+            <input type="text" value={novo.descricao} onChange={e => setNovo({ ...novo, descricao: e.target.value })}
+              placeholder="Descrição do item" style={S.input} onFocus={onFocus} onBlur={onBlur}
+              onKeyDown={e => e.key === 'Enter' && adicionar()} />
           </div>
-          <div className="md:col-span-3">
-            <select
-              value={novoItem.categoria}
-              onChange={(e) => setNovoItem({ ...novoItem, categoria: e.target.value, percentualCemig: '' })}
-              className="input-field text-sm"
-            >
-              <option value="cti">CTI - Cond. Téc. Interessado</option>
-              <option value="ctc">CTC - Cond. Téc. CEMIG</option>
-              <option value="pp">PP - Proporcionalidade</option>
+          <div>
+            <label style={S.label}>Categoria</label>
+            <select value={novo.categoria} onChange={e => setNovo({ ...novo, categoria: e.target.value, percentualCemig: '' })}
+              style={{ ...S.input, appearance: 'none' }} onFocus={onFocus} onBlur={onBlur}>
+              <option value="cti">CTI — Cond. Téc. Interessado</option>
+              <option value="ctc">CTC — Cond. Téc. CEMIG</option>
+              <option value="pp">PP — Proporcionalidade</option>
               <option value="parcela_reg">Parcela Regulatória</option>
             </select>
           </div>
-          <div className="md:col-span-2">
-            <input
-              type="number"
-              step="0.01"
-              value={novoItem.valor}
-              onChange={(e) => setNovoItem({ ...novoItem, valor: e.target.value })}
-              className="input-field"
-              placeholder="Valor (R$)"
-            />
+          <div>
+            <label style={S.label}>
+              {novo.unidade === 'poste' ? 'Qtd. (postes)' : 'Qtd.'}
+            </label>
+            <input type="number" step="1" min="0" value={novo.quantidade}
+              onChange={e => {
+                const postes = e.target.value;
+                const km = postes ? (parseFloat(postes) * 40 / 1000) : '';
+                setNovo({ ...novo, quantidade: postes, distanciaKm: km ? km.toFixed(3) : '' });
+              }}
+              placeholder="0" style={S.input} onFocus={onFocus} onBlur={onBlur} />
+            {novo.unidade === 'poste' && novo.quantidade && (
+              <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', color: '#00A859', margin: '4px 0 0 0', fontWeight: 600 }}>
+                ≈ {(parseFloat(novo.quantidade) * 40 / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} km
+              </p>
+            )}
           </div>
-          {novoItem.categoria === 'pp' && (
-            <div className="md:col-span-1">
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="100"
-                value={novoItem.percentualCemig}
-                onChange={(e) => setNovoItem({ ...novoItem, percentualCemig: e.target.value })}
-                className="input-field"
-                placeholder="% CEMIG"
-              />
-            </div>
-          )}
-          <div className={novoItem.categoria === 'pp' ? 'md:col-span-1' : 'md:col-span-2'}>
-            <button
-              onClick={adicionarItem}
-              className="btn-primary w-full h-full"
-            >
-              ➕
+          <div>
+            <label style={S.label}>Unidade</label>
+            <select value={novo.unidade}
+              onChange={e => setNovo({ ...novo, unidade: e.target.value, quantidade: '', distanciaKm: '' })}
+              style={{ ...S.input, appearance: 'none' }} onFocus={onFocus} onBlur={onBlur}>
+              <option value="km">km</option>
+              <option value="poste">poste</option>
+              <option value="ponto">ponto</option>
+              <option value="un">un</option>
+              <option value="m">m</option>
+            </select>
+          </div>
+          <div>
+            <label style={S.label}>Valor (R$ mil)</label>
+            <input type="number" step="0.01" value={novo.valor} onChange={e => setNovo({ ...novo, valor: e.target.value })}
+              placeholder="0,00" style={S.input} onFocus={onFocus} onBlur={onBlur} />
+          </div>
+          <div style={{ paddingTop: '18px' }}>
+            <button onClick={adicionar}
+              style={{ background: '#00A859', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Open Sans',sans-serif", whiteSpace: 'nowrap', height: '42px' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#007A3D'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#00A859'; }}>
+              + Adicionar
             </button>
           </div>
         </div>
-        {novoItem.categoria === 'pp' && (
-          <div className="mt-2 text-sm text-gray-600">
-            💡 Para itens PP: informe o % que a CEMIG paga. O resto vai para Parcela Regulatória.
+
+        {/* ── Conversor km ↔ postes ── */}
+        {novo.unidade === 'poste' && (
+          <div style={{ marginTop: '12px', background: '#F0F9F4', borderRadius: '8px', padding: '12px 14px', border: '1px solid #C8E6D6' }}>
+            <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', fontWeight: 700, color: '#007A3D', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 10px 0' }}>
+              Conversor: 1 poste = 40 m
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '180px' }}>
+                <label style={{ ...S.label, color: '#007A3D', marginBottom: '4px' }}>Distância (km)</label>
+                <input
+                  type="number"
+                  step="0.001"
+                  min="0"
+                  value={novo.distanciaKm}
+                  onChange={e => {
+                    const km = e.target.value;
+                    const postes = km ? Math.round(parseFloat(km) * 1000 / 40) : '';
+                    setNovo({ ...novo, distanciaKm: km, quantidade: postes !== '' ? String(postes) : '' });
+                  }}
+                  placeholder="Ex: 14.84"
+                  style={{ ...S.input, borderColor: '#B8E6CC' }}
+                  onFocus={e => { e.target.style.borderColor = '#00A859'; }}
+                  onBlur={e  => { e.target.style.borderColor = '#B8E6CC'; }}
+                />
+              </div>
+              <div style={{ paddingTop: '18px', color: '#007A3D', fontSize: '18px', fontWeight: 700 }}>→</div>
+              <div>
+                <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', color: '#666', margin: '0 0 4px 0' }}>Postes calculados</p>
+                <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: '20px', fontWeight: 800, color: '#007A3D', margin: 0 }}>
+                  {novo.quantidade || '—'}
+                  {novo.quantidade && <span style={{ fontSize: '12px', fontWeight: 400, color: '#999', marginLeft: '4px' }}>postes</span>}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {novo.categoria === 'pp' && (
+          <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '160px' }}>
+              <label style={S.label}>% CEMIG</label>
+              <input type="number" step="1" min="0" max="100" value={novo.percentualCemig}
+                onChange={e => setNovo({ ...novo, percentualCemig: e.target.value })}
+                placeholder="%" style={S.input} onFocus={onFocus} onBlur={onBlur} />
+            </div>
+            <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', color: '#888', marginTop: '18px' }}>
+              % que a CEMIG paga. O restante vai para Parcela Regulatória.
+            </p>
           </div>
         )}
       </div>
 
-      {/* Tabela de Itens */}
-      {itens.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          Nenhum item adicionado ainda
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-3 py-2 text-left">#</th>
-                <th className="px-3 py-2 text-left">Descrição</th>
-                <th className="px-3 py-2 text-center">Categoria</th>
-                <th className="px-3 py-2 text-right">Valor Total</th>
-                <th className="px-3 py-2 text-center">% CEMIG</th>
-                <th className="px-3 py-2 text-right">Valor CEMIG (PP)</th>
-                <th className="px-3 py-2 text-right">Parcela Reg</th>
-                <th className="px-3 py-2 text-center">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {itens.map((item, index) => {
-                const { valorCemig, valorCliente, mostrarDetalhes } = calcularDetalhesItem(item);
-                
-                return (
-                  <tr key={item.id} className="border-b hover:bg-gray-50">
-                    <td className="px-3 py-2">{index + 1}</td>
-                    <td className="px-3 py-2">
-                      <input
-                        type="text"
-                        value={item.descricao}
-                        onChange={(e) => editarItem(item.id, 'descricao', e.target.value)}
-                        className="input-field text-sm"
-                      />
-                    </td>
-                    <td className="px-3 py-2 text-center">
-                      <span className={`px-2 py-1 rounded text-xs font-semibold ${getCategoriaColor(item.categoria)}`}>
-                        {getCategoriaLabel(item.categoria).split(' - ')[0]}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2 text-right">
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={item.valor}
-                        onChange={(e) => editarItem(item.id, 'valor', parseFloat(e.target.value) || 0)}
-                        className="input-field text-sm text-right"
-                      />
-                    </td>
-                    <td className="px-3 py-2 text-center">
-                      {item.categoria === 'pp' ? (
-                        <input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          max="100"
-                          value={item.percentualCemig}
-                          onChange={(e) => editarItem(item.id, 'percentualCemig', parseFloat(e.target.value) || 0)}
-                          className="input-field text-sm text-center w-16"
-                        />
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </td>
-                    <td className="px-3 py-2 text-right text-green-600 font-semibold">
-                      {mostrarDetalhes ? formatarMoeda(valorCemig) : '-'}
-                    </td>
-                    <td className="px-3 py-2 text-right text-purple-600 font-semibold">
-                      {mostrarDetalhes ? formatarMoeda(valorCliente) : 
-                       item.categoria === 'parcela_reg' ? formatarMoeda(item.valor) : '-'}
-                    </td>
-                    <td className="px-3 py-2 text-center">
-                      <button
-                        onClick={() => removerItem(item.id)}
-                        className="text-red-600 hover:text-red-800 font-bold"
-                        title="Remover item"
-                      >
-                        🗑️
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot className="bg-gray-100 font-bold">
-              <tr>
-                <td colSpan="3" className="px-3 py-3 text-right">TOTAL DA OBRA:</td>
-                <td className="px-3 py-3 text-right text-lg text-blue-600">
-                  {formatarMoeda(itens.reduce((acc, item) => acc + item.valor, 0))}
-                </td>
-                <td colSpan="4"></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      )}
+      {/* ── Lista de Itens ── */}
+      <div style={S.card}>
+        <h2 style={S.title}>
+          Itens Cadastrados
+          <span style={{ fontSize: '12px', fontWeight: 500, color: '#AAA', marginLeft: '8px', textTransform: 'none', letterSpacing: 0 }}>
+            ({itens.length} {itens.length === 1 ? 'item' : 'itens'})
+          </span>
+        </h2>
 
-      <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <h4 className="font-semibold text-blue-800 mb-2">ℹ️ Categorias:</h4>
-        <ul className="text-sm text-blue-700 space-y-1">
-          <li><strong>CTI (Cond. Téc. Interessado):</strong> Valor pago integralmente pelo cliente</li>
-          <li><strong>CTC (Cond. Téc. CEMIG):</strong> Valor pago pela concessionária</li>
-          <li><strong>PP (Proporcionalidade):</strong> % CEMIG vai para PP, resto vai para Parcela Regulatória</li>
-          <li><strong>Parcela Regulatória:</strong> Pode ser coberta pelo ERD (definido na aba Rateio)</li>
-        </ul>
+        {itens.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px 0', color: '#BBB' }}>
+            <p style={{ fontSize: '32px', marginBottom: '8px' }}>—</p>
+            <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '14px' }}>Nenhum item adicionado ainda</p>
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto', margin: '0 -24px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Open Sans',sans-serif" }}>
+              <thead>
+                <tr>
+                  <th style={th('#'        )}>Nº</th>
+                  <th style={th('Descrição')}>Descrição</th>
+                  <th style={th('Categoria', 'center')}>Categoria</th>
+                  <th style={th('Valor Total', 'right')}>Valor Total</th>
+                  <th style={th('% CEMIG',    'center')}>% CEMIG</th>
+                  <th style={th('Valor PP',   'right')}>Valor PP</th>
+                  <th style={th('Parcela Reg','right')}>Parcela Reg.</th>
+                  <th style={th('',           'center')}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {itens.map((item, idx) => {
+                  const d   = detalhe(item);
+                  const meta = CATEGORIA_META[item.categoria] || CATEGORIA_META.cti;
+                  const bg  = hoveredRow === item.id ? '#F5FBF8' : idx % 2 === 0 ? '#fff' : '#FAFAFA';
+                  return (
+                    <tr key={item.id} style={{ background: bg, transition: 'background 0.1s' }}
+                      onMouseEnter={() => setHoveredRow(item.id)} onMouseLeave={() => setHoveredRow(null)}>
+                      <td style={{ padding: '8px 14px', fontSize: '12px', color: '#AAA', borderBottom: '1px solid #F0F0F0' }}>{idx + 1}</td>
+                      <td style={{ padding: '6px 8px', borderBottom: '1px solid #F0F0F0' }}>
+                        <input type="text" value={item.descricao} onChange={e => editar(item.id, 'descricao', e.target.value)}
+                          style={{ ...S.input, padding: '6px 10px', fontSize: '13px' }} onFocus={onFocus} onBlur={onBlur} />
+                      </td>
+                      <td style={{ padding: '8px 14px', textAlign: 'center', borderBottom: '1px solid #F0F0F0' }}>
+                        <span style={{ ...BADGE_BASE, ...meta.style }}>{meta.label}</span>
+                      </td>
+                      <td style={{ padding: '6px 8px', borderBottom: '1px solid #F0F0F0' }}>
+                        <input type="number" step="0.01" value={item.valor} onChange={e => editar(item.id, 'valor', parseFloat(e.target.value) || 0)}
+                          style={{ ...S.input, padding: '6px 10px', fontSize: '13px', textAlign: 'right' }} onFocus={onFocus} onBlur={onBlur} />
+                      </td>
+                      <td style={{ padding: '6px 8px', textAlign: 'center', borderBottom: '1px solid #F0F0F0' }}>
+                        {item.categoria === 'pp' ? (
+                          <input type="number" step="1" min="0" max="100" value={item.percentualCemig}
+                            onChange={e => editar(item.id, 'percentualCemig', parseFloat(e.target.value) || 0)}
+                            style={{ ...S.input, padding: '6px 10px', fontSize: '13px', textAlign: 'center', width: '72px' }}
+                            onFocus={onFocus} onBlur={onBlur} />
+                        ) : <span style={{ color: '#CCC' }}>—</span>}
+                      </td>
+                      <td style={{ padding: '8px 14px', textAlign: 'right', fontSize: '13px', color: '#2E7D32', fontWeight: 600, borderBottom: '1px solid #F0F0F0', fontVariantNumeric: 'tabular-nums' }}>
+                        {d.show ? formatarMoeda(d.cemig) : <span style={{ color: '#CCC' }}>—</span>}
+                      </td>
+                      <td style={{ padding: '8px 14px', textAlign: 'right', fontSize: '13px', color: '#6A1B9A', fontWeight: 600, borderBottom: '1px solid #F0F0F0', fontVariantNumeric: 'tabular-nums' }}>
+                        {d.show ? formatarMoeda(d.cliente) : item.categoria === 'parcela_reg' ? formatarMoeda(item.valor) : <span style={{ color: '#CCC' }}>—</span>}
+                      </td>
+                      <td style={{ padding: '8px 14px', textAlign: 'center', borderBottom: '1px solid #F0F0F0' }}>
+                        <button onClick={() => remover(item.id)}
+                          style={{ background: 'none', border: 'none', color: '#CCC', fontSize: '13px', cursor: 'pointer', fontFamily: "'Open Sans',sans-serif", padding: '4px 8px', borderRadius: '4px' }}
+                          onMouseEnter={e => { e.currentTarget.style.color = '#c0392b'; e.currentTarget.style.background = '#FFF0EE'; }}
+                          onMouseLeave={e => { e.currentTarget.style.color = '#CCC';    e.currentTarget.style.background = 'none'; }}>
+                          Remover
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              <tfoot>
+                <tr style={{ background: '#F9F9F9', borderTop: '2px solid #E0E0E0' }}>
+                  <td colSpan={3} style={{ padding: '10px 14px', fontFamily: "'Open Sans',sans-serif", fontSize: '12px', fontWeight: 700, color: '#555', textAlign: 'right', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Total da Obra
+                  </td>
+                  <td style={{ padding: '10px 14px', textAlign: 'right', fontFamily: "'Montserrat',sans-serif", fontSize: '15px', fontWeight: 800, color: '#007A3D', fontVariantNumeric: 'tabular-nums' }}>
+                    {formatarMoeda(itens.reduce((a, i) => a + i.valor, 0))}
+                  </td>
+                  <td colSpan={4} />
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* ── Legenda ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '12px' }}>
+        {Object.entries(CATEGORIA_META).map(([, m]) => (
+          <div key={m.label} style={{ ...S.card, marginBottom: 0, padding: '14px 16px' }}>
+            <span style={{ ...BADGE_BASE, ...m.style, marginBottom: '6px', display: 'inline-flex' }}>{m.label}</span>
+            <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', color: '#777', margin: 0, lineHeight: 1.4 }}>
+              {m.label === 'CTI' ? 'Cond. Téc. Interessado' : m.label === 'CTC' ? 'Cond. Téc. CEMIG' : m.label === 'PP' ? 'Proporcionalidade' : 'Parcela Regulatória'}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );
