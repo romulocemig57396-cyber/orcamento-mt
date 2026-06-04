@@ -52,12 +52,23 @@ export default function Exportacao({ orcamento, resetOrcamento }) {
       {/* ── Exportar ── */}
       <div style={S.card}>
         <h2 style={S.title}>Exportar Orçamento</h2>
-        <ExportRow
-          iconBg="#E8F7EE" iconColor="#007A3D" iconText="XLS"
-          title="Exportar Excel"
-          desc="Planilha completa com todas as abas do orçamento"
-          onExport={handleExcel}
-        />
+        {/* Excel — desabilitado temporariamente */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', borderRadius: '10px', border: '1.5px solid #E0E0E0', background: '#FAFAFA', marginBottom: '10px', opacity: 0.5 }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '10px', background: '#E8F7EE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ fontFamily: "'Montserrat',sans-serif", fontSize: '12px', fontWeight: 900, color: '#007A3D' }}>XLS</span>
+          </div>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: '14px', color: '#222', margin: '0 0 2px 0' }}>Exportar Excel</p>
+            <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', color: '#999', margin: 0 }}>Planilha completa com todas as abas do orçamento</p>
+          </div>
+          <div style={{ flexShrink: 0, textAlign: 'right' }}>
+            <button disabled onClick={handleExcel}
+              style={{ background: '#00A859', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'not-allowed', fontFamily: "'Open Sans',sans-serif" }}>
+              Exportar
+            </button>
+            <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', color: '#AAA', margin: '4px 0 0 0' }}>Em desenvolvimento</p>
+          </div>
+        </div>
         <ExportRow
           iconBg="#FEE8E8" iconColor="#c0392b" iconText="PDF"
           title="Exportar PDF"

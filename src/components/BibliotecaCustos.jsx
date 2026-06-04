@@ -116,20 +116,6 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
   return (
     <div>
 
-      {/* ── Cabeçalho ── */}
-      <div style={{ marginBottom: '20px' }}>
-        <h2 style={{
-          fontFamily: "'Montserrat', sans-serif",
-          fontSize: '20px', fontWeight: 700,
-          color: '#007A3D', margin: '0 0 4px 0',
-        }}>
-          Biblioteca de Custos
-        </h2>
-        <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '13px', color: '#999', margin: 0 }}>
-          Tabela oficial de custos unitários para orçamento de obras em MT
-        </p>
-      </div>
-
       {/* ── Ano de Referência ── */}
       <div style={{
         background: '#fff', borderRadius: '12px',
