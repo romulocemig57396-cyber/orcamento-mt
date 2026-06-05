@@ -205,43 +205,76 @@ export default function DadosAtendimento({ dados, updateField }) {
         </div>
       </div>
 
-      {/* ── Stat card: MUSD ── */}
-      <div style={{
-        background: '#fff',
-        borderRadius: '12px',
-        padding: '20px 24px',
-        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
-        borderLeft: '4px solid #00A859',
-      }}>
-        <p style={{
-          fontFamily: "'Open Sans', sans-serif",
-          fontSize: '11px',
-          fontWeight: 700,
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-          color: '#888',
-          margin: '0 0 6px 0',
-        }}>
-          MUSD Calculado
-        </p>
-        <p style={{
-          fontFamily: "'Montserrat', sans-serif",
-          fontSize: '28px',
-          fontWeight: 800,
-          color: '#007A3D',
-          margin: 0,
-          lineHeight: 1,
-        }}>
-          {dados.musd ? dados.musd.toFixed(2) : '0.00'}
-          <span style={{ fontSize: '14px', fontWeight: 500, color: '#AAA', marginLeft: '6px' }}>kW</span>
-        </p>
-        <p style={{
-          fontFamily: "'Open Sans', sans-serif",
-          fontSize: '12px',
-          color: '#AAA',
-          margin: '6px 0 0 0',
-        }}>
-          Carga Futura − Carga Atual
+      {/* ── Stat cards: MUSD + ERD Simulado ── */}
+      {(() => {
+        const K_2026 = 779.9937688857699;
+        const K_2025 = 747.8218066178199;
+        const musd   = dados.musd || 0;
+        const erd2026 = musd * K_2026;
+        const erd2025 = musd * K_2025;
+
+        const fmtBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 });
+
+        return (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+
+            {/* MUSD */}
+            <div style={{ background: '#fff', borderRadius: '12px', padding: '20px 24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', borderLeft: '4px solid #00A859' }}>
+              <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#888', margin: '0 0 6px 0' }}>
+                MUSD Calculado
+              </p>
+              <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: '26px', fontWeight: 800, color: '#007A3D', margin: 0, lineHeight: 1 }}>
+                {musd.toFixed(2)}
+                <span style={{ fontSize: '13px', fontWeight: 500, color: '#AAA', marginLeft: '5px' }}>kW</span>
+              </p>
+              <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', color: '#AAA', margin: '6px 0 0 0' }}>
+                Carga Futura − Carga Atual
+              </p>
+            </div>
+
+            {/* ERD Simulado 2026 */}
+            <div style={{ background: '#fff', borderRadius: '12px', padding: '20px 24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', borderLeft: '4px solid #FFD100' }}>
+              <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#888', margin: '0 0 6px 0' }}>
+                ERD Simulado 2026
+              </p>
+              <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: '18px', fontWeight: 800, color: '#007A3D', margin: 0, lineHeight: 1.2, fontVariantNumeric: 'tabular-nums' }}>
+                {fmtBRL(erd2026)}
+              </p>
+              <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '10px', color: '#AAA', margin: '4px 0 8px 0' }}>
+                MUSD × K = {K_2026.toFixed(4)}
+              </p>
+              <button
+                onClick={() => set('erd', parseFloat(erd2026.toFixed(2)))}
+                style={{ background: '#007A3D', color: '#fff', border: 'none', padding: '5px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Open Sans',sans-serif", transition: 'background 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#005C2E'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#007A3D'; }}
+              >
+                Aplicar no Rateio
+              </button>
+            </div>
+
+            {/* ERD Simulado 2025 */}
+            <div style={{ background: '#fff', borderRadius: '12px', padding: '20px 24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', borderLeft: '4px solid #E0E0E0' }}>
+              <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#888', margin: '0 0 6px 0' }}>
+                ERD Simulado 2025
+              </p>
+              <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: '18px', fontWeight: 800, color: '#555', margin: 0, lineHeight: 1.2, fontVariantNumeric: 'tabular-nums' }}>
+                {fmtBRL(erd2025)}
+              </p>
+              <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '10px', color: '#AAA', margin: '4px 0 0 0' }}>
+                MUSD × K = {K_2025.toFixed(4)}
+              </p>
+            </div>
+
+          </div>
+        );
+      })()}
+
+      {/* Dica CAOR */}
+      <div style={{ background: '#FFFBE6', border: '1px solid #FFE57A', borderRadius: '8px', padding: '10px 14px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+        <span style={{ color: '#8B6D00', fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>💡</span>
+        <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', color: '#8B6D00', margin: 0, lineHeight: 1.5 }}>
+          <strong>Verifique o valor da CAOR</strong> antes de aplicar o ERD simulado no rateio. O valor real pode diferir do simulado conforme a resolução vigente da ANEEL.
         </p>
       </div>
 
