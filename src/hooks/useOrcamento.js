@@ -36,6 +36,14 @@ const initialState = {
   valorTotal: 0,
   dataBase: new Date(),
   dataValidade: new Date(),
+  importacao: {
+    textoOriginal: '',
+    cabecalhoDetectado: null,
+    itensDetectados: [],
+    textosAltaTensao: [],
+    textoAltaTensao: '',
+    analisado: false,
+  },
 };
 
 export const useOrcamento = () => {
@@ -47,7 +55,8 @@ export const useOrcamento = () => {
         return {
           ...parsed,
           dataBase: new Date(parsed.dataBase),
-          dataValidade: new Date(parsed.dataValidade)
+          dataValidade: new Date(parsed.dataValidade),
+          importacao: parsed.importacao || initialState.importacao,
         };
       } catch (e) {
         console.error('Erro ao carregar dados salvos:', e);
@@ -148,6 +157,10 @@ export const useOrcamento = () => {
     setOrcamento(prev => ({ ...prev, [field]: value }));
   };
 
+  const updateImportacao = (updates) => {
+    setOrcamento(prev => ({ ...prev, importacao: { ...prev.importacao, ...updates } }));
+  };
+
   const resetOrcamento = () => {
     setOrcamento(initialState);
     localStorage.removeItem(STORAGE_KEY);
@@ -156,6 +169,7 @@ export const useOrcamento = () => {
   return {
     orcamento,
     updateField,
+    updateImportacao,
     resetOrcamento,
     setOrcamento
   };

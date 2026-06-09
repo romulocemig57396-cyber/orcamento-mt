@@ -8,9 +8,11 @@ import DescricaoTecnica from './components/DescricaoTecnica';
 import ResumoFinanceiro from './components/ResumoFinanceiro';
 import Exportacao from './components/Exportacao';
 import BibliotecaCustos from './components/BibliotecaCustos';
+import Importacao from './components/Importacao';
 
 const abas = [
   { id: 'atendimento', nome: 'Atendimento' },
+  { id: 'importacao',  nome: 'Importar' },
   { id: 'biblioteca',  nome: 'Biblioteca Custos' },
   { id: 'itens',       nome: 'Itens de Obra' },
   { id: 'rateio',      nome: 'Rateio' },
@@ -21,7 +23,7 @@ const abas = [
 ];
 
 function App() {
-  const { orcamento, updateField, resetOrcamento, setOrcamento } = useOrcamento();
+  const { orcamento, updateField, updateImportacao, resetOrcamento, setOrcamento } = useOrcamento();
   const [abaAtiva, setAbaAtiva] = useState('atendimento');
   const [anoReferencia, setAnoReferencia] = useState(2024);
 
@@ -181,6 +183,14 @@ function App() {
 
             {abaAtiva === 'atendimento' && (
               <DadosAtendimento dados={orcamento} updateField={updateField} />
+            )}
+            {abaAtiva === 'importacao' && (
+              <Importacao
+                updateField={updateField}
+                setOrcamento={setOrcamento}
+                importacao={orcamento.importacao}
+                updateImportacao={updateImportacao}
+              />
             )}
             {abaAtiva === 'biblioteca' && (
               <BibliotecaCustos
