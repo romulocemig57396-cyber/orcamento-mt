@@ -1,5 +1,5 @@
 import React from 'react';
-import { exportarExcel, exportarPDF } from '../utils/exportar';
+import { exportarExcel, exportarPDF, exportarRateio } from '../utils/exportar';
 
 const S = {
   card:  { background: '#fff', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', marginBottom: '20px' },
@@ -39,6 +39,11 @@ export default function Exportacao({ orcamento, resetOrcamento }) {
     catch (err) { console.error(err); alert('Erro ao exportar PDF. Veja o console.'); }
   };
 
+  const handleRateio = () => {
+    try { exportarRateio(orcamento); alert('Rateio exportado com sucesso!'); }
+    catch (err) { console.error(err); alert('Erro ao exportar Rateio. Veja o console.'); }
+  };
+
   const handleNovo = () => {
     if (window.confirm('Deseja criar um novo orçamento? Os dados atuais serão perdidos.')) {
       resetOrcamento();
@@ -74,6 +79,12 @@ export default function Exportacao({ orcamento, resetOrcamento }) {
           title="Exportar PDF"
           desc="Documento formatado e pronto para impressão"
           onExport={handlePDF}
+        />
+        <ExportRow
+          iconBg="#E8F4FF" iconColor="#1565C0" iconText="RAT"
+          title="EXPORTAR RATEIO"
+          desc="Detalhamento completo do rateio técnico"
+          onExport={handleRateio}
         />
       </div>
 

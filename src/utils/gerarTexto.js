@@ -292,12 +292,17 @@ const agruparItens = (itens) => {
    Função pública: gerarMemorialDescritivo
    ─────────────────────────────────────────────────────────────────────────── */
 export const gerarMemorialDescritivo = (dados) => {
-  const cliente   = dados.cliente      || '[cliente]';
-  const tipo      = TIPO_ATENDIMENTO[dados.tipoAtendimento] || dados.tipoAtendimento || '[tipo de atendimento]';
-  const demanda   = fmtNum(dados.demandaFutura) || '[demanda]';
-  const tensao    = dados.tensaoKv     || '[tensão]';
-  const local     = dados.localUnidade || '[local]';
-  const municipio = dados.municipio    || '[município]';
+  const cliente    = dados.cliente      || '[cliente]';
+  const tipo       = TIPO_ATENDIMENTO[dados.tipoAtendimento] || dados.tipoAtendimento || '[tipo de atendimento]';
+  const demanda    = fmtNum(dados.demandaFutura) || '[demanda]';
+  const cargaAtual = fmtNum(dados.cargaAtual) || '[carga atual]';
+  const tensao     = dados.tensaoKv     || '[tensão]';
+  const local      = dados.localUnidade || '[local]';
+  const municipio  = dados.municipio    || '[município]';
+
+  const demandaTexto = dados.tipoAtendimento === 'LN'
+    ? `com demanda de ${demanda} kW`
+    : `com demanda atual de ${cargaAtual} kW e demanda futura de ${demanda} kW`;
 
   let listaItens = '[inserir obras necessárias]';
   if (dados.itensObra && dados.itensObra.length > 0) {
@@ -307,7 +312,7 @@ export const gerarMemorialDescritivo = (dados) => {
 
   let texto =
     `Para atendimento à solicitação de ${cliente}, de uma ${tipo}, ` +
-    `com demanda de ${demanda} kW, conectada em ${tensao} kV, ` +
+    `${demandaTexto}, conectada em ${tensao} kV, ` +
     `na ${local}, no município de ${municipio}, ` +
     `será necessária a ${listaItens} e demais modificações necessárias na rede.`;
 

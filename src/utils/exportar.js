@@ -274,3 +274,150 @@ export const exportarPDF = (orcamento) => {
   const nomeArquivo = `Orcamento_${(orcamento.cliente || 'sem-nome').replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
   doc.save(nomeArquivo);
 };
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   RATEIO
+   ───────────────────────────────────────────────────────────────────────────── */
+export const exportarRateio = (orcamento) => {
+  const doc = new jsPDF();
+  const v = (x) => parseFloat(x) || 0;
+  const verde = [0, 122, 61];
+  const azul  = [21, 101, 192];
+  let y = 20;
+
+  const secao = (titulo, cor = verde) => {
+    if (y > 240) { doc.addPage(); y = 20; }
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(...cor);
+    doc.text(titulo, 20, y);
+    doc.setTextColor(0);
+    y += 4;
+  };
+
+  const itensCTC = orcamento.itensObra.filter(i => i.categoria === 'ctc');
+  const itensPP  = orcamento.itensObra.filter(i => i.categoria === 'pp');
+  const itensCTI = orcamento.itensObra.filter(i => i.categoria === 'cti');
+  const itensReg = orcamento.itensObra.filter(i => i.categoria === 'parcela_reg');
+  const totalCTI = itensCTI.reduce((acc, item) => acc + v(item.valor), 0);
+
+  // Cabeçalho
+  doc.setFontSize(15);
+  doc.setFont(undefined, 'bold');
+  doc.text('RATEIO TÉCNICO', 105, y, { align: 'center' });
+  y += 8;
+  doc.setFontSize(9);
+  doc.setFont(undefined, 'normal');
+  doc.setTextColor(100);
+  doc.text(`NS: ${orcamento.ns || '—'}   |   Cliente: ${orcamento.cliente || '—'}   |   Data: ${formatarData(orcamento.dataBase)}`, 105, y, { align: 'center' });
+  doc.setTextColor(0);
+  y += 10;
+
+  // CTC
+  secao('CTC — CONDIÇÃO TÉCNICA CEMIG');
+  doc.autoTable({
+    startY: y,
+    head: [['Descrição', 'Valor']],
+    body: [
+      ...itensCTC.map(item => [item.descricao, formatarMoeda(v(item.valor))]),
+      ['Diferença de Cabo', formatarMoeda(v(orcamento.diferencaCabo))],
+    ],
+    foot: [['Total CTC', formatarMoeda(orcamento.ctcTotal)]],
+    theme: 'striped',
+    headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
+    footStyles: { fillColor: [230, 247, 238], textColor: verde, fontStyle: 'bold' },
+    bodyStyles: { fontSize: 8 },
+    columnStyles: { 1: { halign: 'right', cellWidth: 40 } },
+  });
+  y = doc.lastAutoTable.finalY + 8;
+
+  // PP
+  secao('PP — PROPORCIONALIDADE');
+  doc.autoTable({
+    startY: y,
+    head: [['Descrição', 'Valor Total', '% CEMIG', 'Valor PP (CEMIG)', 'Valor Cliente']],
+    body: itensPP.map(item => {
+      const vt  = v(item.valor);
+      const pct = parseFloat(item.percentualCemig) || 0;
+      return [item.descricao, formatarMoeda(vt), `${pct}%`, formatarMoeda(vt * pct / 100), formatarMoeda(vt * (1 - pct / 100))];
+    }),
+    foot: [['Total PP CEMIG', '', '', formatarMoeda(orcamento.ppTotal), '']],
+    theme: 'striped',
+    headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
+    footStyles: { fillColor: [230, 247, 238], textColor: verde, fontStyle: 'bold' },
+    bodyStyles: { fontSize: 8 },
+    columnStyles: { 1: { halign: 'right' }, 2: { halign: 'center' }, 3: { halign: 'right' }, 4: { halign: 'right' } },
+  });
+  y = doc.lastAutoTable.finalY + 8;
+
+  // Parcela Regulatória
+  if (y > 220) { doc.addPage(); y = 20; }
+  secao('PARCELA REGULATÓRIA');
+  doc.autoTable({
+    startY: y,
+    head: [['Descrição', 'Valor']],
+    body: [
+      ...itensReg.map(item => [item.descricao, formatarMoeda(v(item.valor))]),
+      ['Total Parcela Reg',          formatarMoeda(orcamento.parcelaRegTotal)],
+      ['ERD disponível',             formatarMoeda(v(orcamento.erd))],
+      ['Parcela Reg coberta pelo ERD', formatarMoeda(orcamento.parcelaRegCobertaERD)],
+      ['Sobra da Parcela Reg',       formatarMoeda(orcamento.sobraParcelaReg)],
+    ],
+    theme: 'striped',
+    headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
+    bodyStyles: { fontSize: 8 },
+    columnStyles: { 1: { halign: 'right', cellWidth: 40 } },
+  });
+  y = doc.lastAutoTable.finalY + 8;
+
+  // CTI
+  if (y > 220) { doc.addPage(); y = 20; }
+  secao('CTI — CONDIÇÃO TÉCNICA DO INTERESSADO');
+  doc.autoTable({
+    startY: y,
+    head: [['Descrição', 'Valor']],
+    body: itensCTI.map(item => [item.descricao, formatarMoeda(v(item.valor))]),
+    foot: [['Total CTI', formatarMoeda(totalCTI)]],
+    theme: 'striped',
+    headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
+    footStyles: { fillColor: [230, 247, 238], textColor: verde, fontStyle: 'bold' },
+    bodyStyles: { fontSize: 8 },
+    columnStyles: { 1: { halign: 'right', cellWidth: 40 } },
+  });
+  y = doc.lastAutoTable.finalY + 8;
+
+  // Resumo Final
+  if (y > 220) { doc.addPage(); y = 20; }
+  secao('RESUMO FINAL', azul);
+  doc.autoTable({
+    startY: y,
+    body: [
+      ['Total da Obra',            formatarMoeda(orcamento.totalObra)],
+      ['CT CEMIG (com dif. cabo)', formatarMoeda(orcamento.ctcTotal)],
+      ['PP CEMIG',                 formatarMoeda(orcamento.ppTotal)],
+      ['ERD',                      formatarMoeda(v(orcamento.erd))],
+      ['PFC do Cliente',           formatarMoeda(orcamento.pfcCliente)],
+      ['Parcela D',                formatarMoeda(orcamento.parcelaD)],
+    ],
+    theme: 'plain',
+    bodyStyles: { fontSize: 9 },
+    columnStyles: { 0: { fontStyle: 'bold', cellWidth: 100 }, 1: { halign: 'right', fontStyle: 'bold' } },
+  });
+
+  // Rodapé
+  const totalPags = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= totalPags; p++) {
+    doc.setPage(p);
+    doc.setFontSize(7);
+    doc.setTextColor(150);
+    doc.text(
+      `Emissão: ${orcamento.municipio || ''}, ${formatarData(orcamento.dataBase)}`,
+      105, 285, { align: 'center' }
+    );
+    doc.text(`Página ${p} de ${totalPags}`, 105, 290, { align: 'center' });
+    doc.setTextColor(0);
+  }
+
+  const nomeArquivo = `Rateio_${(orcamento.cliente || 'sem-nome').replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+  doc.save(nomeArquivo);
+};
