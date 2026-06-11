@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { TABELA_CUSTOS, getValorPorAno } from '../data/tabelaCustos';
 
 // ── Regras de matching biblioteca ──────────────────────────────────────────
@@ -200,7 +200,7 @@ function Badge({ cat }) {
 }
 
 // ── Componente principal ─────────────────────────────────────────────────────
-export default function Importacao({ updateField, setOrcamento, importacao, updateImportacao }) {
+export default function Importacao({ updateField, setOrcamento, importacao, updateImportacao, obrasVinculadas, updateObrasVinculadas }) {
   const fileRef = useRef(null);
 
   const {
@@ -211,6 +211,27 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
     textoAltaTensao,
     analisado,
   } = importacao;
+
+  useEffect(() => {
+    const temObrasVinculadas = textosAltaTensao.length > 0;
+    if (
+      obrasVinculadas.temObrasVinculadas !== temObrasVinculadas ||
+      obrasVinculadas.descricao !== textoAltaTensao
+    ) {
+      updateObrasVinculadas({ temObrasVinculadas, descricao: textoAltaTensao });
+    }
+  }, [textosAltaTensao, textoAltaTensao]);
+
+  const handleDataConclusaoChange = (valor) => {
+    let diasRestantes = null;
+    if (valor) {
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+      const dataConclusao = new Date(valor + 'T00:00:00');
+      diasRestantes = Math.ceil((dataConclusao - hoje) / (1000 * 60 * 60 * 24));
+    }
+    updateObrasVinculadas({ dataConclusao: valor, diasRestantes });
+  };
 
   const handleArquivo = (e) => {
     const file = e.target.files[0];
@@ -386,6 +407,30 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
             onMouseLeave={e => e.currentTarget.style.background = '#1565C0'}>
             Copiar para Descrição Técnica
           </button>
+
+          <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #E3F2FD' }}>
+            <label style={S.labelMuted}>Data de Conclusão Estimada das Obras Vinculadas</label>
+            <input
+              type="date"
+              value={obrasVinculadas.dataConclusao}
+              onChange={e => handleDataConclusaoChange(e.target.value)}
+              style={{ ...S.input, maxWidth: '220px' }}
+            />
+            {obrasVinculadas.dataConclusao && obrasVinculadas.diasRestantes !== null && (
+              <p style={{
+                fontFamily: "'Open Sans',sans-serif", fontSize: '13px', fontWeight: 700, margin: '10px 0 0 0',
+                color: obrasVinculadas.diasRestantes < 0
+                  ? '#e74c3c'
+                  : obrasVinculadas.diasRestantes < 180
+                    ? '#E67E22'
+                    : '#00A859',
+              }}>
+                {obrasVinculadas.diasRestantes < 0
+                  ? `Prazo já vencido (${obrasVinculadas.diasRestantes} dias)`
+                  : `Faltam ${obrasVinculadas.diasRestantes} dias para a conclusão`}
+              </p>
+            )}
+          </div>
         </div>
       )}
 

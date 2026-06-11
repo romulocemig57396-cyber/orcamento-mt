@@ -1,10 +1,22 @@
 import React from 'react';
 import { exportarExcel, exportarPDF, exportarRateio } from '../utils/exportar';
+import { formatarData } from '../utils/calculos';
 
 const S = {
   card:  { background: '#fff', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', marginBottom: '20px' },
   title: { fontFamily: "'Montserrat',sans-serif", fontSize: '15px', fontWeight: 700, color: '#007A3D', borderBottom: '2px solid #E7F4EE', paddingBottom: '12px', marginBottom: '20px', marginTop: 0, textTransform: 'uppercase', letterSpacing: '0.05em' },
+  prazoLabel: { fontFamily: "'Open Sans',sans-serif", fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#888', margin: '0 0 8px 0' },
+  prazoValor: { fontFamily: "'Montserrat',sans-serif", fontSize: '20px', fontWeight: 800, color: '#222', margin: '0 0 4px 0' },
+  prazoSub:   { fontFamily: "'Open Sans',sans-serif", fontSize: '12px', color: '#888', margin: 0 },
 };
+
+function PrazoBadge({ texto, cor, bg }) {
+  return (
+    <span style={{ display: 'inline-block', marginTop: '8px', padding: '2px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, fontFamily: "'Open Sans',sans-serif", color: cor, background: bg, border: `1px solid ${cor}33` }}>
+      {texto}
+    </span>
+  );
+}
 
 function ExportRow({ iconBg, iconColor, iconText, title, desc, onExport }) {
   return (
@@ -51,8 +63,60 @@ export default function Exportacao({ orcamento, resetOrcamento }) {
     }
   };
 
+  const { prazoEstimado, obrasVinculadas } = orcamento;
+
   return (
     <div style={{ maxWidth: '640px' }}>
+
+      {/* ── Prazo Estimado ── */}
+      {prazoEstimado && (
+        <div style={S.card}>
+          <h2 style={S.title}>Prazo Estimado</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+
+            {/* Coluna 1 — Prazo de Rede */}
+            <div>
+              <p style={S.prazoLabel}>Obras de Rede</p>
+              <p style={S.prazoValor}>{prazoEstimado.prazoRede} dias</p>
+              <p style={S.prazoSub}>{prazoEstimado.kmTotal.toFixed(2)} km de rede</p>
+              {prazoEstimado.prazoRede === 120
+                ? <PrazoBadge texto="120 dias" cor="#007A3D" bg="#E8F7EE" />
+                : <PrazoBadge texto="365 dias" cor="#E67E22" bg="#FFF3E0" />}
+            </div>
+
+            {/* Coluna 2 — Prazo Vinculadas */}
+            <div>
+              <p style={S.prazoLabel}>Obras Vinculadas</p>
+              {obrasVinculadas?.temObrasVinculadas && obrasVinculadas.diasRestantes !== null ? (
+                <>
+                  <p style={S.prazoValor}>{obrasVinculadas.diasRestantes} dias restantes</p>
+                  <p style={S.prazoSub}>Conclusão: {formatarData(obrasVinculadas.dataConclusao + 'T00:00:00')}</p>
+                  {obrasVinculadas.diasRestantes < 0
+                    ? <PrazoBadge texto="Vencido" cor="#e74c3c" bg="#FDEDEC" />
+                    : obrasVinculadas.diasRestantes < 180
+                      ? <PrazoBadge texto="Atenção" cor="#E67E22" bg="#FFF3E0" />
+                      : <PrazoBadge texto="No prazo" cor="#007A3D" bg="#E8F7EE" />}
+                </>
+              ) : (
+                <p style={{ ...S.prazoValor, color: '#BBB' }}>—</p>
+              )}
+            </div>
+
+            {/* Coluna 3 — Prazo Final */}
+            <div style={{ borderLeft: '4px solid #007A3D', paddingLeft: '16px' }}>
+              <p style={S.prazoLabel}>Prazo Total Estimado</p>
+              <p style={{ ...S.prazoValor, fontSize: '24px' }}>{prazoEstimado.prazoFinal} dias</p>
+              <p style={S.prazoSub}>Até {formatarData(prazoEstimado.dataFinal)}</p>
+              <p style={{ ...S.prazoSub, marginTop: '8px', fontWeight: 600, color: '#888' }}>
+                {prazoEstimado.prazoVinculadas && prazoEstimado.prazoFinal === prazoEstimado.prazoVinculadas
+                  ? '⚠️ Determinado pelas obras vinculadas'
+                  : 'Determinado pela extensão de rede'}
+              </p>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* ── Exportar ── */}
       <div style={S.card}>

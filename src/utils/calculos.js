@@ -63,6 +63,41 @@ export const calcularValidade = (dataBase = new Date()) => {
   return validade;
 };
 
+// RN-016 — Prazo estimado de conclusão da obra
+export const calcularPrazoEstimado = (orcamento) => {
+  const itensObra = orcamento.itensObra || [];
+  const obrasVinculadas = orcamento.obrasVinculadas || {};
+
+  const kmTotal = itensObra.reduce((acc, item) => {
+    if (item.unidade === 'km') return acc + (parseFloat(item.quantidade) || 0);
+    if (item.unidade === 'poste') return acc + ((parseFloat(item.quantidade) || 0) * 40 / 1000);
+    return acc;
+  }, 0);
+
+  const prazoRede = kmTotal <= 1 ? 120 : 365;
+
+  const prazoVinculadas = obrasVinculadas.temObrasVinculadas
+    && obrasVinculadas.diasRestantes > 0
+    ? obrasVinculadas.diasRestantes
+    : null;
+
+  const prazoFinal = prazoVinculadas
+    ? Math.max(prazoRede, prazoVinculadas)
+    : prazoRede;
+
+  const dataFinal = new Date();
+  dataFinal.setDate(dataFinal.getDate() + prazoFinal);
+
+  return {
+    prazoRede,
+    prazoVinculadas,
+    prazoFinal,
+    dataFinal,
+    kmTotal,
+    temObrasVinculadas: !!obrasVinculadas.temObrasVinculadas,
+  };
+};
+
 // Função auxiliar para formatação de moeda
 export const formatarMoeda = (valor) => {
   return new Intl.NumberFormat('pt-BR', {

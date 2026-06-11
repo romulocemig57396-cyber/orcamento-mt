@@ -19,11 +19,11 @@ const abas = [
   { id: 'materiais',   nome: 'Materiais' },
   { id: 'descricao',   nome: 'Descrição Técnica' },
   { id: 'resumo',      nome: 'Resumo Financeiro' },
-  { id: 'exportacao',  nome: 'Exportar' },
+  { id: 'exportacao',  nome: 'Resumo e Exportação' },
 ];
 
 function App() {
-  const { orcamento, updateField, updateImportacao, resetOrcamento, setOrcamento } = useOrcamento();
+  const { orcamento, updateField, updateImportacao, updateObrasVinculadas, resetOrcamento, setOrcamento } = useOrcamento();
   const [abaAtiva, setAbaAtiva] = useState('atendimento');
   const [anoReferencia, setAnoReferencia] = useState(2024);
 
@@ -36,7 +36,7 @@ function App() {
       <aside style={{
         width: '224px',
         minWidth: '224px',
-        background: '#007A3D',
+        background: 'linear-gradient(120deg, #0a5c34, #137a45 70%, #1a8a4f)',
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
@@ -50,21 +50,15 @@ function App() {
           flexShrink: 0,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              width: '36px', height: '36px', borderRadius: '8px',
-              background: '#005C2E', display: 'flex', alignItems: 'center',
-              justifyContent: 'center', flexShrink: 0,
+            <span style={{
+              fontFamily: "'SSBroad', sans-serif",
+              fontSize: '18px',
+              color: '#fff',
+              letterSpacing: '0.02em',
+              display: 'block'
             }}>
-              <span style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: '13px', color: '#FFD100', letterSpacing: '-0.5px' }}>MT</span>
-            </div>
-            <div>
-              <p style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: '13px', color: '#fff', margin: 0, lineHeight: 1.3 }}>
-                Orçamento MT
-              </p>
-              <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '10px', color: 'rgba(255,255,255,0.5)', margin: 0, marginTop: '1px' }}>
-                Média Tensão
-              </p>
-            </div>
+              Orçamento MT
+            </span>
           </div>
         </div>
 
@@ -190,6 +184,8 @@ function App() {
                 setOrcamento={setOrcamento}
                 importacao={orcamento.importacao}
                 updateImportacao={updateImportacao}
+                obrasVinculadas={orcamento.obrasVinculadas}
+                updateObrasVinculadas={updateObrasVinculadas}
               />
             )}
             {abaAtiva === 'biblioteca' && (

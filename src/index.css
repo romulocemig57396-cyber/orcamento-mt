@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'SSBroad';
+  src: url('/fonts/ssbroad.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import {
   calcularMUSD,
-  calcularValidade
+  calcularValidade,
+  calcularPrazoEstimado
 } from '../utils/calculos';
 
 const STORAGE_KEY = 'orcamento_mt_app';
@@ -44,6 +45,13 @@ const initialState = {
     textoAltaTensao: '',
     analisado: false,
   },
+  obrasVinculadas: {
+    temObrasVinculadas: false,
+    descricao: '',
+    dataConclusao: '',
+    diasRestantes: null,
+  },
+  prazoEstimado: null,
 };
 
 export const useOrcamento = () => {
@@ -57,6 +65,7 @@ export const useOrcamento = () => {
           dataBase: new Date(parsed.dataBase),
           dataValidade: new Date(parsed.dataValidade),
           importacao: parsed.importacao || initialState.importacao,
+          obrasVinculadas: parsed.obrasVinculadas || initialState.obrasVinculadas,
         };
       } catch (e) {
         console.error('Erro ao carregar dados salvos:', e);
@@ -111,6 +120,7 @@ export const useOrcamento = () => {
 
     const musd = calcularMUSD(orcamento.demandaFutura, orcamento.cargaAtual);
     const dataValidade = calcularValidade(orcamento.dataBase);
+    const prazoEstimado = calcularPrazoEstimado(orcamento);
 
     if (
       orcamento.musd !== musd ||
@@ -124,7 +134,12 @@ export const useOrcamento = () => {
       orcamento.parcelaD !== parcelaD ||
       orcamento.material !== material ||
       orcamento.servicos !== servicos ||
-      orcamento.valorTotal !== valorTotal
+      orcamento.valorTotal !== valorTotal ||
+      orcamento.prazoEstimado?.prazoFinal !== prazoEstimado.prazoFinal ||
+      orcamento.prazoEstimado?.prazoRede !== prazoEstimado.prazoRede ||
+      orcamento.prazoEstimado?.prazoVinculadas !== prazoEstimado.prazoVinculadas ||
+      orcamento.prazoEstimado?.kmTotal !== prazoEstimado.kmTotal ||
+      orcamento.prazoEstimado?.temObrasVinculadas !== prazoEstimado.temObrasVinculadas
     ) {
       setOrcamento(prev => ({
         ...prev,
@@ -141,6 +156,7 @@ export const useOrcamento = () => {
         servicos,
         valorTotal,
         dataValidade,
+        prazoEstimado,
       }));
     }
   }, [
@@ -151,6 +167,7 @@ export const useOrcamento = () => {
     orcamento.erd,
     orcamento.administracao,
     orcamento.dataBase,
+    orcamento.obrasVinculadas,
   ]);
 
   const updateField = (field, value) => {
@@ -159,6 +176,10 @@ export const useOrcamento = () => {
 
   const updateImportacao = (updates) => {
     setOrcamento(prev => ({ ...prev, importacao: { ...prev.importacao, ...updates } }));
+  };
+
+  const updateObrasVinculadas = (updates) => {
+    setOrcamento(prev => ({ ...prev, obrasVinculadas: { ...prev.obrasVinculadas, ...updates } }));
   };
 
   const resetOrcamento = () => {
@@ -170,6 +191,7 @@ export const useOrcamento = () => {
     orcamento,
     updateField,
     updateImportacao,
+    updateObrasVinculadas,
     resetOrcamento,
     setOrcamento
   };
