@@ -52,9 +52,11 @@ function App() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{
               fontFamily: "'SSBroad', sans-serif",
-              fontSize: '18px',
+              fontSize: '15px',
               color: '#fff',
-              letterSpacing: '0.02em',
+              letterSpacing: '0',
+              lineHeight: 1.1,
+              whiteSpace: 'nowrap',
               display: 'block'
             }}>
               Orçamento MT
