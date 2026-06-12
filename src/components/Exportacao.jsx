@@ -63,7 +63,7 @@ export default function Exportacao({ orcamento, resetOrcamento }) {
     }
   };
 
-  const { prazoEstimado, obrasVinculadas } = orcamento;
+  const { prazoEstimado, temObrasVinculadas, dataObrasVinculadas, diasObrasVinculadas } = orcamento;
 
   return (
     <div style={{ maxWidth: '640px' }}>
@@ -87,13 +87,13 @@ export default function Exportacao({ orcamento, resetOrcamento }) {
             {/* Coluna 2 — Prazo Vinculadas */}
             <div>
               <p style={S.prazoLabel}>Obras Vinculadas</p>
-              {obrasVinculadas?.temObrasVinculadas && obrasVinculadas.diasRestantes !== null ? (
+              {temObrasVinculadas && diasObrasVinculadas !== null ? (
                 <>
-                  <p style={S.prazoValor}>{obrasVinculadas.diasRestantes} dias restantes</p>
-                  <p style={S.prazoSub}>Conclusão: {formatarData(obrasVinculadas.dataConclusao + 'T00:00:00')}</p>
-                  {obrasVinculadas.diasRestantes < 0
+                  <p style={S.prazoValor}>{diasObrasVinculadas} dias restantes</p>
+                  <p style={S.prazoSub}>Conclusão: {formatarData(dataObrasVinculadas + 'T00:00:00')}</p>
+                  {diasObrasVinculadas < 0
                     ? <PrazoBadge texto="Vencido" cor="#e74c3c" bg="#FDEDEC" />
-                    : obrasVinculadas.diasRestantes < 180
+                    : diasObrasVinculadas < 180
                       ? <PrazoBadge texto="Atenção" cor="#E67E22" bg="#FFF3E0" />
                       : <PrazoBadge texto="No prazo" cor="#007A3D" bg="#E8F7EE" />}
                 </>

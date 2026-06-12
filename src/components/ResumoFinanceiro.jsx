@@ -124,6 +124,13 @@ export default function ResumoFinanceiro({ dados }) {
         <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', color: '#AAA', margin: '10px 0 0 0' }}>
           A validade é calculada automaticamente como 120 dias após a data base.
         </p>
+        {dados.dataEstudo && (
+          <div style={{ marginTop: '16px' }}>
+            <label style={S.label}>Data do Estudo</label>
+            <input type="text" value={dados.dataEstudo} disabled
+              style={{ ...S.input, background: '#F5F5F5', color: '#AAA', cursor: 'not-allowed', maxWidth: '220px' }} />
+          </div>
+        )}
       </div>
     </div>
   );

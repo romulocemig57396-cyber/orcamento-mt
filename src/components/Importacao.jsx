@@ -1,42 +1,56 @@
 import React, { useRef, useEffect } from 'react';
 import { TABELA_CUSTOS, getValorPorAno } from '../data/tabelaCustos';
 
-// ── Regras de matching biblioteca ──────────────────────────────────────────
+// ── Itens de retirada pendente — usuário escolhe entre estes 5 tipos ────────
+const RETIRADA_TIPOS = [
+  '1 Km de RDR 1ᴓ cabo 4 a 1/0',
+  '1 Km de RDR 3ᴓ cabo 4 a 1/0',
+  '1 Km de RDR 3ᴓ cabo 4/0 a 336,4',
+  '1 Km de RDP 1ᴓ cabo 50 mm2',
+  '1 Km de RDP 3ᴓ 50 a 150mm²',
+];
+
+// ── Regras de mapeamento Obras → Biblioteca ──────────────────────────────────
+// Cada regra retorna a lista de itens a gerar para a linha (1 ou 2 itens).
 const REGRAS = [
-  [/modificação.*rdu.*rdp.*150/i,              'p/ RDP 150',                        'pp'],
-  [/modificação.*rdu.*rdp.*50mm/i,             'p/ RDP 50',                         'pp'],
-  [/modificação.*rdu.*rdp.*240/i,              'p/ RDP 240',                        'pp'],
-  [/construção.*rdp.*150/i,                    'RDP 150',                           'pp'],
-  [/construção.*rdp.*50/i,                     'RDP 50',                            'pp'],
-  [/construção.*rdp.*240/i,                    'RDP 240',                           'pp'],
-  [/modificação.*rdr.*336/i,                   'CAA 2 p/ 336',                      'pp'],
-  [/modificação.*rdr.*4\/0/i,                  'CAA 2 p/ 4\/0',                     'pp'],
-  [/modificação.*rdr.*1\/0/i,                  'CAA 4 p\/ 1\/0',                    'pp'],
-  [/construção.*rdr.*336/i,                    'Tri CAA 336,4',                     'pp'],
-  [/construção.*rdr.*4\/0/i,                   'Tri CAA 4\/0',                      'pp'],
-  [/construção.*rdr.*1\/0/i,                   'Tri CAA 1\/0',                      'pp'],
-  [/construção.*rdr.*caa.*2/i,                 'Tri CAA 2',                         'pp'],
-  [/construção.*rdr.*caa.*4/i,                 'Tri CAA 4',                         'pp'],
-  [/brt.*167.*rural/i,                         'BRT trif 167 kVA - Rural',          'pp'],
-  [/brt.*167.*urbano/i,                        'BRT trif 167 kVA - Urbano',         'pp'],
-  [/brt.*167/i,                                'BRT trif 167 kVA - Rural',          'pp'],
-  [/brt.*250.*rural/i,                         'BRT trif 250 KVA - Rural',          'pp'],
-  [/brt.*250.*urbano/i,                        'BRT trif 250 KVA - Urbano',         'pp'],
-  [/brt.*76/i,                                 'BRT trif 76,2 kVA',                 'pp'],
-  [/relocação.*religador|relocar.*religador/i, 'Religador trifásico',               'parcela_reg'],
-  [/relocação.*banco.*rt|relocar.*banco/i,     'Banco RT trifásico até 1\/0',       'parcela_reg'],
-  [/religador.*trifásico.*36/i,                'Religador trifásico 36KV',          'pp'],
-  [/religador.*trifásico.*24/i,                'Religador trifásico 24KV Rural',    'pp'],
-  [/religador.*monofásico/i,                   'Religador monofásico 15KV',         'pp'],
-  [/abertura.*chave|fecha.*chave/i,            'Abert\/Fecha. De Chave',            'ctc'],
-  [/remoção.*(trafo|transformador).*(1ᴓ|monofásico)/i, 'Remoção de 01 trafo 1ᴓ',  'parcela_reg'],
-  [/remoção.*(trafo|transformador).*(3ᴓ|trifásico)/i,  'Remoção de 01 trafo 3ᴓ',  'parcela_reg'],
-  [/derivação.*aére/i,                         'Troca poste + ramal aéreo',         'parcela_reg'],
-  [/derivação.*sub/i,                          'Troca poste + ramal sub',           'parcela_reg'],
-  [/banco.*cap.*300.*fix/i,                    'Banco de Cap. 300 kVAr fixo',       'pp'],
-  [/banco.*cap.*600.*fix/i,                    'Banco de Cap. 600 kVAr fixo',       'pp'],
-  [/banco.*cap.*300.*aut/i,                    'Banco de Cap. 300 kVAr automático', 'pp'],
-  [/banco.*cap.*600.*aut/i,                    'Banco de Cap. 600 kVAr automático', 'pp'],
+  // --- Modificação RDU → RDP (gera DOIS itens: construção + retirada pendente)
+  [/modificação.*rdu.*rdp.*150/i, () => [{ tipo: 'RDP 150 Dupla Camada' }, { tipo: '', retiradaPendente: true }]],
+  [/modificação.*rdu.*rdp.*50/i,  () => [{ tipo: 'RDP 50 Dupla Camada' },  { tipo: '', retiradaPendente: true }]],
+  [/modificação.*rdu.*rdp.*240/i, () => [{ tipo: 'RDP 240' },              { tipo: '', retiradaPendente: true }]],
+
+  // --- Construção RDP (item único)
+  [/construção.*rdp.*150/i, () => [{ tipo: 'RDP 150 Dupla Camada' }]],
+  [/construção.*rdp.*50/i,  () => [{ tipo: 'RDP 50 Dupla Camada' }]],
+  [/construção.*rdp.*240/i, () => [{ tipo: 'RDP 240' }]],
+
+  // --- Recondutoramento Rural (gera DOIS itens: recondutoramento + retirada pendente)
+  [/(modificação|recondutoramento).*rdr.*336/i, () => [{ tipo: 'CAA 2 p/ 336' }, { tipo: '', retiradaPendente: true }]],
+  [/modificação.*rdr.*4\/0/i,                    () => [{ tipo: 'CAA 2 p/ 4/0' }, { tipo: '', retiradaPendente: true }]],
+  [/modificação.*rdr.*(1\/0|1\.0caa)/i,          () => [{ tipo: 'CAA 4 p/ 1/0' }, { tipo: '', retiradaPendente: true }]],
+  [/modificação.*rdr.*caa.*2/i,                  () => [{ tipo: 'CAA 2 p/ 2' },   { tipo: '', retiradaPendente: true }]],
+
+  // --- Construção RDR Rural (item único)
+  [/construção.*rdr.*336/i,    () => [{ tipo: 'Tri CAA 336,4' }]],
+  [/construção.*rdr.*4\/0/i,   () => [{ tipo: 'Tri CAA 4/0' }]],
+  [/construção.*rdr.*1\/0/i,   () => [{ tipo: 'Tri CAA 1/0' }]],
+  [/construção.*rdr.*caa.*2/i, () => [{ tipo: 'Tri CAA 2' }]],
+  [/construção.*rdr.*caa.*4/i, () => [{ tipo: 'Tri CAA 4' }]],
+
+  // --- Equipamentos
+  [/abertura.*chave|fechamento.*chave|instalação.*chave.*n\.f\./i,             () => [{ tipo: 'Abert/Fecha. De Chave' }]],
+  [/relocação.*religador.*monofásico|relocar.*religador.*mono/i,               () => [{ tipo: 'Religador monofásico' }]],
+  [/relocação.*religador|relocar.*religador/i,                                  () => [{ tipo: 'Religador trifásico' }]],
+  [/substituir.*religador.*chave|substituir.*religador.*faca/i,                () => [{ tipo: 'Religador trifásico' }]],
+  [/instalação.*religador.*34|religador.*34,5/i,                                () => [{ tipo: 'Religador trifásico 36KV' }]],
+  [/instalação.*religador.*trifásico.*24|religador.*trifásico.*24/i,           () => [{ tipo: 'Religador trifásico 24KV Rural' }]],
+  [/instalação.*religador.*monofásico|religador.*monofásico.*15/i,             () => [{ tipo: 'Religador monofásico 15KV' }]],
+  [/instalação.*brt.*167/i, () => [{ tipo: 'BRT trif 167 kVA - Rural' }]],
+  [/instalação.*brt.*250/i, () => [{ tipo: 'BRT trif 250 KVA - Rural' }]],
+  [/instalação.*brt.*76/i,  () => [{ tipo: 'BRT trif 76,2 kVA' }]],
+
+  // --- Sem correspondência na biblioteca — campo livre para o usuário
+  [/retirar.*sec|instalar.*sec|substituir.*sec/i,    () => [{ tipo: '' }]],
+  [/desativação.*equip|desligar.*banco.*cap/i,        () => [{ tipo: '' }]],
 ];
 
 const TIPOS_BIBLIOTECA = [...new Set(TABELA_CUSTOS.map(t => t.tipo))];
@@ -48,63 +62,77 @@ const CAT_META = {
   parcela_reg: { label: 'REG', bg: '#F3E5F5', color: '#6A1B9A', bd: '#CE93D8' },
 };
 
-const TIPO_LABELS = { LN: 'Ligação Nova', AC: 'Aumento de Carga', RF: 'Reforma' };
-
-// Itens de alta tensão / responsabilidade direta CEMIG — não entram na tabela de validação
-const ALTA_TENSAO_RE = /138\s*kv|linha.*138|\bdli\b|casa\s+de\s+controle|subestaç[ãa]o|\bld\b/i;
+// Itens de alta tensão / obras vinculadas — não entram na tabela de validação
+const ALTA_TENSAO_RE = /138\s*kv|\bdli\b|ld\s*b\s*despacho|linha.*138|casa\s+de\s+controle|obras\s+de\s+alta\s+tens[ãa]o|conclus[ãa]o\s+estimada/i;
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 function matchRegras(texto) {
-  for (const [re, tipo, cat] of REGRAS) {
-    if (re.test(texto)) return { tipo, cat };
+  for (const [re, gerar] of REGRAS) {
+    if (re.test(texto)) return gerar();
   }
   return null;
 }
 
-function extrairQuantidade(texto) {
+export function extrairQuantidade(texto) {
   const kmM = texto.match(/(\d+[.,]\d+|\d+)\s*km/i);
   if (kmM) return { quantidade: parseFloat(kmM[1].replace(',', '.')), unidade: 'km' };
   const bancoM = texto.match(/(\d+)\s*banco/i);
   if (bancoM) return { quantidade: parseInt(bancoM[1]), unidade: 'ponto' };
-  const pontM = texto.match(/(\d+)\s*(conj|ponto|un)/i);
-  if (pontM) return { quantidade: parseInt(pontM[1]), unidade: 'ponto' };
-  return { quantidade: '', unidade: 'km' };
+  const pecaM = texto.match(/(\d+)\s*pe[çc]as?/i);
+  if (pecaM) return { quantidade: parseInt(pecaM[1]), unidade: 'ponto' };
+  const conjM = texto.match(/(\d+)\s*conj/i);
+  if (conjM) return { quantidade: parseInt(conjM[1]), unidade: 'ponto' };
+  const pontoM = texto.match(/(\d+)\s*ponto/i);
+  if (pontoM) return { quantidade: parseInt(pontoM[1]), unidade: 'ponto' };
+  return { quantidade: '', unidade: '' };
 }
 
 // ── Análise do texto ─────────────────────────────────────────────────────────
-function analisarTexto(texto) {
+export function analisarTexto(texto) {
   const cab = {
     ns: '', cliente: '', municipio: '', tensaoKv: '',
-    cargaAtual: '', demandaFutura: '', tipoAtendimento: '',
+    cargaAtual: '', demandaFutura: '', tipoAtendimento: '', dataEstudo: '',
   };
 
   const m = re => texto.match(re);
 
-  const nsM = m(/(?:NS|N\.S\.)[:\s]+([A-Z0-9\-\/]+)/i);
+  const nsM = m(/NS:\s*(\d+)/i);
   if (nsM) cab.ns = nsM[1].trim();
 
-  const cliM = m(/(?:Cliente|Solicitante|Interessado)[:\s]+([^\n\r]+)/i);
+  const cliM = m(/Cliente:\s*(.+)/i);
   if (cliM) cab.cliente = cliM[1].trim();
 
-  const muniM = m(/(?:Município|Municipio|Localidade|Cidade)[:\s]+([^\n\r,\/]+)/i);
+  const muniM = m(/Munic[ií]pio:\s*(.+)/i);
   if (muniM) cab.municipio = muniM[1].trim();
 
-  const tensM = m(/tensão\s+de\s+(\d+[.,]\d+|\d+)\s*kV/i) || m(/(\d+[.,]\d+)\s*kV/i);
+  const tensM = m(/Tensão:\s*([\d,\.]+)\s*kV/i);
   if (tensM) cab.tensaoKv = tensM[1].replace(',', '.');
 
-  const daM = m(/demanda\s+atual\s+de\s+(\d+[.,]?\d*)\s*kW/i) ||
-              m(/carga\s+atual[:\s]+(\d+[.,]?\d*)/i);
-  if (daM) cab.cargaAtual = parseFloat(daM[1].replace(',', '.'));
+  const dataEstudoM = m(/Data\s+do\s+estudo:\s*(\d{2}\/\d{2}\/\d{4})/i);
+  if (dataEstudoM) cab.dataEstudo = dataEstudoM[1];
 
-  const dfM = m(/demanda\s+futura\s+de\s+(\d+[.,]?\d*)\s*kW/i) ||
-              m(/demanda\s+de\s+(\d+[.,]?\d*)\s*kW/i);
-  if (dfM) cab.demandaFutura = parseFloat(dfM[1].replace(',', '.'));
+  const paraM = m(/(\d+)\s*kW.*para\s+(\d+)\s*kW/i);
+  if (paraM) {
+    const antes = parseFloat(paraM[1]);
+    const depois = parseFloat(paraM[2]);
+    cab.demandaFutura = depois;
+    if (antes === 0) {
+      cab.tipoAtendimento = 'Ligação Nova';
+      cab.cargaAtual = 0;
+    } else {
+      cab.tipoAtendimento = 'Ampliação de Carga';
+      cab.cargaAtual = antes;
+    }
+  } else {
+    const kwM = m(/(\d+)\s*kW/i);
+    if (kwM) {
+      cab.demandaFutura = parseFloat(kwM[1]);
+      cab.tipoAtendimento = 'Ligação Nova';
+    }
+  }
 
-  const tl = texto.toLowerCase();
-  if (tl.includes('aumento de demanda') || tl.includes('ampliação') || tl.includes('aumento de carga')) {
-    cab.tipoAtendimento = 'AC';
-  } else if (tl.includes('ligação nova') || tl.includes('nova ligação')) {
-    cab.tipoAtendimento = 'LN';
+  if (/gerador|solar|gera[çc][ãa]o\s+distribu[íi]da/i.test(texto)) {
+    cab.tipoAtendimento = 'Geração Distribuída';
   }
 
   // Extrai bloco de obras
@@ -115,7 +143,7 @@ function analisarTexto(texto) {
   if (fimM) bloco = bloco.slice(0, fimM.index);
 
   const linhas = bloco.split(/\r?\n/);
-  let secao = 'cemig';
+  let secao = null;
   const rawItens = [];
   let cur = null;
 
@@ -124,10 +152,21 @@ function analisarTexto(texto) {
     if (!l) continue;
     const ll = l.toLowerCase();
 
-    if (ll.includes('responsabilidade da cemig') || ll.includes('custo cemig')) {
+    if (
+      ll.includes('obras com custo de responsabilidade da cemig') ||
+      ll.includes('obras de responsabilidade da cemig - condição técnica') ||
+      ll.includes('obras de responsabilidade da cemig - condicao tecnica') ||
+      ll.includes('obras de alta tensão') ||
+      ll.includes('obras de alta tensao')
+    ) {
+      if (cur) rawItens.push(cur);
       secao = 'cemig'; cur = null; continue;
     }
-    if (ll.includes('responsabilidade do interessado') || ll.includes('responsabilidade do cliente')) {
+    if (
+      ll.includes('obras de responsabilidade do interessado') ||
+      ll.includes('obras de responsabilidade do cliente')
+    ) {
+      if (cur) rawItens.push(cur);
       secao = 'interessado'; cur = null; continue;
     }
 
@@ -144,35 +183,49 @@ function analisarTexto(texto) {
   }
   if (cur) rawItens.push(cur);
 
-  // Separa itens de alta tensão (responsabilidade direta CEMIG) dos demais
+  // Separa itens de alta tensão / obras vinculadas dos demais
   const textosAltaTensao = rawItens
     .filter(raw => ALTA_TENSAO_RE.test(raw.texto))
     .map(raw => raw.texto);
 
-  const itens = rawItens.filter(raw => !ALTA_TENSAO_RE.test(raw.texto)).map(raw => {
-    const t = raw.texto;
-    let categoria = raw.secao === 'cemig' ? 'ctc' : 'parcela_reg';
-    let percentualCemig = 0;
+  const itens = [];
+  rawItens
+    .filter(raw => !ALTA_TENSAO_RE.test(raw.texto))
+    .forEach(raw => {
+      const t = raw.texto;
 
-    if (raw.secao === 'interessado') {
-      const propM = t.match(/Proporcionalidade\s+(\d+)%\s+cliente/i) ||
-                   t.match(/(\d+)%\s+(?:de\s+)?(?:responsabilidade\s+do\s+)?cliente/i);
-      if (propM) {
-        categoria = 'pp';
-        percentualCemig = 100 - parseInt(propM[1]);
-      } else if (/exclusivo\s+(?:do\s+)?cliente/i.test(t)) {
-        categoria = 'cti';
+      // Categoria — apenas as regras definidas (RN-Importação)
+      let categoria;
+      let percentualCemig = 0;
+      if (raw.secao === 'cemig') {
+        categoria = 'ctc';
+      } else {
+        const propM = t.match(/Proporcionalidade[^\d]*(\d+)\s*%/i);
+        if (propM) {
+          categoria = 'pp';
+          percentualCemig = 100 - parseInt(propM[1]);
+        } else {
+          categoria = 'parcela_reg';
+        }
       }
-    }
 
-    const match = matchRegras(t);
-    if (match) categoria = match.cat;
-    const tipoSugerido = match ? (match.tipo || '') : '';
+      const { quantidade, unidade } = extrairQuantidade(t);
+      const specs = matchRegras(t) || [{ tipo: '' }];
 
-    const { quantidade, unidade } = extrairQuantidade(t);
-
-    return { textoOriginal: t, tipoSelecionado: tipoSugerido, descricaoManual: t.slice(0, 200), quantidade, unidade, categoria, percentualCemig, expandido: false };
-  });
+      specs.forEach(spec => {
+        itens.push({
+          textoOriginal: t,
+          tipoSelecionado: spec.tipo || '',
+          descricaoManual: t.slice(0, 200),
+          quantidade,
+          unidade,
+          categoria,
+          percentualCemig,
+          expandido: false,
+          retiradaPendente: !!spec.retiradaPendente,
+        });
+      });
+    });
 
   return { cab, itens, textosAltaTensao };
 }
@@ -199,6 +252,14 @@ function Badge({ cat }) {
   );
 }
 
+function BadgeRetiradaPendente() {
+  return (
+    <span style={{ padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, fontFamily: "'Open Sans',sans-serif", background: '#FFF8E1', color: '#8B6D00', border: '1px solid #FFE082', whiteSpace: 'nowrap' }}>
+      ⚠️ Retirada pendente
+    </span>
+  );
+}
+
 // ── Componente principal ─────────────────────────────────────────────────────
 export default function Importacao({ updateField, setOrcamento, importacao, updateImportacao, obrasVinculadas, updateObrasVinculadas }) {
   const fileRef = useRef(null);
@@ -221,17 +282,6 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
       updateObrasVinculadas({ temObrasVinculadas, descricao: textoAltaTensao });
     }
   }, [textosAltaTensao, textoAltaTensao]);
-
-  const handleDataConclusaoChange = (valor) => {
-    let diasRestantes = null;
-    if (valor) {
-      const hoje = new Date();
-      hoje.setHours(0, 0, 0, 0);
-      const dataConclusao = new Date(valor + 'T00:00:00');
-      diasRestantes = Math.ceil((dataConclusao - hoje) / (1000 * 60 * 60 * 24));
-    }
-    updateObrasVinculadas({ dataConclusao: valor, diasRestantes });
-  };
 
   const handleArquivo = (e) => {
     const file = e.target.files[0];
@@ -267,7 +317,7 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
 
   const preencherAtendimento = () => {
     if (!cabecalho) return;
-    ['ns','cliente','municipio','tensaoKv','cargaAtual','demandaFutura','tipoAtendimento']
+    ['ns','cliente','municipio','tensaoKv','cargaAtual','demandaFutura','tipoAtendimento','dataEstudo']
       .forEach(c => { if (cabecalho[c] !== '' && cabecalho[c] != null) updateField(c, cabecalho[c]); });
     alert('Dados preenchidos na aba Atendimento!');
   };
@@ -357,9 +407,10 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
               ['Cliente', cabecalho.cliente],
               ['Município', cabecalho.municipio],
               ['Tensão', cabecalho.tensaoKv ? `${cabecalho.tensaoKv} kV` : ''],
-              ['Demanda Atual', cabecalho.cargaAtual ? `${cabecalho.cargaAtual} kW` : ''],
+              ['Demanda Atual', cabecalho.cargaAtual || cabecalho.cargaAtual === 0 ? `${cabecalho.cargaAtual} kW` : ''],
               ['Demanda Futura', cabecalho.demandaFutura ? `${cabecalho.demandaFutura} kW` : ''],
-              ['Tipo de Atendimento', TIPO_LABELS[cabecalho.tipoAtendimento] || cabecalho.tipoAtendimento],
+              ['Tipo de Atendimento', cabecalho.tipoAtendimento],
+              ['Data do Estudo', cabecalho.dataEstudo],
             ].map(([label, valor]) => (
               <div key={label} style={{ padding: '12px 14px', background: '#F9FFF9', borderRadius: '8px', border: '1px solid #D4ECD9' }}>
                 <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888', margin: '0 0 4px 0' }}>{label}</p>
@@ -378,11 +429,11 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
         </div>
       )}
 
-      {/* ─── Obras de Alta Tensão / Responsabilidade CEMIG ───────────────── */}
+      {/* ─── Obras Vinculadas / Alta Tensão ──────────────────────────────── */}
       {analisado && textosAltaTensao.length > 0 && (
         <div style={S.card}>
           <h2 style={{ ...S.title, color: '#1565C0', borderBottomColor: '#E3F2FD' }}>
-            Obras de Alta Tensão / Responsabilidade CEMIG
+            Obras Vinculadas / Alta Tensão
           </h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
@@ -407,30 +458,6 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
             onMouseLeave={e => e.currentTarget.style.background = '#1565C0'}>
             Copiar para Descrição Técnica
           </button>
-
-          <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #E3F2FD' }}>
-            <label style={S.labelMuted}>Data de Conclusão Estimada das Obras Vinculadas</label>
-            <input
-              type="date"
-              value={obrasVinculadas.dataConclusao}
-              onChange={e => handleDataConclusaoChange(e.target.value)}
-              style={{ ...S.input, maxWidth: '220px' }}
-            />
-            {obrasVinculadas.dataConclusao && obrasVinculadas.diasRestantes !== null && (
-              <p style={{
-                fontFamily: "'Open Sans',sans-serif", fontSize: '13px', fontWeight: 700, margin: '10px 0 0 0',
-                color: obrasVinculadas.diasRestantes < 0
-                  ? '#e74c3c'
-                  : obrasVinculadas.diasRestantes < 180
-                    ? '#E67E22'
-                    : '#00A859',
-              }}>
-                {obrasVinculadas.diasRestantes < 0
-                  ? `Prazo já vencido (${obrasVinculadas.diasRestantes} dias)`
-                  : `Faltam ${obrasVinculadas.diasRestantes} dias para a conclusão`}
-              </p>
-            )}
-          </div>
         </div>
       )}
 
@@ -492,12 +519,12 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
                           value={item.tipoSelecionado}
                           onChange={e => upd(idx, 'tipoSelecionado', e.target.value)}
                           style={{ ...S.input, padding: '5px 8px', fontSize: '11px' }}>
-                          <option value="">— sem correspondência —</option>
-                          {TIPOS_BIBLIOTECA.map(t => (
+                          <option value="">— {item.retiradaPendente ? 'selecione a retirada' : 'sem correspondência'} —</option>
+                          {(item.retiradaPendente ? RETIRADA_TIPOS : TIPOS_BIBLIOTECA).map(t => (
                             <option key={t} value={t}>{t}</option>
                           ))}
                         </select>
-                        {!item.tipoSelecionado && (
+                        {!item.tipoSelecionado && !item.retiradaPendente && (
                           <input
                             type="text"
                             value={item.descricaoManual}
@@ -536,6 +563,7 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
                       <td style={S.td}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                           <Badge cat={item.categoria} />
+                          {item.retiradaPendente && <BadgeRetiradaPendente />}
                           <select
                             value={item.categoria}
                             onChange={e => upd(idx, 'categoria', e.target.value)}
@@ -552,9 +580,15 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
                       <td style={{ ...S.td, textAlign: 'center' }}>
                         <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                           <button onClick={() => adicionar(idx)}
-                            style={{ ...S.btnVerde, padding: '6px 14px', fontSize: '12px' }}
-                            onMouseEnter={e => e.currentTarget.style.background = '#007A3D'}
-                            onMouseLeave={e => e.currentTarget.style.background = '#00A859'}>
+                            disabled={item.retiradaPendente && !item.tipoSelecionado}
+                            style={{
+                              ...S.btnVerde, padding: '6px 14px', fontSize: '12px',
+                              ...(item.retiradaPendente && !item.tipoSelecionado
+                                ? { background: '#CCC', cursor: 'not-allowed' }
+                                : {}),
+                            }}
+                            onMouseEnter={e => { if (!(item.retiradaPendente && !item.tipoSelecionado)) e.currentTarget.style.background = '#007A3D'; }}
+                            onMouseLeave={e => { if (!(item.retiradaPendente && !item.tipoSelecionado)) e.currentTarget.style.background = '#00A859'; }}>
                             Adicionar
                           </button>
                           <button onClick={() => ignorar(idx)}

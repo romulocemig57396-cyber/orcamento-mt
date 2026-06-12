@@ -73,6 +73,58 @@ export default function RateioTecnico({ dados, setOrcamento }) {
             <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', color: '#AAA', margin: '4px 0 0 0' }}>Abate da Parcela Regulatória Total</p>
           </div>
         </div>
+
+        <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #F0F0F0' }}>
+          <label style={S.label}>Obras Vinculadas / Alta Tensão</label>
+          <div
+            onClick={() => setOrcamento(prev => ({ ...prev, temObrasVinculadas: !prev.temObrasVinculadas }))}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '10px',
+              border: '1.5px solid #E0E0E0', borderRadius: '8px', padding: '12px 16px',
+              cursor: 'pointer',
+              background: dados.temObrasVinculadas ? '#E7F4EE' : '#F5F5F5',
+              transition: 'background 0.15s',
+            }}
+          >
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              width: '18px', height: '18px', borderRadius: '50%',
+              border: `2px solid ${dados.temObrasVinculadas ? '#00A859' : '#CCC'}`,
+              background: dados.temObrasVinculadas ? '#00A859' : 'transparent',
+              color: '#fff', fontSize: '12px', fontWeight: 700, flexShrink: 0,
+            }}>
+              {dados.temObrasVinculadas ? '✓' : ''}
+            </span>
+            <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', fontWeight: 600, color: '#333' }}>
+              Possui obras vinculadas ou de alta tensão?
+            </span>
+          </div>
+
+          {dados.temObrasVinculadas && (
+            <div style={{ marginTop: '14px' }}>
+              <label style={S.label}>Data de Conclusão Estimada</label>
+              <input
+                type="date"
+                value={dados.dataObrasVinculadas}
+                onChange={e => setOrcamento(prev => ({ ...prev, dataObrasVinculadas: e.target.value }))}
+                style={{ ...S.input, maxWidth: '220px' }}
+                onFocus={onFocus} onBlur={onBlur}
+              />
+              {dados.dataObrasVinculadas && dados.diasObrasVinculadas !== null && (
+                <p style={{
+                  fontFamily: "'Open Sans',sans-serif", fontSize: '13px', fontWeight: 700, margin: '10px 0 0 0',
+                  color: dados.diasObrasVinculadas < 0
+                    ? '#e74c3c'
+                    : dados.diasObrasVinculadas < 180
+                      ? '#E67E22'
+                      : '#00A859',
+                }}>
+                  Faltam {dados.diasObrasVinculadas} dias para a conclusão
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ── CTC ── */}

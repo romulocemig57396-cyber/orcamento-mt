@@ -66,7 +66,6 @@ export const calcularValidade = (dataBase = new Date()) => {
 // RN-016 — Prazo estimado de conclusão da obra
 export const calcularPrazoEstimado = (orcamento) => {
   const itensObra = orcamento.itensObra || [];
-  const obrasVinculadas = orcamento.obrasVinculadas || {};
 
   const kmTotal = itensObra.reduce((acc, item) => {
     if (item.unidade === 'km') return acc + (parseFloat(item.quantidade) || 0);
@@ -76,9 +75,9 @@ export const calcularPrazoEstimado = (orcamento) => {
 
   const prazoRede = kmTotal <= 1 ? 120 : 365;
 
-  const prazoVinculadas = obrasVinculadas.temObrasVinculadas
-    && obrasVinculadas.diasRestantes > 0
-    ? obrasVinculadas.diasRestantes
+  const prazoVinculadas = orcamento.temObrasVinculadas
+    && orcamento.diasObrasVinculadas > 0
+    ? orcamento.diasObrasVinculadas
     : null;
 
   const prazoFinal = prazoVinculadas
@@ -94,7 +93,7 @@ export const calcularPrazoEstimado = (orcamento) => {
     prazoFinal,
     dataFinal,
     kmTotal,
-    temObrasVinculadas: !!obrasVinculadas.temObrasVinculadas,
+    temObrasVinculadas: !!orcamento.temObrasVinculadas,
   };
 };
 

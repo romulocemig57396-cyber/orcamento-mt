@@ -37,6 +37,7 @@ const initialState = {
   valorTotal: 0,
   dataBase: new Date(),
   dataValidade: new Date(),
+  dataEstudo: '',
   importacao: {
     textoOriginal: '',
     cabecalhoDetectado: null,
@@ -51,6 +52,9 @@ const initialState = {
     dataConclusao: '',
     diasRestantes: null,
   },
+  temObrasVinculadas: false,
+  dataObrasVinculadas: '',
+  diasObrasVinculadas: null,
   prazoEstimado: null,
 };
 
@@ -78,6 +82,17 @@ export const useOrcamento = () => {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(orcamento));
   }, [orcamento]);
+
+  useEffect(() => {
+    const hoje = new Date();
+    const conclusao = new Date(orcamento.dataObrasVinculadas);
+    const diff = Math.ceil((conclusao - hoje) / (1000 * 60 * 60 * 24));
+    const diasObrasVinculadas = isNaN(diff) ? null : diff;
+
+    if (orcamento.diasObrasVinculadas !== diasObrasVinculadas) {
+      setOrcamento(prev => ({ ...prev, diasObrasVinculadas }));
+    }
+  }, [orcamento.dataObrasVinculadas]);
 
   useEffect(() => {
     const totalObra = orcamento.itensObra.reduce((acc, item) => acc + (parseFloat(item.valor) || 0), 0);
@@ -167,7 +182,8 @@ export const useOrcamento = () => {
     orcamento.erd,
     orcamento.administracao,
     orcamento.dataBase,
-    orcamento.obrasVinculadas,
+    orcamento.temObrasVinculadas,
+    orcamento.diasObrasVinculadas,
   ]);
 
   const updateField = (field, value) => {

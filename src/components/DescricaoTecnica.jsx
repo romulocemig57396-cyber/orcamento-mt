@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { gerarMemorialDescritivo } from '../utils/gerarTexto';
 
 const S = {
@@ -8,20 +8,6 @@ const S = {
 };
 
 export default function DescricaoTecnica({ dados, setOrcamento }) {
-  useEffect(() => {
-    const textoGerado = gerarMemorialDescritivo(dados);
-    setOrcamento(prev => ({ ...prev, descricaoTecnica: textoGerado }));
-  }, [
-    dados.cliente,
-    dados.tipoAtendimento,
-    dados.demandaFutura,
-    dados.tensaoKv,
-    dados.municipio,
-    dados.localUnidade,
-    dados.observacoes,
-    dados.itensObra,
-  ]);
-
   return (
     <div style={S.card}>
       <h2 style={S.title}>Memorial Descritivo Técnico</h2>
