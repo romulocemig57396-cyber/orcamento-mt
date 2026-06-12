@@ -4,99 +4,132 @@ import 'jspdf-autotable';
 import { formatarMoeda, formatarData } from './calculos';
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   PRAZO ESTIMADO — auxiliar local
+   ───────────────────────────────────────────────────────────────────────────── */
+function calcularPrazoExport(orcamento) {
+  const kmTotal = (orcamento.itensObra || []).reduce((acc, item) => {
+    if (item.unidade === 'km') return acc + (parseFloat(item.quantidade) || 0);
+    if (item.unidade === 'poste') return acc + ((parseFloat(item.quantidade) || 0) * 40 / 1000);
+    return acc;
+  }, 0);
+  const prazoRede = kmTotal <= 1 ? 120 : 365;
+  const prazoVinculadas = orcamento.temObrasVinculadas && orcamento.diasObrasVinculadas > 0
+    ? orcamento.diasObrasVinculadas : null;
+  const prazoFinal = prazoVinculadas ? Math.max(prazoRede, prazoVinculadas) : prazoRede;
+  const dataFinal = new Date();
+  dataFinal.setDate(dataFinal.getDate() + prazoFinal);
+  return { prazoRede, prazoVinculadas, prazoFinal, dataFinal, kmTotal };
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    EXCEL
    ───────────────────────────────────────────────────────────────────────────── */
 export const exportarExcel = (orcamento) => {
   const workbook = XLSX.utils.book_new();
+  const v = (x) => parseFloat(x) || 0;
 
-  // Filtros por categoria financeira
   const itensCTC = orcamento.itensObra.filter(i => i.categoria === 'ctc');
   const itensPP  = orcamento.itensObra.filter(i => i.categoria === 'pp');
   const itensCTI = orcamento.itensObra.filter(i => i.categoria === 'cti');
   const itensReg = orcamento.itensObra.filter(i => i.categoria === 'parcela_reg');
 
-  const totalCTC = orcamento.ctcTotal;
-  const totalPP  = orcamento.ppTotal;
+  const prazo = calcularPrazoExport(orcamento);
 
   // ── Aba Orçamento ──────────────────────────────────────────────────────────
   const dados = [
-    ['NS — Número de Serviço:', orcamento.ns || ''],
-    ['Cliente:', orcamento.cliente || ''],
+    ['ORÇAMENTO DE OBRAS MT'],
     [],
-    // Cabeçalho da tabela de itens
-    ['', 'DESCRIÇÃO', 'CUSTOS DE OBRA', '', 'CONDIÇÃO TÉCNICA (CT)', '', 'PROPORCIONALIDADE (PP)', '', 'ATENDIMENTO', '', '', '', 'PFC'],
+
+    // DADOS DO ATENDIMENTO
+    ['DADOS DO ATENDIMENTO'],
+    ['NS', orcamento.ns || ''],
+    ['Cliente', orcamento.cliente || ''],
+    ['Tipo de Atendimento', orcamento.tipoAtendimento || ''],
+    ['Município', orcamento.municipio || ''],
+    ['Local / Fazenda', orcamento.localUnidade || ''],
+    ['Tensão (kV)', orcamento.tensaoKv || ''],
+    ['Carga Atual (kW)', orcamento.cargaAtual || 0],
+    ['Demanda Futura (kW)', orcamento.demandaFutura || 0],
+    ['MUSD (kW)', orcamento.musd || 0],
+    ...(orcamento.dataEstudo ? [['Data do Estudo', orcamento.dataEstudo]] : []),
+    [],
+
+    // PRAZO ESTIMADO
+    ['PRAZO ESTIMADO'],
+    ['Extensão total de rede (km)', prazo.kmTotal.toFixed(2)],
+    ['Prazo base (rede)', `${prazo.prazoRede} dias`],
+    ['Obras vinculadas', prazo.prazoVinculadas ? `${prazo.prazoVinculadas} dias` : 'Não informado'],
+    ['PRAZO TOTAL ESTIMADO', `${prazo.prazoFinal} dias`],
+    ['Previsão de conclusão', formatarData(prazo.dataFinal)],
+    [],
+
+    // CUSTOS DE OBRA
+    ['CUSTOS DE OBRA'],
+    ['#', 'Descrição', 'Categoria', 'Qtd', 'Unidade', 'Valor'],
+    ...orcamento.itensObra.map((item, i) => [
+      i + 1, item.descricao, item.categoria,
+      item.quantidade || '', item.unidade || '', item.valor
+    ]),
+    ['', '', '', '', 'TOTAL DA OBRA', orcamento.totalObra],
+    [],
+
+    // RATEIO
+    ['RATEIO TÉCNICO'],
+    ['Total da Obra', '', orcamento.totalObra],
+    [],
+
+    ['CTC — CONDIÇÃO TÉCNICA CEMIG'],
+    ...itensCTC.map(item => [item.descricao, '', item.valor]),
+    ['Diferença de Cabo', '', orcamento.diferencaCabo || 0],
+    ['TOTAL CTC', '', orcamento.ctcTotal],
+    [],
+
+    ['PP — PROPORCIONALIDADE'],
+    ...itensPP.map(item => [item.descricao, `${item.percentualCemig}% CEMIG`, item.valor]),
+    ['TOTAL PP', '', orcamento.ppTotal],
+    [],
+
+    ...(itensCTI.length > 0 ? [
+      ['CTI — CONDIÇÃO TÉCNICA DO INTERESSADO'],
+      ...itensCTI.map(item => [item.descricao, '', item.valor]),
+      ['TOTAL CTI', '', itensCTI.reduce((acc, item) => acc + v(item.valor), 0)],
+      [],
+    ] : []),
+
+    ...(itensReg.length > 0 ? [
+      ['PARCELA REGULATÓRIA'],
+      ...itensReg.map(item => [item.descricao, '', item.valor]),
+      [],
+    ] : []),
+
+    ['CTC — Cond. Téc. CEMIG (c/ dif. cabo)', '', orcamento.ctcTotal],
+    ['PP — Proporcionalidade', '', orcamento.ppTotal],
+    ['Parcela Regulatória Total', '', orcamento.parcelaRegTotal],
+    ['ERD disponível', '', orcamento.erd || 0],
+    ['Parcela Reg. coberta ERD', '', orcamento.parcelaRegCobertaERD],
+    ['Sobra Parcela Reg.', '', orcamento.sobraParcelaReg],
+    ['PFC do Cliente', '', orcamento.pfcCliente],
+    ['Parcela D (CTC + PP)', '', orcamento.parcelaD],
+    [],
+
+    // Descrição Técnica
+    ['MEMORIAL DESCRITIVO'],
+    [orcamento.descricaoTecnica || ''],
+    [],
+
+    // Resumo Financeiro
+    ['RESUMO FINANCEIRO'],
+    ['Material Requisitado (60%)', '', orcamento.material],
+    ['Serviços Contratados (40%)', '', orcamento.servicos],
+    ...(orcamento.administracao > 0 ? [['Administração/MOP', '', orcamento.administracao]] : []),
+    ['VALOR TOTAL', '', orcamento.valorTotal],
+    [],
+
+    // Validade e emissão
+    ['Validade', '', formatarData(orcamento.dataValidade)],
+    ['Data Base', '', formatarData(orcamento.dataBase)],
+    [`${orcamento.municipio || ''}`, '', formatarData(orcamento.dataBase)],
   ];
-
-  // Itens CEMIG (CTC)
-  itensCTC.forEach((item, i) => {
-    dados.push([i + 1, item.descricao, item.valor]);
-  });
-
-  // Itens PP
-  itensPP.forEach((item, i) => {
-    const valorCemig   = item.valor * (item.percentualCemig / 100);
-    const valorCliente = item.valor * (1 - item.percentualCemig / 100);
-    dados.push([itensCTC.length + i + 1, item.descricao, item.valor, '', valorCemig, '', valorCliente]);
-  });
-
-  // Total CEMIG
-  dados.push(['', 'Total', '', '', totalCTC, '', totalPP]);
-  dados.push([]);
-
-  // Itens Cliente (CTI)
-  itensCTI.forEach((item, i) => {
-    dados.push([i + 1, item.descricao, item.valor]);
-  });
-
-  // Itens Parcela Regulatória
-  if (itensReg.length > 0) {
-    dados.push([]);
-    dados.push(['PARCELA REGULATÓRIA']);
-    itensReg.forEach((item, i) => {
-      dados.push([i + 1, item.descricao, item.valor]);
-    });
-  }
-
-  dados.push([]);
-
-  // Diferença de Cabo
-  if (orcamento.diferencaCabo > 0) {
-    dados.push(['DIFERENÇA DE CABO', '', '']);
-    dados.push([1, 'Diferença de cabo', orcamento.diferencaCabo]);
-    dados.push([]);
-  }
-
-  // Total Geral
-  dados.push(['', 'Total', orcamento.totalObra]);
-  dados.push([]);
-
-  // Bloco lateral de resumo
-  dados.push(['OBRAS',                            orcamento.totalObra]);
-  dados.push(['CARGA ATUAL (kW)',                 orcamento.cargaAtual || 0]);
-  dados.push(['CARGA FUTURA (kW)',                orcamento.demandaFutura || 0]);
-  dados.push(['MUSD (kW)',                        orcamento.musd || 0]);
-  dados.push(['ERD',                              orcamento.erd || 0]);
-  dados.push(['PFC',                              orcamento.pfcCliente]);
-  dados.push(['CT',                               orcamento.ctcTotal]);
-  dados.push(['PP',                               orcamento.ppTotal]);
-  dados.push(['Parc Demanda Regulada Técnica D:', orcamento.parcelaD]);
-  dados.push([]);
-
-  // Descrição Técnica
-  dados.push(['DESCRIÇÃO DE OBRA']);
-  dados.push([orcamento.descricaoTecnica || '']);
-  dados.push([]);
-
-  // Resumo Financeiro
-  dados.push(['Administração',          '', orcamento.administracao || 0]);
-  dados.push(['Material requisitado',   '', orcamento.material]);
-  dados.push(['Serviços contratados',   '', orcamento.servicos]);
-  dados.push(['Valor total da obra',    '', orcamento.valorTotal]);
-  dados.push([]);
-
-  // Validade e emissão
-  dados.push(['Validade:',             '', formatarData(orcamento.dataValidade)]);
-  dados.push([`${orcamento.municipio || ''},`, '', formatarData(orcamento.dataBase)]);
 
   const ws1 = XLSX.utils.aoa_to_sheet(dados);
   XLSX.utils.book_append_sheet(workbook, ws1, 'Orçamento');
@@ -135,62 +168,112 @@ export const exportarPDF = (orcamento) => {
   let y = 20;
 
   const verde = [0, 122, 61]; // #007A3D
+  const v = (x) => parseFloat(x) || 0;
 
   // ── Cabeçalho ──────────────────────────────────────────────────────────────
   doc.setFontSize(16);
   doc.setFont(undefined, 'bold');
-  doc.text('ORÇAMENTO DE OBRA MT', 105, y, { align: 'center' });
-  y += 10;
+  doc.setTextColor(...verde);
+  doc.text('ORÇAMENTO DE OBRAS MT', 105, y, { align: 'center' });
+  doc.setTextColor(0);
+  y += 8;
+
+  if (orcamento.ns) {
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'normal');
+    doc.text(`NS: ${orcamento.ns}`, 105, y, { align: 'center' });
+    y += 7;
+  }
 
   doc.setFontSize(9);
-  doc.setFont(undefined, 'normal');
   doc.setTextColor(100);
-  doc.text('Sistema de Orçamento — Média Tensão', 105, y, { align: 'center' });
+  doc.text(`Emissão: ${formatarData(new Date())}`, 190, y, { align: 'right' });
   doc.setTextColor(0);
-  y += 12;
+  y += 8;
 
   // ── Dados do Atendimento ───────────────────────────────────────────────────
   doc.setFontSize(12);
   doc.setFont(undefined, 'bold');
+  doc.setTextColor(...verde);
   doc.text('DADOS DO ATENDIMENTO', 20, y);
-  y += 6;
+  doc.setTextColor(0);
+  y += 4;
 
-  doc.setFontSize(9);
-  doc.setFont(undefined, 'normal');
-  const atendimento = [
-    ['NS:', orcamento.ns || '—'],
-    ['Cliente:', orcamento.cliente || '—'],
-    ['Município:', orcamento.municipio || '—'],
-    ['Tipo de Atendimento:', orcamento.tipoAtendimento || '—'],
-    ['Tensão:', `${orcamento.tensaoKv || '—'} kV`],
-    ['Demanda Futura:', `${orcamento.demandaFutura || '—'} kW`],
-    ['MUSD:', `${orcamento.musd || 0} kW`],
-  ];
-  atendimento.forEach(([label, val]) => {
-    doc.setFont(undefined, 'bold');
-    doc.text(label, 20, y);
-    doc.setFont(undefined, 'normal');
-    doc.text(String(val), 65, y);
-    y += 5;
-  });
-  y += 5;
-
-  // ── Itens de Obra ──────────────────────────────────────────────────────────
   doc.autoTable({
     startY: y,
-    head: [['#', 'Descrição', 'Categoria', 'Valor']],
+    body: [
+      ['NS — Número de Serviço', orcamento.ns || '—'],
+      ['Cliente', orcamento.cliente || '—'],
+      ['Tipo de Atendimento', orcamento.tipoAtendimento || '—'],
+      ['Município', orcamento.municipio || '—'],
+      ['Local / Fazenda', orcamento.localUnidade || '—'],
+      ['Tensão', `${orcamento.tensaoKv || '—'} kV`],
+      ['Carga Atual', `${orcamento.cargaAtual || 0} kW`],
+      ['Demanda Futura', `${orcamento.demandaFutura || '—'} kW`],
+      ['MUSD', `${orcamento.musd || 0} kW`],
+      ...(orcamento.dataEstudo ? [['Data do Estudo', orcamento.dataEstudo]] : []),
+    ],
+    theme: 'plain',
+    bodyStyles: { fontSize: 9 },
+    columnStyles: { 0: { fontStyle: 'bold', cellWidth: 60 } },
+  });
+  y = doc.lastAutoTable.finalY + 8;
+
+  // ── Prazo Estimado ─────────────────────────────────────────────────────────
+  if (y > 240) { doc.addPage(); y = 20; }
+
+  const prazo = calcularPrazoExport(orcamento);
+
+  doc.setFontSize(12);
+  doc.setFont(undefined, 'bold');
+  doc.setTextColor(...verde);
+  doc.text('PRAZO ESTIMADO', 20, y);
+  doc.setTextColor(0);
+  y += 4;
+
+  const linhasPrazo = [
+    ['Extensão total de rede', `${prazo.kmTotal.toFixed(2)} km`],
+    ['Prazo base (rede)', `${prazo.prazoRede} dias`],
+    ['Obras vinculadas', prazo.prazoVinculadas ? `${prazo.prazoVinculadas} dias` : 'Não informado'],
+  ];
+  if (orcamento.temObrasVinculadas && orcamento.dataObrasVinculadas) {
+    linhasPrazo.push(['Data de conclusão (obras vinculadas)', formatarData(orcamento.dataObrasVinculadas + 'T00:00:00')]);
+    if (orcamento.diasObrasVinculadas !== null && orcamento.diasObrasVinculadas !== undefined) {
+      linhasPrazo.push(['Dias restantes (obras vinculadas)', `${orcamento.diasObrasVinculadas} dias`]);
+    }
+  }
+  linhasPrazo.push(['PRAZO TOTAL ESTIMADO', `${prazo.prazoFinal} dias`]);
+  linhasPrazo.push(['Previsão de conclusão', formatarData(prazo.dataFinal)]);
+
+  doc.autoTable({
+    startY: y,
+    body: linhasPrazo,
+    theme: 'plain',
+    bodyStyles: { fontSize: 9 },
+    columnStyles: { 0: { fontStyle: 'bold', cellWidth: 100 }, 1: { halign: 'right' } },
+  });
+  y = doc.lastAutoTable.finalY + 8;
+
+  // ── Itens de Obra ──────────────────────────────────────────────────────────
+  if (y > 240) { doc.addPage(); y = 20; }
+
+  doc.autoTable({
+    startY: y,
+    head: [['#', 'Descrição', 'Categoria', 'Qtd', 'Un.', 'Valor']],
     body: orcamento.itensObra.map((item, i) => [
       i + 1,
       item.descricao,
       item.categoria.toUpperCase(),
+      item.quantidade || '',
+      item.unidade || '',
       formatarMoeda(item.valor),
     ]),
-    foot: [['', '', 'TOTAL', formatarMoeda(orcamento.totalObra)]],
+    foot: [['', '', '', '', 'TOTAL DA OBRA', formatarMoeda(orcamento.totalObra)]],
     theme: 'striped',
     headStyles: { fillColor: verde, fontSize: 9, fontStyle: 'bold' },
-    footStyles: { fillColor: [230, 247, 238], textColor: [0, 122, 61], fontStyle: 'bold' },
+    footStyles: { fillColor: [230, 247, 238], textColor: verde, fontStyle: 'bold' },
     bodyStyles: { fontSize: 8 },
-    columnStyles: { 3: { halign: 'right' } },
+    columnStyles: { 5: { halign: 'right' } },
   });
   y = doc.lastAutoTable.finalY + 10;
 
@@ -199,18 +282,23 @@ export const exportarPDF = (orcamento) => {
 
   doc.setFontSize(12);
   doc.setFont(undefined, 'bold');
+  doc.setTextColor(...verde);
   doc.text('RATEIO TÉCNICO', 20, y);
+  doc.setTextColor(0);
   y += 4;
 
   doc.autoTable({
     startY: y,
     body: [
-      ['Obras',                              formatarMoeda(orcamento.totalObra)],
-      ['Condição Técnica (CTC)',             formatarMoeda(orcamento.ctcTotal)],
-      ['Proporcionalidade (PP)',             formatarMoeda(orcamento.ppTotal)],
-      ['ERD',                               formatarMoeda(orcamento.erd || 0)],
-      ['PFC do Cliente',                    formatarMoeda(orcamento.pfcCliente)],
-      ['Parcela Demanda Regulada Técnica D', formatarMoeda(orcamento.parcelaD)],
+      ['Total da Obra', formatarMoeda(orcamento.totalObra)],
+      ['CTC — Cond. Téc. CEMIG (c/ dif. cabo)', formatarMoeda(orcamento.ctcTotal)],
+      ['PP — Proporcionalidade', formatarMoeda(orcamento.ppTotal)],
+      ['Parcela Regulatória', formatarMoeda(orcamento.parcelaRegTotal)],
+      ['ERD disponível', formatarMoeda(v(orcamento.erd))],
+      ['Parcela Reg. coberta ERD', formatarMoeda(orcamento.parcelaRegCobertaERD)],
+      ['Sobra Parcela Reg.', formatarMoeda(orcamento.sobraParcelaReg)],
+      ['PFC do Cliente', formatarMoeda(orcamento.pfcCliente)],
+      ['Parcela D (CTC + PP)', formatarMoeda(orcamento.parcelaD)],
     ],
     theme: 'plain',
     bodyStyles: { fontSize: 9 },
@@ -223,7 +311,9 @@ export const exportarPDF = (orcamento) => {
 
   doc.setFontSize(12);
   doc.setFont(undefined, 'bold');
+  doc.setTextColor(...verde);
   doc.text('RESUMO FINANCEIRO', 20, y);
+  doc.setTextColor(0);
   y += 4;
 
   doc.autoTable({
@@ -247,7 +337,9 @@ export const exportarPDF = (orcamento) => {
 
   doc.setFontSize(12);
   doc.setFont(undefined, 'bold');
+  doc.setTextColor(...verde);
   doc.text('MEMORIAL DESCRITIVO', 20, y);
+  doc.setTextColor(0);
   y += 7;
 
   doc.setFontSize(9);
@@ -264,10 +356,13 @@ export const exportarPDF = (orcamento) => {
     doc.setFontSize(7);
     doc.setTextColor(150);
     doc.text(
-      `Validade: ${formatarData(orcamento.dataValidade)}  |  Emissão: ${orcamento.municipio || ''}, ${formatarData(orcamento.dataBase)}`,
-      105, 285, { align: 'center' }
+      `Validade: ${formatarData(orcamento.dataValidade)}  |  Data Base: ${formatarData(orcamento.dataBase)}`,
+      20, 290
     );
-    doc.text(`Página ${p} de ${totalPags}`, 105, 290, { align: 'center' });
+    if (orcamento.dataEstudo) {
+      doc.text(`Data do Estudo: ${orcamento.dataEstudo}`, 105, 290, { align: 'center' });
+    }
+    doc.text(`Página ${p} de ${totalPags}`, 190, 290, { align: 'right' });
     doc.setTextColor(0);
   }
 
