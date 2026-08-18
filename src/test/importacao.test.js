@@ -1,6 +1,26 @@
 import { describe, test, expect } from 'vitest';
 import { analisarTexto, extrairQuantidade } from '../components/Importacao';
 
+const TEXTO_3 = `Obras de Média Tensão (MT):
+Obras com custo de responsabilidade da Cemig
+- Construção de RDP 3#150mm² 34,5 kV. 2,24 km da coord.
+23:345792:8086023 a coord. 23-346551:8087724. Melhor traçado definir em
+campo. .
+- Construção de RDP 3#150mm² 34,5 kV. 12,02 km da coord.
+23-346551:8087724 a coord. 23-355388:8092432. Melhor traçado definir em
+campo .
+- Obras, equipamentos e serviços necessários à coordenação da proteção
+serão indicados pelas equipes de operação do sistema elétrico.
+________________________________________
+Observações/Recomendações:
+- Medida criada para formalização da execução da obra de 14 km como
+condição técnica, uma vez o trecho será utilizado no futuro para
+interligação da SE Paracatu 11 - João Pinheiro 7.
+- Mesmo alimentador da NS 1149308680
+- Esse atendimento só poderá ocorrer mediante a redução 500kW na demanda
+do cliente referente a NS 1149308680 até a conclusão da SE João Pinheiro
+7. Ver medida 61 - SAP da NS 1149308680.`;
+
 const TEXTO_1 = `NS: 1150323805
 Cliente: CONSORCIO JACARANDA
 Município: Juiz De Fora
@@ -153,5 +173,74 @@ describe('analisarTexto — quantidades', () => {
 
   test('detecta conj: "1 conj" → 1, unidade ponto', () => {
     expect(extrairQuantidade('Abertura de chave. 1 conj coordenado')).toEqual({ quantidade: 1, unidade: 'ponto' });
+  });
+});
+
+describe('analisarTexto — conversão km → postes (item vinculado a item de biblioteca "poste")', () => {
+  test('Construção de RDP 150 com quantidade em km é convertida para postes', () => {
+    const { itens } = analisarTexto(TEXTO_1);
+    const item = itens.find(i => /construção de rdp/i.test(i.textoOriginal));
+    expect(item.unidade).toBe('poste');
+    // 0,05 km * 1000 / 40 = 1,25 → arredonda para 1
+    expect(item.quantidade).toBe(1);
+    expect(item.quantidadeKmOriginal).toBe(0.05);
+  });
+
+  test('item de retirada pendente (sem tipo vinculado) mantém a quantidade em km', () => {
+    const { itens } = analisarTexto(TEXTO_2);
+    const retirada = itens.find(i => /modificação de rdu/i.test(i.textoOriginal) && i.retiradaPendente);
+    expect(retirada.unidade).toBe('km');
+    expect(retirada.quantidade).toBe(3.33);
+  });
+
+  test('caso real — dois itens RDP 150, quantidades convertidas corretamente para postes', () => {
+    const { itens } = analisarTexto(TEXTO_3);
+    expect(itens.length).toBe(2);
+
+    const [item1, item2] = itens;
+    expect(item1.tipoSelecionado).toBe('RDP 150 Dupla Camada');
+    expect(item1.categoria).toBe('ctc');
+    expect(item1.unidade).toBe('poste');
+    expect(item1.quantidadeKmOriginal).toBe(2.24);
+    expect(item1.quantidade).toBe(56); // Math.round(2.24 * 1000 / 40)
+
+    expect(item2.tipoSelecionado).toBe('RDP 150 Dupla Camada');
+    expect(item2.categoria).toBe('ctc');
+    expect(item2.unidade).toBe('poste');
+    expect(item2.quantidadeKmOriginal).toBe(12.02);
+    expect(item2.quantidade).toBe(301); // Math.round(12.02 * 1000 / 40)
+  });
+});
+
+describe('analisarTexto — não captura observações/recomendações fora do bloco de obras', () => {
+  test('frases de "Observações/Recomendações" não viram itens detectados', () => {
+    const { itens } = analisarTexto(TEXTO_3);
+    const textos = itens.map(i => i.textoOriginal).join(' ');
+    expect(textos).not.toMatch(/medida criada para formalização/i);
+    expect(textos).not.toMatch(/mesmo alimentador/i);
+    expect(textos).not.toMatch(/esse atendimento só poderá ocorrer/i);
+    // a frase de observação também cita "14 km" — garante que é a seção, e não
+    // a ausência de km, que está excluindo o texto
+    expect(textos).not.toMatch(/14 km/i);
+  });
+
+  test('nota de coordenação da proteção (sem regra nem quantidade) não vira item, mesmo dentro do bloco Cemig', () => {
+    const { itens } = analisarTexto(TEXTO_3);
+    const textos = itens.map(i => i.textoOriginal).join(' ');
+    expect(textos).not.toMatch(/coordenação da proteção/i);
+  });
+
+  test('bloco de obras sem marcador "Custo Estimado" continua sendo cortado em "Observações"', () => {
+    // regressão: garante que o marcador original ("Custo Estimado") continua
+    // funcionando junto com os novos marcadores
+    const texto = `Obras de Média Tensão (MT):
+Obras com custo de responsabilidade da Cemig
+- Abertura de chave. 1 conj coordenado pela Cemig.
+Custo Estimado: R$ 50.000,00
+Observações/Recomendações:
+- Nota qualquer que não deve virar item.`;
+    const { itens } = analisarTexto(texto);
+    expect(itens.length).toBe(1);
+    expect(itens[0].textoOriginal).toMatch(/abertura de chave/i);
   });
 });

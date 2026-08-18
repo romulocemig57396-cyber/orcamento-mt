@@ -8,6 +8,7 @@ import {
   getValorPorAno,
   formatarValor,
 } from '../data/tabelaCustos';
+import { kmParaPostes, postesParaKm } from '../utils/postes';
 
 /* ── Estilos base ── */
 const inputStyle = {
@@ -387,7 +388,7 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                       onChange={e => {
                         const km = e.target.value;
                         setDistanciaKm(km);
-                        const postes = km ? Math.round(parseFloat(km) * 1000 / 40) : '';
+                        const postes = km ? kmParaPostes(km) : '';
                         setQuantidade(postes !== '' ? String(postes) : '');
                       }}
                       style={{ ...inputStyle, borderColor: '#B8E6CC' }}
@@ -410,7 +411,7 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                         onChange={e => {
                           const postes = e.target.value;
                           setQuantidade(postes);
-                          const km = postes ? (parseFloat(postes) * 40 / 1000) : '';
+                          const km = postes ? postesParaKm(postes) : '';
                           setDistanciaKm(km !== '' ? km.toFixed(3) : '');
                         }}
                         style={{ ...inputStyle, borderColor: '#B8E6CC' }}

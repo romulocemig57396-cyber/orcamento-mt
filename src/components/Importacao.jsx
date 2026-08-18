@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { TABELA_CUSTOS, getValorPorAno } from '../data/tabelaCustos';
+import { kmParaPostes, postesParaKm } from '../utils/postes';
 
 // ── Itens de retirada pendente — usuário escolhe entre estes 5 tipos ────────
 const RETIRADA_TIPOS = [
@@ -65,12 +66,30 @@ const CAT_META = {
 // Itens de alta tensão / obras vinculadas — não entram na tabela de validação
 const ALTA_TENSAO_RE = /138\s*kv|\bdli\b|ld\s*b\s*despacho|linha.*138|casa\s+de\s+controle|obras\s+de\s+alta\s+tens[ãa]o|conclus[ãa]o\s+estimada/i;
 
+// Marcadores que encerram o bloco de obras — o texto a partir do primeiro que
+// aparecer (o mais próximo do início do bloco) é descartado. Ponto de extensão:
+// adicione aqui novos regex conforme surgirem variações nos textos da Cemig.
+const MARCADORES_FIM_BLOCO = [
+  /Custo\s+Estimado/i,
+  /Observa[çc][õo]es/i,
+  /Recomenda[çc][õo]es/i,
+];
+
 // ── Helpers ─────────────────────────────────────────────────────────────────
 function matchRegras(texto) {
   for (const [re, gerar] of REGRAS) {
     if (re.test(texto)) return gerar();
   }
   return null;
+}
+
+function encontrarFimBloco(bloco) {
+  let fimIndex = -1;
+  for (const re of MARCADORES_FIM_BLOCO) {
+    const m = bloco.match(re);
+    if (m && (fimIndex === -1 || m.index < fimIndex)) fimIndex = m.index;
+  }
+  return fimIndex;
 }
 
 export function extrairQuantidade(texto) {
@@ -139,8 +158,8 @@ export function analisarTexto(texto) {
   let bloco = texto;
   const inicioM = bloco.match(/Obras\s+de\s+M[eé]dia\s+Tens[ãa]o/i);
   if (inicioM) bloco = bloco.slice(inicioM.index);
-  const fimM = bloco.match(/Custo\s+Estimado/i);
-  if (fimM) bloco = bloco.slice(0, fimM.index);
+  const fimIndex = encontrarFimBloco(bloco);
+  if (fimIndex !== -1) bloco = bloco.slice(0, fimIndex);
 
   const linhas = bloco.split(/\r?\n/);
   let secao = null;
@@ -210,15 +229,28 @@ export function analisarTexto(texto) {
       }
 
       const { quantidade, unidade } = extrairQuantidade(t);
-      const specs = matchRegras(t) || [{ tipo: '' }];
+      const quantidadeKmOriginal = unidade === 'km' ? quantidade : null;
+      const specsMatch = matchRegras(t);
+
+      // Camada de segurança: uma linha só vira item candidato se bater em alguma
+      // regra de mapeamento OU tiver uma quantidade extraível. Frases de observação
+      // livre (ex: notas gerais dentro do próprio bloco de obras) não têm nenhum dos
+      // dois sinais e não devem poluir a lista de itens detectados.
+      if (!specsMatch && unidade === '') return;
+
+      const specs = specsMatch || [{ tipo: '' }];
 
       specs.forEach(spec => {
+        const tabItem = spec.tipo ? TABELA_CUSTOS.find(ti => ti.tipo === spec.tipo) : null;
+        const converterParaPoste = quantidadeKmOriginal != null && tabItem?.unidade === 'poste';
+
         itens.push({
           textoOriginal: t,
           tipoSelecionado: spec.tipo || '',
           descricaoManual: t.slice(0, 200),
-          quantidade,
-          unidade,
+          quantidade: converterParaPoste ? kmParaPostes(quantidadeKmOriginal) : quantidade,
+          unidade: converterParaPoste ? 'poste' : unidade,
+          quantidadeKmOriginal,
           categoria,
           percentualCemig,
           expandido: false,
@@ -323,7 +355,20 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
   };
 
   const upd = (idx, campo, valor) =>
-    updateImportacao({ itensDetectados: itens.map((it, i) => i === idx ? { ...it, [campo]: valor } : it) });
+    updateImportacao({
+      itensDetectados: itens.map((it, i) => {
+        if (i !== idx) return it;
+        if (campo === 'tipoSelecionado' && it.quantidadeKmOriginal != null) {
+          // Reaplica a conversão km → postes a partir do km bruto extraído do texto,
+          // evitando erro de arredondamento acumulado ao trocar o item da biblioteca.
+          const tabItem = TABELA_CUSTOS.find(t => t.tipo === valor);
+          return tabItem?.unidade === 'poste'
+            ? { ...it, tipoSelecionado: valor, quantidade: kmParaPostes(it.quantidadeKmOriginal), unidade: 'poste' }
+            : { ...it, tipoSelecionado: valor, quantidade: it.quantidadeKmOriginal, unidade: 'km' };
+        }
+        return { ...it, [campo]: valor };
+      }),
+    });
 
   const adicionar = (idx) => {
     const item = itens[idx];
@@ -545,6 +590,11 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
                           min="0" step="0.01"
                           style={{ ...S.input, padding: '5px 8px', fontSize: '12px', width: '62px' }}
                         />
+                        {item.unidade === 'poste' && item.quantidade !== '' && item.quantidade != null && (
+                          <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '10px', color: '#00A859', margin: '4px 0 0 0' }}>
+                            ≈ {postesParaKm(item.quantidade).toFixed(2)} km
+                          </p>
+                        )}
                       </td>
 
                       {/* % CEMIG */}
