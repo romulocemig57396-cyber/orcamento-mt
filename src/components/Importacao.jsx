@@ -387,7 +387,7 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
         percentualCemig: item.categoria === 'pp' ? parseFloat(item.percentualCemig) || 0 : 0,
         quantidade: qtd || null,
         unidade: tabItem ? tabItem.unidade : (item.unidade || ''),
-        ...(tabItem ? { origem: 'biblioteca', itemOrigem: tabItem.id, valorUnitario: unitario * 1000 } : {}),
+        ...(tabItem ? { origem: 'biblioteca', itemOrigem: tabItem.id, valorUnitario: unitario * 1000, anoReferencia: 2024 } : {}),
       }],
     }));
     updateImportacao({ itensDetectados: itens.filter((_, i) => i !== idx) });

@@ -2,6 +2,10 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { formatarMoeda, formatarData } from './calculos';
+import { diferencaDoItem, baseRateioDoItem } from './diferencaCabo';
+
+// Itens com diferença de cabo (cabo superior → cabo necessário)
+const itensComDiferenca = (orcamento) => (orcamento.itensObra || []).filter(i => diferencaDoItem(i) > 0);
 
 /* ─────────────────────────────────────────────────────────────────────────────
    PRAZO ESTIMADO — auxiliar local
@@ -80,25 +84,26 @@ export const exportarExcel = (orcamento) => {
 
     ['CTC — CONDIÇÃO TÉCNICA CEMIG'],
     ...itensCTC.map(item => [item.descricao, '', item.valor]),
-    ['Diferença de Cabo', '', orcamento.diferencaCabo || 0],
+    ...itensComDiferenca(orcamento).map(item => [`Diferença de cabo — ${item.descricao} → ${item.caboNecessarioTipo || ''}`, '', diferencaDoItem(item)]),
+    ...((parseFloat(orcamento.diferencaCabo) || 0) !== 0 ? [['Diferença de cabo (valor antigo)', '', parseFloat(orcamento.diferencaCabo)]] : []),
     ['TOTAL CTC', '', orcamento.ctcTotal],
     [],
 
     ['PP — PROPORCIONALIDADE'],
-    ...itensPP.map(item => [item.descricao, `${item.percentualCemig}% CEMIG`, item.valor]),
+    ...itensPP.map(item => [item.descricao, `${item.percentualCemig}% CEMIG sobre ${formatarMoeda(baseRateioDoItem(item))}`, baseRateioDoItem(item) * (parseFloat(item.percentualCemig) || 0) / 100]),
     ['TOTAL PP', '', orcamento.ppTotal],
     [],
 
     ...(itensCTI.length > 0 ? [
       ['CTI — CONDIÇÃO TÉCNICA DO INTERESSADO'],
-      ...itensCTI.map(item => [item.descricao, '', item.valor]),
-      ['TOTAL CTI', '', itensCTI.reduce((acc, item) => acc + v(item.valor), 0)],
+      ...itensCTI.map(item => [item.descricao, '', baseRateioDoItem(item)]),
+      ['TOTAL CTI', '', orcamento.ctiTotal || 0],
       [],
     ] : []),
 
     ...(itensReg.length > 0 ? [
       ['PARCELA REGULATÓRIA'],
-      ...itensReg.map(item => [item.descricao, '', item.valor]),
+      ...itensReg.map(item => [item.descricao, '', baseRateioDoItem(item)]),
       [],
     ] : []),
 
@@ -108,6 +113,7 @@ export const exportarExcel = (orcamento) => {
     ['ERD disponível', '', orcamento.erd || 0],
     ['Parcela Reg. coberta ERD', '', orcamento.parcelaRegCobertaERD],
     ['Sobra Parcela Reg.', '', orcamento.sobraParcelaReg],
+    ['ERD não utilizado', '', orcamento.erdNaoUtilizado || 0],
     ['PFC do Cliente', '', orcamento.pfcCliente],
     ['Parcela D (CTC + PP)', '', orcamento.parcelaD],
     [],
@@ -297,6 +303,7 @@ export const exportarPDF = (orcamento) => {
       ['ERD disponível', formatarMoeda(v(orcamento.erd))],
       ['Parcela Reg. coberta ERD', formatarMoeda(orcamento.parcelaRegCobertaERD)],
       ['Sobra Parcela Reg.', formatarMoeda(orcamento.sobraParcelaReg)],
+      ['ERD não utilizado', formatarMoeda(v(orcamento.erdNaoUtilizado))],
       ['PFC do Cliente', formatarMoeda(orcamento.pfcCliente)],
       ['Parcela D (CTC + PP)', formatarMoeda(orcamento.parcelaD)],
     ],
@@ -394,7 +401,8 @@ export const exportarRateio = (orcamento) => {
   const itensPP  = orcamento.itensObra.filter(i => i.categoria === 'pp');
   const itensCTI = orcamento.itensObra.filter(i => i.categoria === 'cti');
   const itensReg = orcamento.itensObra.filter(i => i.categoria === 'parcela_reg');
-  const totalCTI = itensCTI.reduce((acc, item) => acc + v(item.valor), 0);
+  const totalCTI = orcamento.ctiTotal || 0;
+  const itensDif = itensComDiferenca(orcamento);
 
   // Cabeçalho
   doc.setFontSize(15);
@@ -408,6 +416,29 @@ export const exportarRateio = (orcamento) => {
   doc.setTextColor(0);
   y += 10;
 
+  // Diferença de cabo por item
+  if (itensDif.length > 0) {
+    secao('DIFERENÇA DE CABO');
+    doc.autoTable({
+      startY: y,
+      head: [['Item', 'Qtd', 'Cabo superior (obra)', 'Cabo necessário', 'Diferença (CTC)']],
+      body: itensDif.map(item => [
+        item.categoria.toUpperCase(),
+        `${item.quantidade ?? ''} ${item.unidade || ''}`,
+        `${item.descricao}\n${formatarMoeda(v(item.valor))}`,
+        `${item.caboNecessarioTipo || ''}\n${formatarMoeda(baseRateioDoItem(item))}`,
+        formatarMoeda(diferencaDoItem(item)),
+      ]),
+      foot: [['', '', '', 'Total', formatarMoeda(orcamento.diferencaCaboItens || 0)]],
+      theme: 'striped',
+      headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
+      footStyles: { fillColor: [230, 247, 238], textColor: verde, fontStyle: 'bold' },
+      bodyStyles: { fontSize: 8 },
+      columnStyles: { 4: { halign: 'right' } },
+    });
+    y = doc.lastAutoTable.finalY + 8;
+  }
+
   // CTC
   secao('CTC — CONDIÇÃO TÉCNICA CEMIG');
   doc.autoTable({
@@ -415,7 +446,8 @@ export const exportarRateio = (orcamento) => {
     head: [['Descrição', 'Valor']],
     body: [
       ...itensCTC.map(item => [item.descricao, formatarMoeda(v(item.valor))]),
-      ['Diferença de Cabo', formatarMoeda(v(orcamento.diferencaCabo))],
+      ...itensDif.map(item => [`Diferença de cabo — ${item.descricao}`, formatarMoeda(diferencaDoItem(item))]),
+      ...(v(orcamento.diferencaCabo) !== 0 ? [['Diferença de cabo (valor antigo)', formatarMoeda(v(orcamento.diferencaCabo))]] : []),
     ],
     foot: [['Total CTC', formatarMoeda(orcamento.ctcTotal)]],
     theme: 'striped',
@@ -430,18 +462,19 @@ export const exportarRateio = (orcamento) => {
   secao('PP — PROPORCIONALIDADE');
   doc.autoTable({
     startY: y,
-    head: [['Descrição', 'Valor Total', '% CEMIG', 'Valor PP (CEMIG)', 'Valor Cliente']],
+    head: [['Descrição', 'Valor Total', 'Base (cabo nec.)', '% CEMIG', 'Valor PP (CEMIG)', 'Valor Cliente']],
     body: itensPP.map(item => {
       const vt  = v(item.valor);
       const pct = parseFloat(item.percentualCemig) || 0;
-      return [item.descricao, formatarMoeda(vt), `${pct}%`, formatarMoeda(vt * pct / 100), formatarMoeda(vt * (1 - pct / 100))];
+      const base = baseRateioDoItem(item);
+      return [item.descricao, formatarMoeda(vt), formatarMoeda(base), `${pct}%`, formatarMoeda(base * pct / 100), formatarMoeda(base * (1 - pct / 100))];
     }),
-    foot: [['Total PP CEMIG', '', '', formatarMoeda(orcamento.ppTotal), '']],
+    foot: [['Total PP CEMIG', '', '', '', formatarMoeda(orcamento.ppTotal), '']],
     theme: 'striped',
     headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
     footStyles: { fillColor: [230, 247, 238], textColor: verde, fontStyle: 'bold' },
     bodyStyles: { fontSize: 8 },
-    columnStyles: { 1: { halign: 'right' }, 2: { halign: 'center' }, 3: { halign: 'right' }, 4: { halign: 'right' } },
+    columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'center' }, 4: { halign: 'right' }, 5: { halign: 'right' } },
   });
   y = doc.lastAutoTable.finalY + 8;
 
@@ -452,11 +485,12 @@ export const exportarRateio = (orcamento) => {
     startY: y,
     head: [['Descrição', 'Valor']],
     body: [
-      ...itensReg.map(item => [item.descricao, formatarMoeda(v(item.valor))]),
+      ...itensReg.map(item => [item.descricao, formatarMoeda(baseRateioDoItem(item))]),
       ['Total Parcela Reg',          formatarMoeda(orcamento.parcelaRegTotal)],
       ['ERD disponível',             formatarMoeda(v(orcamento.erd))],
       ['Parcela Reg coberta pelo ERD', formatarMoeda(orcamento.parcelaRegCobertaERD)],
       ['Sobra da Parcela Reg',       formatarMoeda(orcamento.sobraParcelaReg)],
+      ['ERD não utilizado',          formatarMoeda(v(orcamento.erdNaoUtilizado))],
     ],
     theme: 'striped',
     headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
@@ -471,7 +505,7 @@ export const exportarRateio = (orcamento) => {
   doc.autoTable({
     startY: y,
     head: [['Descrição', 'Valor']],
-    body: itensCTI.map(item => [item.descricao, formatarMoeda(v(item.valor))]),
+    body: itensCTI.map(item => [item.descricao, formatarMoeda(baseRateioDoItem(item))]),
     foot: [['Total CTI', formatarMoeda(totalCTI)]],
     theme: 'striped',
     headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
@@ -490,7 +524,7 @@ export const exportarRateio = (orcamento) => {
       ['Total da Obra',            formatarMoeda(orcamento.totalObra)],
       ['CT CEMIG (com dif. cabo)', formatarMoeda(orcamento.ctcTotal)],
       ['PP CEMIG',                 formatarMoeda(orcamento.ppTotal)],
-      ['ERD',                      formatarMoeda(v(orcamento.erd))],
+      ['ERD aplicado',             formatarMoeda(orcamento.parcelaRegCobertaERD)],
       ['PFC do Cliente',           formatarMoeda(orcamento.pfcCliente)],
       ['Parcela D',                formatarMoeda(orcamento.parcelaD)],
     ],

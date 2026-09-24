@@ -67,7 +67,7 @@ export default function ResumoFinanceiro({ dados }) {
         <div style={S.card}>
           <h2 style={S.title}>Rateio Detalhado</h2>
           <LineRow label="Total da Obra"               value={formatarMoeda(dados.totalObra)}           bold />
-          {dados.diferencaCabo > 0 && <LineRow label="+ Diferença de Cabo (CTC)" value={formatarMoeda(dados.diferencaCabo)} color="#8B6D00" indent />}
+          {(dados.diferencaCaboTotal || 0) > 0 && <LineRow label="Diferença de Cabo (incluída na CTC)" value={formatarMoeda(dados.diferencaCaboTotal)} color="#8B6D00" indent />}
           <div style={{ height: '1px', background: '#E0E0E0', margin: '4px 0' }} />
           <LineRow label="CTC — Cond. Téc. CEMIG"      value={formatarMoeda(dados.ctcTotal)}            color="#8B6D00" />
           <LineRow label="PP — Proporcionalidade"       value={formatarMoeda(dados.ppTotal)}             color="#2E7D32" />

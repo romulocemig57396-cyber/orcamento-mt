@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatarMoeda } from '../utils/calculos';
+import { diferencaDoItem, baseRateioDoItem } from '../utils/diferencaCabo';
 
 const S = {
   card:  { background: '#fff', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', marginBottom: '20px' },
@@ -60,10 +61,21 @@ export default function RateioTecnico({ dados, setOrcamento }) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
           <div>
             <label style={S.label}>Diferença de Cabo (R$)</label>
-            <input type="number" step="0.01" value={dados.diferencaCabo}
-              onChange={e => setOrcamento(prev => ({ ...prev, diferencaCabo: parseFloat(e.target.value) || 0 }))}
-              style={S.input} placeholder="0,00" onFocus={onFocus} onBlur={onBlur} />
-            <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', color: '#AAA', margin: '4px 0 0 0' }}>Não entra no Total da Obra — apenas soma no CTC</p>
+            <div style={{ ...S.input, background: '#F9F9F9', fontVariantNumeric: 'tabular-nums' }}>{formatarMoeda(dados.diferencaCaboTotal || 0)}</div>
+            <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', color: '#AAA', margin: '4px 0 0 0' }}>
+              Soma das diferenças calculadas por item na aba Itens de Obra (botão "Dif. Cabo"). Já está dentro do Total da Obra e é paga pela Cemig como CTC.
+            </p>
+            {(parseFloat(dados.diferencaCabo) || 0) !== 0 && (
+              <div style={{ marginTop: '8px', background: '#FFFBE6', border: '1px solid #FFE57A', borderRadius: '8px', padding: '8px 12px' }}>
+                <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', color: '#8B6D00', margin: '0 0 6px 0' }}>
+                  Este orçamento tem uma diferença de cabo digitada no formato antigo: <strong>{formatarMoeda(dados.diferencaCabo)}</strong>. Ela ainda está somada no CTC. Recalcule pelo item e remova o valor antigo.
+                </p>
+                <button onClick={() => setOrcamento(prev => ({ ...prev, diferencaCabo: 0 }))}
+                  style={{ background: '#fff', border: '1px solid #E6BC00', color: '#8B6D00', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}>
+                  Remover valor antigo
+                </button>
+              </div>
+            )}
           </div>
           <div>
             <label style={S.label}>ERD — Parcela Regulatória (R$)</label>
@@ -132,10 +144,11 @@ export default function RateioTecnico({ dados, setOrcamento }) {
         {itensCTC.length === 0
           ? <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', color: '#BBB' }}>Nenhum item CTC adicionado.</p>
           : itensCTC.map(i => <ItemRow key={i.id} descricao={i.descricao} valor={i.valor} />)}
-        {dados.diferencaCabo > 0 && (
-          <div style={{ ...S.card, margin: '6px 0 0 0', padding: '10px 12px', background: '#FFFBE6', border: '1px solid #FFE57A', boxShadow: 'none' }}>
-            <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', color: '#8B6D00' }}>+ Diferença de Cabo: <strong>{formatarMoeda(dados.diferencaCabo)}</strong></span>
-          </div>
+        {dados.itensObra.filter(i => diferencaDoItem(i) > 0).map(i => (
+          <ItemRow key={`dif-${i.id}`} descricao={`Diferença de cabo — ${i.descricao} → ${i.caboNecessarioTipo || 'cabo necessário'}`} valor={diferencaDoItem(i)} />
+        ))}
+        {(parseFloat(dados.diferencaCabo) || 0) !== 0 && (
+          <ItemRow descricao="Diferença de cabo (valor antigo, digitado)" valor={parseFloat(dados.diferencaCabo) || 0} />
         )}
         <TotalBadge label="Total CTC" valor={dados.ctcTotal} bg="#FFFBE6" color="#8B6D00" />
       </SectionCard>
@@ -145,16 +158,18 @@ export default function RateioTecnico({ dados, setOrcamento }) {
         {itensPP.length === 0
           ? <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', color: '#BBB' }}>Nenhum item PP adicionado.</p>
           : itensPP.map(i => {
-              const cemig   = i.valor * (i.percentualCemig / 100);
-              const parcela = i.valor * (1 - i.percentualCemig / 100);
+              const dif     = diferencaDoItem(i);
+              const base    = baseRateioDoItem(i);
+              const cemig   = base * (i.percentualCemig / 100);
+              const parcela = base * (1 - i.percentualCemig / 100);
               return (
                 <div key={i.id} style={{ background: '#FAFAFA', borderRadius: '8px', padding: '12px', marginBottom: '8px', border: '1px solid #F0F0F0' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', fontWeight: 600, color: '#222' }}>{i.descricao}</span>
                     <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', background: '#E8F5E9', color: '#2E7D32', border: '1px solid #A5D6A7', padding: '2px 8px', borderRadius: '12px' }}>{i.percentualCemig}% CEMIG</span>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
-                    {[['Total', i.valor, '#333'], ['CEMIG paga (PP)', cemig, '#2E7D32'], ['Parcela Reg.', parcela, '#6A1B9A']].map(([lbl, val, clr]) => (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '8px' }}>
+                    {[['Total', i.valor, '#333'], ...(dif > 0 ? [['Dif. cabo (CTC)', dif, '#8B6D00'], ['Base (cabo necessário)', base, '#333']] : []), ['CEMIG paga (PP)', cemig, '#2E7D32'], ['Parcela Reg.', parcela, '#6A1B9A']].map(([lbl, val, clr]) => (
                       <div key={lbl} style={{ background: '#fff', borderRadius: '6px', padding: '8px 10px', border: '1px solid #EEE' }}>
                         <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '10px', color: '#999', margin: '0 0 2px 0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{lbl}</p>
                         <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', fontWeight: 700, color: clr, margin: 0, fontVariantNumeric: 'tabular-nums' }}>{formatarMoeda(val)}</p>
@@ -169,21 +184,22 @@ export default function RateioTecnico({ dados, setOrcamento }) {
 
       {/* ── Parcela Regulatória ── */}
       <SectionCard title="Parcela Regulatória" borderColor="#9C27B0">
-        {itensReg.map(i => <ItemRow key={i.id} descricao={i.descricao} valor={i.valor} />)}
+        {itensReg.map(i => <ItemRow key={i.id} descricao={diferencaDoItem(i) > 0 ? `${i.descricao} (cabo necessário: ${i.caboNecessarioTipo})` : i.descricao} valor={baseRateioDoItem(i)} />)}
         {itensPP.length > 0 && (
           <>
             <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '12px 0 6px 0' }}>Parte cliente dos itens PP</p>
             {itensPP.map(i => {
-              const parcela = i.valor * (1 - i.percentualCemig / 100);
+              const parcela = baseRateioDoItem(i) * (1 - i.percentualCemig / 100);
               return <ItemRow key={i.id} descricao={`${i.descricao} (${100 - i.percentualCemig}%)`} valor={parcela} />;
             })}
           </>
         )}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginTop: '14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '10px', marginTop: '14px' }}>
           {[
             { lbl: 'Total Parcela Reg.', val: dados.parcelaRegTotal,     bg: '#F3E5F5', clr: '#6A1B9A' },
             { lbl: 'Coberto pelo ERD',   val: dados.parcelaRegCobertaERD, bg: '#E8F5E9', clr: '#2E7D32' },
-            { lbl: 'Sobra (vai p/ PFC)', val: dados.sobraParcelaReg,      bg: '#FEE8E8', clr: '#c0392b' },
+            { lbl: 'Sobra não coberta',  val: dados.sobraParcelaReg,      bg: '#FEE8E8', clr: '#c0392b' },
+            { lbl: 'ERD não utilizado',  val: dados.erdNaoUtilizado || 0, bg: '#F5F5F5', clr: '#555' },
           ].map(({ lbl, val, bg, clr }) => (
             <div key={lbl} style={{ background: bg, borderRadius: '8px', padding: '12px 14px' }}>
               <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', color: clr, opacity: 0.7, margin: '0 0 4px 0', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{lbl}</p>
@@ -196,8 +212,8 @@ export default function RateioTecnico({ dados, setOrcamento }) {
       {/* ── CTI ── */}
       {itensCTI.length > 0 && (
         <SectionCard title="CTI — Condição Técnica do Interessado" borderColor="#2196F3">
-          {itensCTI.map(i => <ItemRow key={i.id} descricao={i.descricao} valor={i.valor} />)}
-          <TotalBadge label="Total CTI" valor={itensCTI.reduce((a, i) => a + i.valor, 0)} bg="#E3F2FD" color="#1565C0" />
+          {itensCTI.map(i => <ItemRow key={i.id} descricao={diferencaDoItem(i) > 0 ? `${i.descricao} (cabo necessário: ${i.caboNecessarioTipo})` : i.descricao} valor={baseRateioDoItem(i)} />)}
+          <TotalBadge label="Total CTI" valor={dados.ctiTotal || 0} bg="#E3F2FD" color="#1565C0" />
         </SectionCard>
       )}
 

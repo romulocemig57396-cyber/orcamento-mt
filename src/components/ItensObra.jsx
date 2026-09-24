@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { formatarMoeda } from '../utils/calculos';
+import DiferencaCaboModal from './DiferencaCaboModal';
+import { itemPermiteDiferencaCabo, diferencaDoItem, baseRateioDoItem } from '../utils/diferencaCabo';
 
 const S = {
   card: { background: '#fff', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', marginBottom: '20px' },
@@ -23,6 +25,7 @@ const BADGE_BASE = { padding: '3px 10px', borderRadius: '20px', fontSize: '11px'
 export default function ItensObra({ itens, setOrcamento }) {
   const [novo, setNovo] = useState({ descricao: '', categoria: 'cti', valor: '', percentualCemig: '', quantidade: '', unidade: 'km', distanciaKm: '' });
   const [hoveredRow, setHoveredRow] = useState(null);
+  const [itemDifCabo, setItemDifCabo] = useState(null);
 
   const adicionar = () => {
     if (!novo.descricao || !novo.valor) { alert('Preencha descrição e valor'); return; }
@@ -47,9 +50,19 @@ export default function ItensObra({ itens, setOrcamento }) {
   const remover  = id => setOrcamento(prev => ({ ...prev, itensObra: prev.itensObra.filter(i => i.id !== id) }));
   const editar   = (id, field, value) => setOrcamento(prev => ({ ...prev, itensObra: prev.itensObra.map(i => i.id === id ? { ...i, [field]: value } : i) }));
 
-  const detalhe  = item => item.categoria === 'pp'
-    ? { cemig: item.valor * (item.percentualCemig / 100), cliente: item.valor * (1 - item.percentualCemig / 100), show: true }
-    : { cemig: 0, cliente: item.valor, show: false };
+  // Rateio do item sobre o cabo necessário (valor − diferença de cabo)
+  const detalhe  = item => {
+    const base = baseRateioDoItem(item);
+    return item.categoria === 'pp'
+      ? { cemig: base * (item.percentualCemig / 100), cliente: base * (1 - item.percentualCemig / 100), base, show: true }
+      : { cemig: 0, cliente: base, base, show: false };
+  };
+
+  const aplicarDifCabo = (id, dados) => {
+    setOrcamento(prev => ({ ...prev, itensObra: prev.itensObra.map(i => i.id === id ? { ...i, ...dados } : i) }));
+    setItemDifCabo(null);
+  };
+  const removerDifCabo = (id) => aplicarDifCabo(id, { caboNecessarioId: null, caboNecessarioTipo: null, diferencaCabo: 0 });
 
   const th = (txt, align = 'left') => ({
     padding: '10px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase',
@@ -201,6 +214,7 @@ export default function ItensObra({ itens, setOrcamento }) {
                   <th style={th('% CEMIG',    'center')}>% CEMIG</th>
                   <th style={th('Valor PP',   'right')}>Valor PP</th>
                   <th style={th('Parcela Reg','right')}>Parcela Reg.</th>
+                  <th style={th('Dif. Cabo','center')}>Dif. Cabo (CTC)</th>
                   <th style={th('',           'center')}></th>
                 </tr>
               </thead>
@@ -236,7 +250,15 @@ export default function ItensObra({ itens, setOrcamento }) {
                         {d.show ? formatarMoeda(d.cemig) : <span style={{ color: '#CCC' }}>—</span>}
                       </td>
                       <td style={{ padding: '8px 14px', textAlign: 'right', fontSize: '13px', color: '#6A1B9A', fontWeight: 600, borderBottom: '1px solid #F0F0F0', fontVariantNumeric: 'tabular-nums' }}>
-                        {d.show ? formatarMoeda(d.cliente) : item.categoria === 'parcela_reg' ? formatarMoeda(item.valor) : <span style={{ color: '#CCC' }}>—</span>}
+                        {d.show ? formatarMoeda(d.cliente) : item.categoria === 'parcela_reg' ? formatarMoeda(d.base) : <span style={{ color: '#CCC' }}>—</span>}
+                      </td>
+                      <td style={{ padding: '8px 10px', textAlign: 'center', borderBottom: '1px solid #F0F0F0', whiteSpace: 'nowrap' }}>
+                        {itemPermiteDiferencaCabo(item) ? (
+                          <button onClick={() => setItemDifCabo(item)} title={item.caboNecessarioTipo ? `Cabo necessário: ${item.caboNecessarioTipo}` : 'Informar cabo necessário'}
+                            style={{ background: diferencaDoItem(item) > 0 ? '#FFFBE6' : '#fff', border: `1px solid ${diferencaDoItem(item) > 0 ? '#FFE57A' : '#DDD'}`, color: diferencaDoItem(item) > 0 ? '#8B6D00' : '#666', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Open Sans',sans-serif", padding: '4px 10px', borderRadius: '6px', fontVariantNumeric: 'tabular-nums' }}>
+                            {diferencaDoItem(item) > 0 ? formatarMoeda(diferencaDoItem(item)) : 'Calcular'}
+                          </button>
+                        ) : <span style={{ color: '#CCC' }}>—</span>}
                       </td>
                       <td style={{ padding: '8px 14px', textAlign: 'center', borderBottom: '1px solid #F0F0F0' }}>
                         <button onClick={() => remover(item.id)}
@@ -258,13 +280,22 @@ export default function ItensObra({ itens, setOrcamento }) {
                   <td style={{ padding: '10px 14px', textAlign: 'right', fontFamily: "'Montserrat',sans-serif", fontSize: '15px', fontWeight: 800, color: '#007A3D', fontVariantNumeric: 'tabular-nums' }}>
                     {formatarMoeda(itens.reduce((a, i) => a + i.valor, 0))}
                   </td>
-                  <td colSpan={4} />
+                  <td colSpan={5} />
                 </tr>
               </tfoot>
             </table>
           </div>
         )}
       </div>
+
+      {itemDifCabo && (
+        <DiferencaCaboModal
+          item={itemDifCabo}
+          onAplicar={dados => aplicarDifCabo(itemDifCabo.id, dados)}
+          onRemover={() => removerDifCabo(itemDifCabo.id)}
+          onFechar={() => setItemDifCabo(null)}
+        />
+      )}
 
       {/* ── Legenda ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '12px' }}>

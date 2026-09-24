@@ -148,3 +148,43 @@ describe('calcularValidade', () => {
     expect(validade.getUTCDate()).toBe(1);
   });
 });
+
+import { calcularRateioERD } from '../utils/calculos';
+
+describe('calcularRateioERD — limite do ERD (PFC nunca negativa)', () => {
+  test('cenário da planilha: ERD menor que a Parcela Reg. → sem mudança', () => {
+    const r = calcularRateioERD({ totalObra: 7361977.53, ctcTotal: 556081.53, ppTotal: 2039524.4265, parcelaRegTotal: 5014165.3235, erd: 1862071.80 });
+    expect(r.parcelaRegCobertaERD).toBeCloseTo(1862071.80, 2);
+    expect(r.pfcCliente).toBeCloseTo(2904299.77, 1);
+    expect(r.erdNaoUtilizado).toBe(0);
+  });
+
+  test('ERD cobre toda a Parcela Reg. e há diferença de cabo → ERD limitado, PFC = 0', () => {
+    // Itens: CTC 10.000, REG 50.000 → total 60.000; dif. cabo 20.000 → CTC 30.000
+    const r = calcularRateioERD({ totalObra: 60000, ctcTotal: 30000, ppTotal: 0, parcelaRegTotal: 50000, erd: 100000 });
+    expect(r.pfcAntesERD).toBe(30000);
+    expect(r.parcelaRegCobertaERD).toBe(30000);
+    expect(r.sobraParcelaReg).toBe(20000);
+    expect(r.erdNaoUtilizado).toBe(70000);
+    expect(r.pfcCliente).toBe(0);
+  });
+
+  test('ERD menor que o limite → usado integralmente', () => {
+    const r = calcularRateioERD({ totalObra: 60000, ctcTotal: 30000, ppTotal: 0, parcelaRegTotal: 50000, erd: 10000 });
+    expect(r.parcelaRegCobertaERD).toBe(10000);
+    expect(r.pfcCliente).toBe(20000);
+    expect(r.erdNaoUtilizado).toBe(0);
+  });
+
+  test('diferença de cabo maior que tudo que o cliente pagaria → ERD não usado e PFC = 0', () => {
+    const r = calcularRateioERD({ totalObra: 60000, ctcTotal: 90000, ppTotal: 0, parcelaRegTotal: 50000, erd: 40000 });
+    expect(r.parcelaRegCobertaERD).toBe(0);
+    expect(r.erdNaoUtilizado).toBe(40000);
+    expect(r.pfcCliente).toBe(0);
+  });
+
+  test('sem ERD → PFC = Total − CTC − PP', () => {
+    const r = calcularRateioERD({ totalObra: 60000, ctcTotal: 10000, ppTotal: 5000, parcelaRegTotal: 45000, erd: 0 });
+    expect(r.pfcCliente).toBe(45000);
+  });
+});

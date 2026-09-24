@@ -102,6 +102,7 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
         quantidade: parseFloat(quantidade),
         unidade: itemSelecionado.unidade,
         valorUnitario: unitario * 1000,
+        anoReferencia,
       }],
     }));
     alert(`Item adicionado ao orçamento: ${itemSelecionado.tipo}`);

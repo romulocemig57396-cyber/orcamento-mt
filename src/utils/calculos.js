@@ -1,3 +1,5 @@
+import { diferencaDoItem, baseRateioDoItem } from './diferencaCabo';
+
 // RN-001 — Total da Condição Técnica
 export const calcularCT = (itensCT, diferencaCabo = 0) => {
   const somaItensCT = itensCT.reduce((acc, item) => acc + (parseFloat(item.valor) || 0), 0);
@@ -19,9 +21,52 @@ export const calcularTotalObra = (itensObra) => {
   return itensObra.reduce((acc, item) => acc + (parseFloat(item.valor) || 0), 0);
 };
 
-// RN-008 — PFC do cliente
+// RN-001/002/004/005/006 — Totais do rateio a partir dos itens
+// A diferença de cabo de cada item vai para o CTC; o restante do item (cabo
+// necessário) segue a categoria do item. O Total da Obra usa o cabo superior.
+// `diferencaCaboAvulsa` mantém compatibilidade com orçamentos antigos, em que a
+// diferença era digitada num campo único do Rateio.
+export const calcularTotaisItens = (itensObra = [], diferencaCaboAvulsa = 0) => {
+  const v = (x) => parseFloat(x) || 0;
+  const pct = (i) => v(i.percentualCemig) / 100;
+  const por = (cat) => itensObra.filter(i => i.categoria === cat);
+
+  const totalObra = itensObra.reduce((a, i) => a + v(i.valor), 0);
+  const diferencaCaboItens = itensObra.reduce((a, i) => a + diferencaDoItem(i), 0);
+  const diferencaCaboTotal = diferencaCaboItens + v(diferencaCaboAvulsa);
+
+  const ctcTotal = por('ctc').reduce((a, i) => a + v(i.valor), 0) + diferencaCaboTotal;
+  const ppTotal = por('pp').reduce((a, i) => a + baseRateioDoItem(i) * pct(i), 0);
+  const parcelaRegTotal =
+    por('parcela_reg').reduce((a, i) => a + baseRateioDoItem(i), 0) +
+    por('pp').reduce((a, i) => a + baseRateioDoItem(i) * (1 - pct(i)), 0);
+  const ctiTotal = por('cti').reduce((a, i) => a + baseRateioDoItem(i), 0);
+
+  return { totalObra, diferencaCaboItens, diferencaCaboTotal, ctcTotal, ppTotal, parcelaRegTotal, ctiTotal };
+};
+
+// RN-008 — PFC do cliente (nunca negativa)
 export const calcularPFC = (totalObras, ct, pp, erd) => {
-  return totalObras - ct - pp - (parseFloat(erd) || 0);
+  return Math.max(0, totalObras - ct - pp - (parseFloat(erd) || 0));
+};
+
+// RN-007 — Aplicação do ERD com limite
+// O ERD abate a Parcela Regulatória, limitado ao menor entre:
+//   - o ERD disponível;
+//   - a Parcela Regulatória total;
+//   - o valor que o cliente ainda pagaria antes do ERD (Total − CTC − PP),
+//     para que a PFC nunca fique negativa.
+export const calcularRateioERD = ({ totalObra, ctcTotal, ppTotal, parcelaRegTotal, erd }) => {
+  const erdDisponivel = parseFloat(erd) || 0;
+  const pfcAntesERD = totalObra - ctcTotal - ppTotal;
+  const parcelaRegCobertaERD = Math.max(0, Math.min(erdDisponivel, parcelaRegTotal, pfcAntesERD));
+  return {
+    pfcAntesERD,
+    parcelaRegCobertaERD,
+    sobraParcelaReg: Math.max(0, parcelaRegTotal - parcelaRegCobertaERD),
+    erdNaoUtilizado: Math.max(0, erdDisponivel - parcelaRegCobertaERD),
+    pfcCliente: Math.max(0, pfcAntesERD - parcelaRegCobertaERD),
+  };
 };
 
 // RN-009 — Parcela Demanda Regulada Técnica D

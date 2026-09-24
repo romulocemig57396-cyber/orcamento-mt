@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import {
   calcularMUSD,
   calcularValidade,
-  calcularPrazoEstimado
+  calcularPrazoEstimado,
+  calcularRateioERD,
+  calcularTotaisItens
 } from '../utils/calculos';
 
 const STORAGE_KEY = 'orcamento_mt_app';
@@ -29,6 +31,10 @@ const initialState = {
   parcelaRegTotal: 0,
   parcelaRegCobertaERD: 0,
   sobraParcelaReg: 0,
+  erdNaoUtilizado: 0,
+  diferencaCaboItens: 0,
+  diferencaCaboTotal: 0,
+  ctiTotal: 0,
   pfcCliente: 0,
   parcelaD: 0,
   material: 0,
@@ -95,38 +101,13 @@ export const useOrcamento = () => {
   }, [orcamento.dataObrasVinculadas]);
 
   useEffect(() => {
-    const totalObra = orcamento.itensObra.reduce((acc, item) => acc + (parseFloat(item.valor) || 0), 0);
+    const {
+      totalObra, diferencaCaboItens, diferencaCaboTotal,
+      ctcTotal, ppTotal, parcelaRegTotal, ctiTotal,
+    } = calcularTotaisItens(orcamento.itensObra, orcamento.diferencaCabo);
 
-    const ctcTotal = orcamento.itensObra
-      .filter(item => item.categoria === 'ctc')
-      .reduce((acc, item) => acc + (parseFloat(item.valor) || 0), 0)
-      + (parseFloat(orcamento.diferencaCabo) || 0);
-
-    const ppTotal = orcamento.itensObra
-      .filter(item => item.categoria === 'pp')
-      .reduce((acc, item) => {
-        const valor = parseFloat(item.valor) || 0;
-        const percentualCemig = parseFloat(item.percentualCemig) || 0;
-        return acc + (valor * percentualCemig / 100);
-      }, 0);
-
-    const parcelaRegTotal =
-      orcamento.itensObra
-        .filter(item => item.categoria === 'parcela_reg')
-        .reduce((acc, item) => acc + (parseFloat(item.valor) || 0), 0)
-      + orcamento.itensObra
-        .filter(item => item.categoria === 'pp')
-        .reduce((acc, item) => {
-          const valor = parseFloat(item.valor) || 0;
-          const percentualCemig = parseFloat(item.percentualCemig) || 0;
-          return acc + (valor * (100 - percentualCemig) / 100);
-        }, 0);
-
-    const erdValue = parseFloat(orcamento.erd) || 0;
-    const parcelaRegCobertaERD = Math.min(erdValue, parcelaRegTotal);
-    const sobraParcelaReg = Math.max(0, parcelaRegTotal - erdValue);
-
-    const pfcCliente = totalObra - ctcTotal - ppTotal - parcelaRegCobertaERD;
+    const { parcelaRegCobertaERD, sobraParcelaReg, erdNaoUtilizado, pfcCliente } =
+      calcularRateioERD({ totalObra, ctcTotal, ppTotal, parcelaRegTotal, erd: orcamento.erd });
     const parcelaD = ctcTotal + ppTotal;
 
     const material = totalObra * 0.60;
@@ -145,6 +126,10 @@ export const useOrcamento = () => {
       orcamento.parcelaRegTotal !== parcelaRegTotal ||
       orcamento.parcelaRegCobertaERD !== parcelaRegCobertaERD ||
       orcamento.sobraParcelaReg !== sobraParcelaReg ||
+      orcamento.erdNaoUtilizado !== erdNaoUtilizado ||
+      orcamento.diferencaCaboItens !== diferencaCaboItens ||
+      orcamento.diferencaCaboTotal !== diferencaCaboTotal ||
+      orcamento.ctiTotal !== ctiTotal ||
       orcamento.pfcCliente !== pfcCliente ||
       orcamento.parcelaD !== parcelaD ||
       orcamento.material !== material ||
@@ -165,6 +150,10 @@ export const useOrcamento = () => {
         parcelaRegTotal,
         parcelaRegCobertaERD,
         sobraParcelaReg,
+        erdNaoUtilizado,
+        diferencaCaboItens,
+        diferencaCaboTotal,
+        ctiTotal,
         pfcCliente,
         parcelaD,
         material,
