@@ -3,6 +3,10 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { formatarMoeda, formatarData } from './calculos';
 import { diferencaDoItem, baseRateioDoItem } from './diferencaCabo';
+import { formatarQuantidade } from './postes';
+
+// A fonte padrão do PDF não tem os símbolos ≈ e →; usar texto equivalente.
+const Q = (item) => formatarQuantidade(item.quantidade, item.unidade).replace('≈ ', 'aprox. ');
 
 // Itens com diferença de cabo (cabo superior → cabo necessário)
 const itensComDiferenca = (orcamento) => (orcamento.itensObra || []).filter(i => diferencaDoItem(i) > 0);
@@ -265,21 +269,20 @@ export const exportarPDF = (orcamento) => {
 
   doc.autoTable({
     startY: y,
-    head: [['#', 'Descrição', 'Categoria', 'Qtd', 'Un.', 'Valor']],
+    head: [['#', 'Descrição', 'Categoria', 'Qtd', 'Valor']],
     body: orcamento.itensObra.map((item, i) => [
       i + 1,
       item.descricao,
       item.categoria.toUpperCase(),
-      item.quantidade || '',
-      item.unidade || '',
+      Q(item),
       formatarMoeda(item.valor),
     ]),
-    foot: [['', '', '', '', 'TOTAL DA OBRA', formatarMoeda(orcamento.totalObra)]],
+    foot: [['', '', '', 'TOTAL DA OBRA', formatarMoeda(orcamento.totalObra)]],
     theme: 'striped',
     headStyles: { fillColor: verde, fontSize: 9, fontStyle: 'bold' },
     footStyles: { fillColor: [230, 247, 238], textColor: verde, fontStyle: 'bold' },
     bodyStyles: { fontSize: 8 },
-    columnStyles: { 5: { halign: 'right' } },
+    columnStyles: { 3: { halign: 'right' }, 4: { halign: 'right' } },
   });
   y = doc.lastAutoTable.finalY + 10;
 
@@ -424,7 +427,7 @@ export const exportarRateio = (orcamento) => {
       head: [['Item', 'Qtd', 'Cabo superior (obra)', 'Cabo necessário', 'Diferença (CTC)']],
       body: itensDif.map(item => [
         item.categoria.toUpperCase(),
-        `${item.quantidade ?? ''} ${item.unidade || ''}`,
+        Q(item),
         `${item.descricao}\n${formatarMoeda(v(item.valor))}`,
         `${item.caboNecessarioTipo || ''}\n${formatarMoeda(baseRateioDoItem(item))}`,
         formatarMoeda(diferencaDoItem(item)),
@@ -443,18 +446,18 @@ export const exportarRateio = (orcamento) => {
   secao('CTC — CONDIÇÃO TÉCNICA CEMIG');
   doc.autoTable({
     startY: y,
-    head: [['Descrição', 'Valor']],
+    head: [['Descrição', 'Qtd', 'Valor']],
     body: [
-      ...itensCTC.map(item => [item.descricao, formatarMoeda(v(item.valor))]),
-      ...itensDif.map(item => [`Diferença de cabo — ${item.descricao}`, formatarMoeda(diferencaDoItem(item))]),
-      ...(v(orcamento.diferencaCabo) !== 0 ? [['Diferença de cabo (valor antigo)', formatarMoeda(v(orcamento.diferencaCabo))]] : []),
+      ...itensCTC.map(item => [item.descricao, Q(item), formatarMoeda(v(item.valor))]),
+      ...itensDif.map(item => [`Diferença de cabo — ${item.descricao} p/ ${item.caboNecessarioTipo || ''}`, Q(item), formatarMoeda(diferencaDoItem(item))]),
+      ...(v(orcamento.diferencaCabo) !== 0 ? [['Diferença de cabo (valor antigo)', '', formatarMoeda(v(orcamento.diferencaCabo))]] : []),
     ],
-    foot: [['Total CTC', formatarMoeda(orcamento.ctcTotal)]],
+    foot: [['Total CTC', '', formatarMoeda(orcamento.ctcTotal)]],
     theme: 'striped',
     headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
     footStyles: { fillColor: [230, 247, 238], textColor: verde, fontStyle: 'bold' },
     bodyStyles: { fontSize: 8 },
-    columnStyles: { 1: { halign: 'right', cellWidth: 40 } },
+    columnStyles: { 1: { halign: 'right', cellWidth: 48 }, 2: { halign: 'right', cellWidth: 36 } },
   });
   y = doc.lastAutoTable.finalY + 8;
 
@@ -462,19 +465,19 @@ export const exportarRateio = (orcamento) => {
   secao('PP — PROPORCIONALIDADE');
   doc.autoTable({
     startY: y,
-    head: [['Descrição', 'Valor Total', 'Base (cabo nec.)', '% CEMIG', 'Valor PP (CEMIG)', 'Valor Cliente']],
+    head: [['Descrição', 'Qtd', 'Valor Total', 'Base (cabo nec.)', '% CEMIG', 'Valor PP (CEMIG)', 'Valor Cliente']],
     body: itensPP.map(item => {
       const vt  = v(item.valor);
       const pct = parseFloat(item.percentualCemig) || 0;
       const base = baseRateioDoItem(item);
-      return [item.descricao, formatarMoeda(vt), formatarMoeda(base), `${pct}%`, formatarMoeda(base * pct / 100), formatarMoeda(base * (1 - pct / 100))];
+      return [item.descricao, Q(item), formatarMoeda(vt), formatarMoeda(base), `${pct}%`, formatarMoeda(base * pct / 100), formatarMoeda(base * (1 - pct / 100))];
     }),
-    foot: [['Total PP CEMIG', '', '', '', formatarMoeda(orcamento.ppTotal), '']],
+    foot: [['Total PP CEMIG', '', '', '', '', formatarMoeda(orcamento.ppTotal), '']],
     theme: 'striped',
     headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
     footStyles: { fillColor: [230, 247, 238], textColor: verde, fontStyle: 'bold' },
     bodyStyles: { fontSize: 8 },
-    columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'center' }, 4: { halign: 'right' }, 5: { halign: 'right' } },
+    columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' }, 4: { halign: 'center' }, 5: { halign: 'right' }, 6: { halign: 'right' } },
   });
   y = doc.lastAutoTable.finalY + 8;
 
@@ -483,19 +486,20 @@ export const exportarRateio = (orcamento) => {
   secao('PARCELA REGULATÓRIA');
   doc.autoTable({
     startY: y,
-    head: [['Descrição', 'Valor']],
+    head: [['Descrição', 'Qtd', 'Valor']],
     body: [
-      ...itensReg.map(item => [item.descricao, formatarMoeda(baseRateioDoItem(item))]),
-      ['Total Parcela Reg',          formatarMoeda(orcamento.parcelaRegTotal)],
-      ['ERD disponível',             formatarMoeda(v(orcamento.erd))],
-      ['Parcela Reg coberta pelo ERD', formatarMoeda(orcamento.parcelaRegCobertaERD)],
-      ['Sobra da Parcela Reg',       formatarMoeda(orcamento.sobraParcelaReg)],
-      ['ERD não utilizado',          formatarMoeda(v(orcamento.erdNaoUtilizado))],
+      ...itensReg.map(item => [item.descricao, Q(item), formatarMoeda(baseRateioDoItem(item))]),
+      ...itensPP.map(item => [`${item.descricao} — parte cliente da PP (${100 - (parseFloat(item.percentualCemig) || 0)}%)`, Q(item), formatarMoeda(baseRateioDoItem(item) * (1 - (parseFloat(item.percentualCemig) || 0) / 100))]),
+      ['Total Parcela Reg',            '', formatarMoeda(orcamento.parcelaRegTotal)],
+      ['ERD disponível',               '', formatarMoeda(v(orcamento.erd))],
+      ['Parcela Reg coberta pelo ERD', '', formatarMoeda(orcamento.parcelaRegCobertaERD)],
+      ['Sobra da Parcela Reg',         '', formatarMoeda(orcamento.sobraParcelaReg)],
+      ['ERD não utilizado',            '', formatarMoeda(v(orcamento.erdNaoUtilizado))],
     ],
     theme: 'striped',
     headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
     bodyStyles: { fontSize: 8 },
-    columnStyles: { 1: { halign: 'right', cellWidth: 40 } },
+    columnStyles: { 1: { halign: 'right', cellWidth: 48 }, 2: { halign: 'right', cellWidth: 36 } },
   });
   y = doc.lastAutoTable.finalY + 8;
 
@@ -504,14 +508,14 @@ export const exportarRateio = (orcamento) => {
   secao('CTI — CONDIÇÃO TÉCNICA DO INTERESSADO');
   doc.autoTable({
     startY: y,
-    head: [['Descrição', 'Valor']],
-    body: itensCTI.map(item => [item.descricao, formatarMoeda(baseRateioDoItem(item))]),
-    foot: [['Total CTI', formatarMoeda(totalCTI)]],
+    head: [['Descrição', 'Qtd', 'Valor']],
+    body: itensCTI.map(item => [item.descricao, Q(item), formatarMoeda(baseRateioDoItem(item))]),
+    foot: [['Total CTI', '', formatarMoeda(totalCTI)]],
     theme: 'striped',
     headStyles: { fillColor: verde, fontSize: 8, fontStyle: 'bold' },
     footStyles: { fillColor: [230, 247, 238], textColor: verde, fontStyle: 'bold' },
     bodyStyles: { fontSize: 8 },
-    columnStyles: { 1: { halign: 'right', cellWidth: 40 } },
+    columnStyles: { 1: { halign: 'right', cellWidth: 48 }, 2: { halign: 'right', cellWidth: 36 } },
   });
   y = doc.lastAutoTable.finalY + 8;
 
