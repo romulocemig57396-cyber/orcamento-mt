@@ -1,6 +1,9 @@
 import React from 'react';
 import { formatarMoeda } from '../utils/calculos';
 import { diferencaDoItem, baseRateioDoItem } from '../utils/diferencaCabo';
+import { formatarQuantidade } from '../utils/postes';
+
+const qtdDe = (i) => formatarQuantidade(i.quantidade, i.unidade);
 
 const S = {
   card:  { background: '#fff', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', marginBottom: '20px' },
@@ -20,10 +23,15 @@ function SectionCard({ title, borderColor, children }) {
   );
 }
 
-function ItemRow({ descricao, valor }) {
+function ItemRow({ descricao, valor, qtd }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: '#FAFAFA', borderRadius: '6px', marginBottom: '6px' }}>
-      <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', color: '#444' }}>{descricao}</span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', padding: '8px 12px', background: '#FAFAFA', borderRadius: '6px', marginBottom: '6px' }}>
+      <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', color: '#444' }}>
+        {descricao}
+        {qtd && qtd !== '—' && (
+          <span style={{ display: 'block', fontSize: '11px', color: '#999', marginTop: '2px', fontVariantNumeric: 'tabular-nums' }}>{qtd}</span>
+        )}
+      </span>
       <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', fontWeight: 600, color: '#222', fontVariantNumeric: 'tabular-nums' }}>{formatarMoeda(valor)}</span>
     </div>
   );
@@ -143,9 +151,9 @@ export default function RateioTecnico({ dados, setOrcamento }) {
       <SectionCard title="CTC — Condição Técnica CEMIG" borderColor="#FFD100">
         {itensCTC.length === 0
           ? <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', color: '#BBB' }}>Nenhum item CTC adicionado.</p>
-          : itensCTC.map(i => <ItemRow key={i.id} descricao={i.descricao} valor={i.valor} />)}
+          : itensCTC.map(i => <ItemRow key={i.id} descricao={i.descricao} valor={i.valor} qtd={qtdDe(i)} />)}
         {dados.itensObra.filter(i => diferencaDoItem(i) > 0).map(i => (
-          <ItemRow key={`dif-${i.id}`} descricao={`Diferença de cabo — ${i.descricao} → ${i.caboNecessarioTipo || 'cabo necessário'}`} valor={diferencaDoItem(i)} />
+          <ItemRow key={`dif-${i.id}`} descricao={`Diferença de cabo — ${i.descricao} → ${i.caboNecessarioTipo || 'cabo necessário'}`} valor={diferencaDoItem(i)} qtd={qtdDe(i)} />
         ))}
         {(parseFloat(dados.diferencaCabo) || 0) !== 0 && (
           <ItemRow descricao="Diferença de cabo (valor antigo, digitado)" valor={parseFloat(dados.diferencaCabo) || 0} />
@@ -165,7 +173,10 @@ export default function RateioTecnico({ dados, setOrcamento }) {
               return (
                 <div key={i.id} style={{ background: '#FAFAFA', borderRadius: '8px', padding: '12px', marginBottom: '8px', border: '1px solid #F0F0F0' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', fontWeight: 600, color: '#222' }}>{i.descricao}</span>
+                    <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', fontWeight: 600, color: '#222' }}>
+                      {i.descricao}
+                      {qtdDe(i) !== '—' && <span style={{ fontWeight: 400, color: '#999', fontSize: '12px', marginLeft: '8px', fontVariantNumeric: 'tabular-nums' }}>{qtdDe(i)}</span>}
+                    </span>
                     <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', background: '#E8F5E9', color: '#2E7D32', border: '1px solid #A5D6A7', padding: '2px 8px', borderRadius: '12px' }}>{i.percentualCemig}% CEMIG</span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '8px' }}>
@@ -184,13 +195,13 @@ export default function RateioTecnico({ dados, setOrcamento }) {
 
       {/* ── Parcela Regulatória ── */}
       <SectionCard title="Parcela Regulatória" borderColor="#9C27B0">
-        {itensReg.map(i => <ItemRow key={i.id} descricao={diferencaDoItem(i) > 0 ? `${i.descricao} (cabo necessário: ${i.caboNecessarioTipo})` : i.descricao} valor={baseRateioDoItem(i)} />)}
+        {itensReg.map(i => <ItemRow key={i.id} descricao={diferencaDoItem(i) > 0 ? `${i.descricao} (cabo necessário: ${i.caboNecessarioTipo})` : i.descricao} valor={baseRateioDoItem(i)} qtd={qtdDe(i)} />)}
         {itensPP.length > 0 && (
           <>
             <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '12px 0 6px 0' }}>Parte cliente dos itens PP</p>
             {itensPP.map(i => {
               const parcela = baseRateioDoItem(i) * (1 - i.percentualCemig / 100);
-              return <ItemRow key={i.id} descricao={`${i.descricao} (${100 - i.percentualCemig}%)`} valor={parcela} />;
+              return <ItemRow key={i.id} descricao={`${i.descricao} (${100 - i.percentualCemig}%)`} valor={parcela} qtd={qtdDe(i)} />;
             })}
           </>
         )}
@@ -212,7 +223,7 @@ export default function RateioTecnico({ dados, setOrcamento }) {
       {/* ── CTI ── */}
       {itensCTI.length > 0 && (
         <SectionCard title="CTI — Condição Técnica do Interessado" borderColor="#2196F3">
-          {itensCTI.map(i => <ItemRow key={i.id} descricao={diferencaDoItem(i) > 0 ? `${i.descricao} (cabo necessário: ${i.caboNecessarioTipo})` : i.descricao} valor={baseRateioDoItem(i)} />)}
+          {itensCTI.map(i => <ItemRow key={i.id} descricao={diferencaDoItem(i) > 0 ? `${i.descricao} (cabo necessário: ${i.caboNecessarioTipo})` : i.descricao} valor={baseRateioDoItem(i)} qtd={qtdDe(i)} />)}
           <TotalBadge label="Total CTI" valor={dados.ctiTotal || 0} bg="#E3F2FD" color="#1565C0" />
         </SectionCard>
       )}

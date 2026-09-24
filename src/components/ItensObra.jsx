@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { formatarMoeda } from '../utils/calculos';
 import DiferencaCaboModal from './DiferencaCaboModal';
+import { formatarQuantidade } from '../utils/postes';
 import { itemPermiteDiferencaCabo, diferencaDoItem, baseRateioDoItem } from '../utils/diferencaCabo';
 
 const S = {
@@ -209,6 +210,7 @@ export default function ItensObra({ itens, setOrcamento }) {
                 <tr>
                   <th style={th('#'        )}>Nº</th>
                   <th style={th('Descrição')}>Descrição</th>
+                  <th style={th('Qtd.', 'right')}>Qtd.</th>
                   <th style={th('Categoria', 'center')}>Categoria</th>
                   <th style={th('Valor Total', 'right')}>Valor Total</th>
                   <th style={th('% CEMIG',    'center')}>% CEMIG</th>
@@ -230,6 +232,9 @@ export default function ItensObra({ itens, setOrcamento }) {
                       <td style={{ padding: '6px 8px', borderBottom: '1px solid #F0F0F0' }}>
                         <input type="text" value={item.descricao} onChange={e => editar(item.id, 'descricao', e.target.value)}
                           style={{ ...S.input, padding: '6px 10px', fontSize: '13px' }} onFocus={onFocus} onBlur={onBlur} />
+                      </td>
+                      <td style={{ padding: '8px 14px', textAlign: 'right', fontSize: '12px', color: '#555', borderBottom: '1px solid #F0F0F0', whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>
+                        {formatarQuantidade(item.quantidade, item.unidade)}
                       </td>
                       <td style={{ padding: '8px 14px', textAlign: 'center', borderBottom: '1px solid #F0F0F0' }}>
                         <span style={{ ...BADGE_BASE, ...meta.style }}>{meta.label}</span>
@@ -274,7 +279,7 @@ export default function ItensObra({ itens, setOrcamento }) {
               </tbody>
               <tfoot>
                 <tr style={{ background: '#F9F9F9', borderTop: '2px solid #E0E0E0' }}>
-                  <td colSpan={3} style={{ padding: '10px 14px', fontFamily: "'Open Sans',sans-serif", fontSize: '12px', fontWeight: 700, color: '#555', textAlign: 'right', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <td colSpan={4} style={{ padding: '10px 14px', fontFamily: "'Open Sans',sans-serif", fontSize: '12px', fontWeight: 700, color: '#555', textAlign: 'right', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Total da Obra
                   </td>
                   <td style={{ padding: '10px 14px', textAlign: 'right', fontFamily: "'Montserrat',sans-serif", fontSize: '15px', fontWeight: 800, color: '#007A3D', fontVariantNumeric: 'tabular-nums' }}>

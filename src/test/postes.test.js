@@ -43,3 +43,13 @@ describe('postesParaKm', () => {
     expect(postesParaKm(undefined)).toBe(0);
   });
 });
+
+import { formatarQuantidade } from '../utils/postes';
+
+describe('formatarQuantidade', () => {
+  test('km com 2 casas', () => expect(formatarQuantidade(11.33, 'km')).toBe('11,33 km'));
+  test('postes com equivalente em km', () => expect(formatarQuantidade(371, 'poste')).toBe('371 postes (≈ 14,84 km)'));
+  test('1 poste no singular', () => expect(formatarQuantidade(1, 'poste')).toBe('1 poste (≈ 0,04 km)'));
+  test('pontos', () => expect(formatarQuantidade(2, 'ponto')).toBe('2 pontos'));
+  test('sem quantidade', () => expect(formatarQuantidade(null, 'km')).toBe('—'));
+});
