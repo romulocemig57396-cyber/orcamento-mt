@@ -133,7 +133,22 @@ export const getSubcategorias = (categoria) =>
 export const TEXTO_PENDENTE = 'Pendente — sem custo cadastrado';
 export const AVISO_PENDENTE = 'Este item está sem custo cadastrado e entrará com R$ 0,00';
 
-export const ehPendente = (item, ref) => !!item && !(parseFloat(getValorPorAno(item, ref, 'unitario')) > 0);
+/* Um item só existe nas referências em que tem bloco de custos. Um item criado
+   numa referência nova (ex.: a partir de um projeto do PROORC) não existe nas
+   anteriores: ali ele é "não disponível" e não pode ser usado — diferente de
+   "pendente", que é custo 0 numa referência em que o item existe.          */
+export const TEXTO_NAO_DISPONIVEL = 'Não disponível nesta referência';
+
+export const disponivelNaReferencia = (item, ref) => {
+  if (!item) return false;
+  if (!item.custos) return true; // item solto, sem bloco de custos
+  const chave = String(ref ?? '').trim();
+  const temChave = (k) => Object.prototype.hasOwnProperty.call(item.custos, k);
+  return temChave(chave) || temChave(normalizarChaveReferencia(ref));
+};
+
+export const ehPendente = (item, ref) =>
+  !!item && disponivelNaReferencia(item, ref) && !(parseFloat(getValorPorAno(item, ref, 'unitario')) > 0);
 
 export const itensPendentes = (ref) => TABELA_CUSTOS.filter(item => ehPendente(item, ref));
 

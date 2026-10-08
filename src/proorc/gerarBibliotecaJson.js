@@ -21,6 +21,7 @@ export const aplicarNovaReferencia = ({
   rotulo,
   fonte,
   atual = true,
+  itensNovos = [],
 }) => {
   const chaveNova = String(chave).trim();
   if (!chaveNova) throw new Error('Informe a chave da nova referência.');
@@ -33,7 +34,14 @@ export const aplicarNovaReferencia = ({
     ...biblioteca.referencias.map(r => (atual ? { ...r, atual: false } : { ...r })),
   ];
 
-  const itens = biblioteca.itens.map(item => {
+  // Itens novos criados a partir de projetos do PROORC (R9): entram no arquivo
+  // só com a referência nova, e a ligação com o projeto vai para o mapeamento.
+  const idsExistentes = new Set(biblioteca.itens.map(i => i.id));
+  const novos = itensNovos
+    .filter(i => !idsExistentes.has(i.id))
+    .map(i => ({ ...i, custos: {}, composicoes: {} }));
+
+  const itens = [...biblioteca.itens, ...novos].map(item => {
     const custosNovos = resultado.custos[item.id];
     if (!custosNovos) return item;
 
@@ -52,9 +60,21 @@ export const aplicarNovaReferencia = ({
     };
   });
 
+  const ligacoesNovas = {};
+  novos.forEach(i => {
+    if (!i.formacao?.projeto) return;
+    ligacoesNovas[i.formacao.projeto] = {
+      item: i.id,
+      unidadesPorProjeto: v(i.formacao.unidadesPorProjeto) || 1,
+      situacao: 'item novo',
+      descricao: resultado.composicoes[i.id]?.descricaoProjeto || '',
+    };
+  });
+
   return {
     ...biblioteca,
     referencias,
+    mapeamentoProorc: { ...biblioteca.mapeamentoProorc, ...ligacoesNovas },
     precosUS: { ...biblioteca.precosUS, [chaveNova]: resultado.precosUS },
     catalogoMateriais: { ...biblioteca.catalogoMateriais, [chaveNova]: resultado.catalogoMateriais },
     itens,

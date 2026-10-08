@@ -8,6 +8,8 @@ import { calcularNovaReferencia } from '../proorc/calcularReferencia';
 import { aplicarNovaReferencia, baixarBiblioteca, serializarBiblioteca } from '../proorc/gerarBibliotecaJson';
 import { ORIGENS } from '../proorc/formacao';
 import EditarValores from './EditarValores';
+import ItemNovoDialog from './ItemNovoDialog';
+import { criarItemNovo, ligacaoDoItemNovo } from '../proorc/itensNovos';
 
 const S = {
   card: { background: '#fff', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', marginBottom: '20px' },
@@ -70,6 +72,9 @@ export default function AtualizarProorc() {
   const [filtro, setFiltro] = useState('todos');
   const [gerada, setGeradaEstado] = useState(null);
   const [editando, setEditando] = useState(false);
+  // Itens novos criados a partir de projetos do relatório (R9)
+  const [itensNovos, setItensNovos] = useState([]);
+  const [projetoItemNovo, setProjetoItemNovo] = useState(null);
   // Qualquer mudança descarta a referência gerada e a edição sobre ela
   const setGerada = (valor) => { setGeradaEstado(valor); if (!valor) setEditando(false); };
 
@@ -78,8 +83,8 @@ export default function AtualizarProorc() {
 
   const resultado = useMemo(() => {
     if (!consolidado) return null;
-    return calcularNovaReferencia({ biblioteca: BIBLIOTECA, consolidado, chaveAnterior, mapeamento, escolhas });
-  }, [consolidado, mapeamento, escolhas, chaveAnterior]);
+    return calcularNovaReferencia({ biblioteca: BIBLIOTECA, consolidado, chaveAnterior, mapeamento, escolhas, itensNovos });
+  }, [consolidado, mapeamento, escolhas, chaveAnterior, itensNovos]);
 
   const carregar = async (campo, file) => {
     if (!file) return;
@@ -104,6 +109,8 @@ export default function AtualizarProorc() {
       setChave(s.chave);
       setRotulo(s.rotulo);
       setEscolhas({});
+      setItensNovos([]);
+      setMapeamento(BIBLIOTECA.mapeamentoProorc);
       setConfirmouLigacoes(false);
     } catch (e) {
       setErro(`Não foi possível ler os relatórios: ${e.message}`);
@@ -119,6 +126,7 @@ export default function AtualizarProorc() {
         rotulo,
         fonte: `PROORC, relatórios de ${consolidado.dataReferencia}`,
         atual: viraAtual,
+        itensNovos,
       });
       setGerada(nova);
       setErro('');
@@ -143,6 +151,26 @@ export default function AtualizarProorc() {
       .map(k => ({ chave: k, descricao: mapeamento[k].descricao || '', total: null, noRelatorio: false }));
     return [...doRelatorio, ...cadastradas];
   }, [consolidado, mapeamento]);
+
+  const criarItem = (definicao) => {
+    const projeto = consolidado.projetos.find(p => p.chave === definicao.projeto);
+    const item = criarItemNovo(definicao, { biblioteca: BIBLIOTECA, itensNovos });
+    setItensNovos(prev => [...prev, item]);
+    setMapeamento(prev => ({ ...prev, [definicao.projeto]: ligacaoDoItemNovo(item, projeto) }));
+    setProjetoItemNovo(null);
+    setGerada(null);
+  };
+
+  // Desfaz a criação: o projeto volta a ficar sem ligação
+  const desfazerItem = (item) => {
+    setItensNovos(prev => prev.filter(i => i.id !== item.id));
+    setMapeamento(prev => {
+      const novo = { ...prev };
+      if (novo[item.formacao.projeto]?.item === item.id) delete novo[item.formacao.projeto];
+      return novo;
+    });
+    setGerada(null);
+  };
 
   const alterarLigacao = (projeto, campo, valor) => {
     setMapeamento(prev => {
@@ -260,6 +288,30 @@ export default function AtualizarProorc() {
                   {linhasMapeamento.map((p, idx) => {
                     const ligacao = mapeamento[p.chave];
                     const usado = p.noRelatorio && ligacao?.item;
+                    const itemNovo = itensNovos.find(i => i.id === ligacao?.item);
+                    if (itemNovo) {
+                      return (
+                        <tr key={p.chave} style={{ background: '#F3FBF6' }}>
+                          <td style={S.td}>
+                            <p style={{ margin: 0, fontWeight: 700, color: '#222', ...S.mono }}>{p.chave}</p>
+                            <p style={{ margin: '2px 0 0 0', fontSize: '11px', color: '#888' }}>{p.descricao}</p>
+                            {p.total != null && <p style={{ margin: '2px 0 0 0', fontSize: '11px', color: '#00A859', ...S.mono }}>{fmtReais(p.total)}</p>}
+                          </td>
+                          <td style={S.td}>
+                            <p style={{ margin: 0, fontWeight: 600, color: '#222' }}>{itemNovo.tipo}</p>
+                            <p style={{ margin: '2px 0 0 0', fontSize: '10px', color: '#888' }}>
+                              {itemNovo.id} · {itemNovo.categoria}{itemNovo.subcategoria ? ` › ${itemNovo.subcategoria}` : ''} · {itemNovo.unidade}
+                            </p>
+                            <button onClick={() => desfazerItem(itemNovo)}
+                              style={{ ...S.btnCinza, padding: '4px 10px', fontSize: '11px', marginTop: '6px', color: '#c0392b', borderColor: '#F5B7B1' }}>
+                              Desfazer criação
+                            </button>
+                          </td>
+                          <td style={{ ...S.td, ...S.mono }}>{itemNovo.formacao.unidadesPorProjeto}</td>
+                          <td style={S.td}><Selo texto="Item novo" cor="#007A3D" fundo="#E7F4EE" borda="#B8E6CC" /></td>
+                        </tr>
+                      );
+                    }
                     return (
                       <tr key={p.chave} style={{ background: idx % 2 === 0 ? '#fff' : '#FAFAFA' }}>
                         <td style={S.td}>
@@ -278,6 +330,12 @@ export default function AtualizarProorc() {
                               <option key={i.id} value={i.id}>{i.tipo} — {i.categoria}{i.subcategoria ? ` › ${i.subcategoria}` : ''}</option>
                             ))}
                           </select>
+                          {p.noRelatorio && !ligacao?.item && (
+                            <button onClick={() => setProjetoItemNovo(consolidado.projetos.find(x => x.chave === p.chave))}
+                              style={{ ...S.btnCinza, padding: '4px 10px', fontSize: '11px', marginTop: '6px', color: '#007A3D', borderColor: '#B8E6CC' }}>
+                              Criar item novo
+                            </button>
+                          )}
                         </td>
                         <td style={S.td}>
                           <input
@@ -397,6 +455,41 @@ export default function AtualizarProorc() {
               </table>
             </div>
 
+            {resultado.previaNovos.length > 0 && (
+              <div style={{ marginTop: '18px' }}>
+                <p style={{ ...S.label, marginBottom: '10px' }}>Itens novos criados a partir do PROORC ({resultado.previaNovos.length})</p>
+                <div style={{ overflowX: 'auto' }}>
+                  <table aria-label="Itens novos criados a partir do PROORC" style={{ width: '100%', borderCollapse: 'collapse', minWidth: '820px' }}>
+                    <thead>
+                      <tr>
+                        <th style={S.th}>Item</th>
+                        <th style={S.th}>Projeto</th>
+                        <th style={{ ...S.th, textAlign: 'right' }}>Material</th>
+                        <th style={{ ...S.th, textAlign: 'right' }}>Mão de obra</th>
+                        <th style={{ ...S.th, textAlign: 'right' }}>Unitário</th>
+                        <th style={{ ...S.th, textAlign: 'right' }}>Composição</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {resultado.previaNovos.map((l, idx) => (
+                        <tr key={l.id} style={{ background: idx % 2 === 0 ? '#fff' : '#FAFAFA' }}>
+                          <td style={S.td}>
+                            <p style={{ margin: 0, fontWeight: 600, color: '#222' }}>{l.tipo}</p>
+                            <p style={{ margin: '2px 0 0 0', fontSize: '10px', color: '#AAA' }}>{l.categoria}{l.subcategoria ? ` › ${l.subcategoria}` : ''} · por {l.unidade}</p>
+                          </td>
+                          <td style={{ ...S.td, fontSize: '11px', color: '#666' }}>{l.motivo}</td>
+                          <td style={{ ...S.td, textAlign: 'right', ...S.mono }}>{fmt(l.efetivo.material)}</td>
+                          <td style={{ ...S.td, textAlign: 'right', ...S.mono }}>{fmt(l.efetivo.maoObra)}</td>
+                          <td style={{ ...S.td, textAlign: 'right', fontWeight: 700, color: '#222', ...S.mono }}>{fmt(l.efetivo.unitario)}</td>
+                          <td style={{ ...S.td, textAlign: 'right', ...S.mono }}>{l.totalMateriaisComposicao} materiais</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
             {resultado.projetosNaoUsados.length > 0 && (
               <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', color: '#8B6D00', marginTop: '12px' }}>
                 Projetos do relatório sem ligação, que não entraram no cálculo: {resultado.projetosNaoUsados.map(p => p.chave).join(', ')}.
@@ -457,6 +550,7 @@ export default function AtualizarProorc() {
                     `${resultado.resumo.atualizados} itens calculados do PROORC ou das fórmulas`,
                     `${resultado.resumo.naoAtualizados} itens copiados de ${rotuloAnterior}`,
                     `${resultado.resumo.mantidos} itens que você escolheu manter`,
+                    ...(resultado.resumo.itensNovos > 0 ? [`${resultado.resumo.itensNovos} ${resultado.resumo.itensNovos === 1 ? 'item novo criado' : 'itens novos criados'} a partir do PROORC`] : []),
                     `${Object.keys(resultado.composicoes).length} composições gravadas`,
                     `${Object.keys(resultado.catalogoMateriais).length} materiais no catálogo`,
                     `${(serializarBiblioteca(gerada).length / 1024).toFixed(0)} KB de arquivo`,
@@ -490,6 +584,16 @@ export default function AtualizarProorc() {
             </section>
           )}
         </>
+      )}
+
+      {projetoItemNovo && (
+        <ItemNovoDialog
+          projeto={projetoItemNovo}
+          itensNovos={itensNovos}
+          precoUSConstrucao={consolidado?.precosUS?.construcao}
+          onCriar={criarItem}
+          onCancelar={() => setProjetoItemNovo(null)}
+        />
       )}
     </div>
   );

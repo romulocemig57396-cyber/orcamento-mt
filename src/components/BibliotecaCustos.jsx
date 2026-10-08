@@ -11,6 +11,8 @@ import {
   getReferencia,
   formatarValor,
   ehPendente,
+  disponivelNaReferencia,
+  TEXTO_NAO_DISPONIVEL,
 } from '../data/biblioteca';
 import SeloPendente, { AvisoPendente, COR_PENDENTE } from './SeloPendente';
 import { kmParaPostes, postesParaKm } from '../utils/postes';
@@ -299,14 +301,18 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                   const unitario = getValorPorAno(item, anoReferencia, 'unitario');
                   const isHovered = hoveredRow === item.id;
                   const pendente = ehPendente(item, anoReferencia);
-                  const rowBg = pendente
-                    ? (isHovered ? COR_PENDENTE.fundoHover : COR_PENDENTE.fundo)
-                    : isHovered ? '#E7F4EE' : idx % 2 === 0 ? '#fff' : '#F9F9F9';
+                  // Item que não existe nesta referência (criado numa referência mais nova)
+                  const indisponivel = !disponivelNaReferencia(item, anoReferencia);
+                  const rowBg = indisponivel
+                    ? '#F2F2F2'
+                    : pendente
+                      ? (isHovered ? COR_PENDENTE.fundoHover : COR_PENDENTE.fundo)
+                      : isHovered ? '#E7F4EE' : idx % 2 === 0 ? '#fff' : '#F9F9F9';
 
                   return (
                     <tr
                       key={item.id}
-                      style={{ background: rowBg, transition: 'background 0.1s', ...(pendente ? { color: COR_PENDENTE.texto } : {}) }}
+                      style={{ background: rowBg, transition: 'background 0.1s', ...(pendente ? { color: COR_PENDENTE.texto } : {}), ...(indisponivel ? { color: '#999' } : {}) }}
                       onMouseEnter={() => setHoveredRow(item.id)}
                       onMouseLeave={() => setHoveredRow(null)}
                     >
@@ -319,6 +325,12 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                       <td style={{ padding: '10px 14px', fontSize: '13px', fontWeight: 500, color: '#222', borderBottom: '1px solid #F0F0F0' }}>
                         {item.tipo}
                         {pendente && <SeloPendente />}
+                        {indisponivel && (
+                          <span title="O item foi criado numa referência mais nova e não tem custo nesta. Selecione outra referência para usá-lo."
+                            style={{ marginLeft: '8px', padding: '1px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#E8E8E8', color: '#666', border: '1px solid #CCC', whiteSpace: 'nowrap' }}>
+                            {TEXTO_NAO_DISPONIVEL}
+                          </span>
+                        )}
                         {item.status === 'proposta' && (
                           <span title={`Proposta de ${item.autor}, ainda não aprovada pelo responsável.`}
                             style={{ marginLeft: '8px', padding: '1px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#F3E5F5', color: '#6A1B9A', border: '1px solid #CE93D8', whiteSpace: 'nowrap' }}>
@@ -339,26 +351,28 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                       </td>
                       {[material, maoObra, usConstr].map((val, i) => (
                         <td key={i} style={{ padding: '10px 14px', fontSize: '13px', textAlign: 'right', color: '#555', borderBottom: '1px solid #F0F0F0', fontVariantNumeric: 'tabular-nums' }}>
-                          {formatarValor(val)}
+                          {indisponivel ? '—' : formatarValor(val)}
                         </td>
                       ))}
-                      <td style={{ padding: '10px 14px', fontSize: '13px', textAlign: 'right', fontWeight: 700, color: '#007A3D', borderBottom: '1px solid #F0F0F0', fontVariantNumeric: 'tabular-nums' }}>
-                        {formatarValor(unitario)}
+                      <td style={{ padding: '10px 14px', fontSize: '13px', textAlign: 'right', fontWeight: 700, color: indisponivel ? '#999' : '#007A3D', borderBottom: '1px solid #F0F0F0', fontVariantNumeric: 'tabular-nums' }}>
+                        {indisponivel ? '—' : formatarValor(unitario)}
                       </td>
                       <td style={{ padding: '10px 14px', textAlign: 'center', borderBottom: '1px solid #F0F0F0' }}>
                         <button
                           onClick={() => abrirModal(item)}
+                          disabled={indisponivel}
+                          title={indisponivel ? TEXTO_NAO_DISPONIVEL : undefined}
                           style={{
-                            background: '#00A859', color: '#fff',
+                            background: indisponivel ? '#CCC' : '#00A859', color: '#fff', cursor: indisponivel ? 'not-allowed' : 'pointer',
                             border: 'none', padding: '6px 14px',
                             borderRadius: '6px', fontSize: '12px',
-                            fontWeight: 600, cursor: 'pointer',
+                            fontWeight: 600,
                             fontFamily: "'Open Sans', sans-serif",
                             transition: 'background 0.15s',
                             whiteSpace: 'nowrap',
                           }}
-                          onMouseEnter={e => { e.currentTarget.style.background = '#007A3D'; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = '#00A859'; }}
+                          onMouseEnter={e => { if (!indisponivel) e.currentTarget.style.background = '#007A3D'; }}
+                          onMouseLeave={e => { if (!indisponivel) e.currentTarget.style.background = '#00A859'; }}
                         >
                           + Adicionar
                         </button>

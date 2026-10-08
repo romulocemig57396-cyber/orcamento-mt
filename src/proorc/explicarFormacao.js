@@ -58,17 +58,23 @@ export const explicarFormacao = (item, ref, { precosUS } = {}) => {
     const unidades = v(composicao.unidadesPorProjeto) || 1;
     const ehPT = item.formacao.regra === 'postoTransformacao';
     const materialProjeto = v(composicao.totalMateriais) + (ehPT ? v(composicao.religadorAdicional) : 0);
-    const maoObraProjeto = ehPT ? materialProjeto * v(composicao.percentualMaoObra) : v(composicao.totalServicos);
+    // Itens criados de projeto sem serviços (R9): mão de obra por % ou por US
+    const regra = item.formacao.regra;
+    const maoObraProjeto = ehPT || regra === 'maoObraPercentual'
+      ? materialProjeto * v(composicao.percentualMaoObra)
+      : regra === 'maoObraPorUS'
+        ? v(composicao.usConstrucaoInformada) * v(composicao.precoUSConstrucao)
+        : v(composicao.totalServicos);
+    const rotuloMaoObra = ehPT || regra === 'maoObraPercentual'
+      ? `Mão de obra (${(v(composicao.percentualMaoObra) * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}% do material)`
+      : regra === 'maoObraPorUS'
+        ? `Mão de obra (${us(composicao.usConstrucaoInformada)} US × ${reais(composicao.precoUSConstrucao)})`
+        : 'Serviços contratados';
 
     const passos = [
       { rotulo: 'Materiais requisitados', valor: reais(composicao.totalMateriais) },
       ...(ehPT ? [{ rotulo: 'Religador adicional', valor: reais(composicao.religadorAdicional) }] : []),
-      {
-        rotulo: ehPT
-          ? `Mão de obra (${Math.round(v(composicao.percentualMaoObra) * 100)}% do material)`
-          : 'Serviços contratados',
-        valor: reais(maoObraProjeto),
-      },
+      { rotulo: rotuloMaoObra, valor: reais(maoObraProjeto) },
       { rotulo: 'Total do projeto', valor: reais(materialProjeto + maoObraProjeto), destaque: true },
       ...(unidades > 1 ? [{ rotulo: `Dividido por ${unidades} ${item.unidade}s`, valor: `÷ ${unidades}` }] : []),
       { rotulo: `Unitário por ${item.unidade} (R$ mil)`, valor: mil(custos.unitario), destaque: true },

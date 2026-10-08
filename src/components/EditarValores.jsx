@@ -108,8 +108,11 @@ export default function EditarValores({ base }) {
       const fonte = emPreparacao
         ? `${base.fonte || base.rotulo} + edições administrativas`
         : `Edição administrativa sobre ${rotuloBase}${fonteTodMudou ? ` (${fonteTod.trim()})` : ''}`;
+      // Itens novos da referência em preparação (criados a partir do PROORC)
+      const instalados = new Set(BIBLIOTECA.itens.map(i => i.id));
+      const itensNovos = bibliotecaBase.itens.filter(i => !instalados.has(i.id));
       const nova = aplicarEdicao({
-        biblioteca: BIBLIOTECA, resultado, chave, rotulo, fonte, atual: viraAtual, parametros, fonteTod: fonteTod.trim(),
+        biblioteca: BIBLIOTECA, resultado, chave, rotulo, fonte, atual: viraAtual, parametros, fonteTod: fonteTod.trim(), itensNovos,
       });
       setGerada(nova);
       setErro('');
