@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, beforeAll } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { lerSintetico } from '../proorc/lerSintetico';
@@ -46,10 +46,14 @@ describe('Etapa 3 — variação e mapeamento', () => {
   });
 });
 
+/* O cálculo fica em beforeAll, e não no corpo do describe: o corpo roda mesmo
+   quando `skipIf` pula os testes, e aí a falta dos arquivos quebraria a coleta. */
 describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 07/10/2026', () => {
-  const r = calcular();
+  let r;
   const linha = (id) => r.previa.find(l => l.id === id);
   const custo = (id) => r.custos[id];
+
+  beforeAll(() => { r = calcular(); });
 
   test('os 70 itens entram na prévia', () => {
     expect(r.previa).toHaveLength(70);

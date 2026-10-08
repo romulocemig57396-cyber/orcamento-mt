@@ -71,6 +71,7 @@ Sistema web da Cemig para elaborar orçamentos de obras de Média Tensão (MT) e
 - Valores monetários internos em R$ (reais); a biblioteca está em R$ mil e é multiplicada por 1000 ao entrar no orçamento.
 - A referência de custos usada por um item fica gravada nele (`anoReferencia`); nada deve fixar `2024` no código.
 - Leitura de relatório e cálculo ficam em funções puras testáveis (`src/proorc/`); os componentes só exibem.
+- Teste que depende de `docs/proorc/` usa `describe.skipIf`, e a leitura dos arquivos tem que ficar dentro de `beforeAll` ou do próprio teste: o corpo do `describe` roda mesmo quando os testes são pulados, e a falta dos arquivos quebraria a coleta no CI.
 - Formatação sempre pt-BR (`Intl.NumberFormat('pt-BR')`, `Intl.DateTimeFormat('pt-BR')`).
 - A fonte padrão do jsPDF não tem os símbolos "≈" e "→": nos PDFs usar "aprox." e "p/".
 - Orçamentos já salvos no navegador dos usuários precisam continuar abrindo: toda mudança de formato de dados exige migração na leitura do `localStorage`.

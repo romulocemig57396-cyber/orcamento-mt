@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, beforeAll } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { lerSintetico } from '../proorc/lerSintetico';
@@ -22,12 +22,18 @@ const ARQUIVOS = {
 const caminho = (nome) => resolve(PASTA, nome);
 const temTodos = Object.values(ARQUIVOS).every(nome => existsSync(caminho(nome)));
 
+/* A leitura fica em beforeAll, e não no corpo do describe: o corpo roda mesmo
+   quando `skipIf` pula os testes, e aí a falta dos arquivos quebraria a coleta. */
 describe.skipIf(!temTodos)('Etapa 2 — relatórios reais de 07/10/2026', () => {
-  const sintetico = lerSintetico(readFileSync(caminho(ARQUIVOS.sintetico)));
-  const analitico = lerAnalitico(readFileSync(caminho(ARQUIVOS.analitico)));
-  const servicos = lerServicos(readFileSync(caminho(ARQUIVOS.servicos)));
-  const c = consolidarProorc({ sintetico, analitico, servicos });
+  let sintetico, analitico, servicos, c;
   const projeto = (chave) => c.projetos.find(p => p.chave === chave);
+
+  beforeAll(() => {
+    sintetico = lerSintetico(readFileSync(caminho(ARQUIVOS.sintetico)));
+    analitico = lerAnalitico(readFileSync(caminho(ARQUIVOS.analitico)));
+    servicos = lerServicos(readFileSync(caminho(ARQUIVOS.servicos)));
+    c = consolidarProorc({ sintetico, analitico, servicos });
+  });
 
   test('16 projetos no sintético e no analítico, 14 no de serviços', () => {
     expect(sintetico.projetos).toHaveLength(16);

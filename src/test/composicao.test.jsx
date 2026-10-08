@@ -1,4 +1,4 @@
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect, vi, beforeAll } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -91,8 +91,11 @@ describe('Etapa 5 — explicação sem composição na referência', () => {
   });
 });
 
+/* A montagem fica em beforeAll, e não no corpo do describe: o corpo roda mesmo
+   quando `skipIf` pula os testes, e aí a falta dos arquivos quebraria a coleta. */
 describe.skipIf(!temTodos)('Etapa 5 — composição na referência gerada pelo PROORC', () => {
-  const { itemPorId, precosUS } = comReferenciaNova();
+  let itemPorId, precosUS;
+  beforeAll(() => { ({ itemPorId, precosUS } = comReferenciaNova()); });
 
   test('RDP 150 Dupla Camada: 43 materiais, R$ 250.715,19 no projeto e 10,02861 por poste', () => {
     const d = explicarFormacao(itemPorId('ext_urbano_rdp150_dupla'), '2026-10');
@@ -150,7 +153,8 @@ describe.skipIf(!temTodos)('Etapa 5 — composição na referência gerada pelo 
 });
 
 describe.skipIf(!temTodos)('Etapa 5 — diálogo de composição', () => {
-  const { itemPorId } = comReferenciaNova();
+  let itemPorId;
+  beforeAll(() => { ({ itemPorId } = comReferenciaNova()); });
 
   test('mostra projeto, passos, mão de obra e a tabela de materiais', () => {
     render(<ComposicaoModal item={itemPorId('ext_urbano_rdp150_dupla')} referencia="2026-10" onFechar={() => {}} />);
