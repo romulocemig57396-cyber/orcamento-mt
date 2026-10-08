@@ -48,7 +48,11 @@ export default function ItensObra({ itens, setOrcamento }) {
     setNovo({ descricao: '', categoria: 'cti', valor: '', percentualCemig: '', quantidade: '', unidade: 'km', distanciaKm: '' });
   };
 
-  const remover  = id => setOrcamento(prev => ({ ...prev, itensObra: prev.itensObra.filter(i => i.id !== id) }));
+  const remover  = item => {
+    const aviso = diferencaDoItem(item) > 0 ? ' A diferença de cabo calculada também será removida.' : '';
+    if (!window.confirm(`Remover o item '${item.descricao}'?${aviso}`)) return;
+    setOrcamento(prev => ({ ...prev, itensObra: prev.itensObra.filter(i => i.id !== item.id) }));
+  };
   const editar   = (id, field, value) => setOrcamento(prev => ({ ...prev, itensObra: prev.itensObra.map(i => i.id === id ? { ...i, [field]: value } : i) }));
 
   // Rateio do item sobre o cabo necessário (valor − diferença de cabo)
@@ -266,7 +270,7 @@ export default function ItensObra({ itens, setOrcamento }) {
                         ) : <span style={{ color: '#CCC' }}>—</span>}
                       </td>
                       <td style={{ padding: '8px 14px', textAlign: 'center', borderBottom: '1px solid #F0F0F0' }}>
-                        <button onClick={() => remover(item.id)}
+                        <button onClick={() => remover(item)}
                           style={{ background: 'none', border: 'none', color: '#CCC', fontSize: '13px', cursor: 'pointer', fontFamily: "'Open Sans',sans-serif", padding: '4px 8px', borderRadius: '4px' }}
                           onMouseEnter={e => { e.currentTarget.style.color = '#c0392b'; e.currentTarget.style.background = '#FFF0EE'; }}
                           onMouseLeave={e => { e.currentTarget.style.color = '#CCC';    e.currentTarget.style.background = 'none'; }}>
