@@ -110,7 +110,7 @@ export default function ResumoFinanceiro({ dados }) {
         <h2 style={S.title}>Validade do Orçamento</h2>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
           <div>
-            <label style={S.label}>Data Base</label>
+            <label style={S.label}>Data Base (emissão)</label>
             <input type="date" value={dados.dataBase || ''}
               onChange={e => { const v = e.target.value; if (v) dados.setOrcamento(prev => ({ ...prev, dataBase: v, dataValidade: calcularValidade(v) })); }}
               style={S.input} onFocus={onFocus} onBlur={onBlur} />
@@ -122,7 +122,7 @@ export default function ResumoFinanceiro({ dados }) {
           </div>
         </div>
         <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', color: '#AAA', margin: '10px 0 0 0' }}>
-          A validade é calculada automaticamente como 120 dias após a data base.
+          A Data Base é a data de emissão do orçamento, impressa nos PDFs e no Excel. A validade (120 dias) conta a partir da Data Base.
         </p>
         {dados.dataEstudo && (
           <div style={{ marginTop: '16px' }}>
