@@ -34,17 +34,27 @@ function encontrarFimBloco(bloco) {
   return fimIndex;
 }
 
+// Número no formato brasileiro: "1.200", "1.200,5", "112,5", "1500".
+// Ponto seguido de exatamente 3 dígitos é milhar; ponto com outra quantidade de
+// dígitos ("11.33") é tratado como decimal, para manter textos já existentes.
+const NUM = String.raw`\d{1,3}(?:\.\d{3})+(?:,\d+)?(?!\d)|\d+(?:[.,]\d+)?`;
+
+export function lerNumeroBR(texto) {
+  const t = String(texto ?? '').trim();
+  if (!/^\d[\d.,]*$/.test(t)) return NaN;
+  if (t.includes(',')) return parseFloat(t.replace(/\./g, '').replace(',', '.'));
+  if (/^\d{1,3}(\.\d{3})+$/.test(t)) return parseFloat(t.replace(/\./g, ''));
+  return parseFloat(t);
+}
+
 export function extrairQuantidade(texto) {
-  const kmM = texto.match(/(\d+[.,]\d+|\d+)\s*km/i);
-  if (kmM) return { quantidade: parseFloat(kmM[1].replace(',', '.')), unidade: 'km' };
-  const bancoM = texto.match(/(\d+)\s*banco/i);
-  if (bancoM) return { quantidade: parseInt(bancoM[1]), unidade: 'ponto' };
-  const pecaM = texto.match(/(\d+)\s*pe[çc]as?/i);
-  if (pecaM) return { quantidade: parseInt(pecaM[1]), unidade: 'ponto' };
-  const conjM = texto.match(/(\d+)\s*conj/i);
-  if (conjM) return { quantidade: parseInt(conjM[1]), unidade: 'ponto' };
-  const pontoM = texto.match(/(\d+)\s*ponto/i);
-  if (pontoM) return { quantidade: parseInt(pontoM[1]), unidade: 'ponto' };
+  const qtd = (sufixo) => texto.match(new RegExp(`(${NUM})\\s*${sufixo}`, 'i'));
+  const kmM = qtd('km');
+  if (kmM) return { quantidade: lerNumeroBR(kmM[1]), unidade: 'km' };
+  for (const sufixo of ['banco', 'pe[çc]as?', 'conj', 'ponto']) {
+    const m = qtd(sufixo);
+    if (m) return { quantidade: lerNumeroBR(m[1]), unidade: 'ponto' };
+  }
   return { quantidade: '', unidade: '' };
 }
 
@@ -72,10 +82,10 @@ export function analisarTexto(texto) {
   const dataEstudoM = m(/Data\s+do\s+estudo:\s*(\d{2}\/\d{2}\/\d{4})/i);
   if (dataEstudoM) cab.dataEstudo = dataEstudoM[1];
 
-  const paraM = m(/(\d+)\s*kW.*para\s+(\d+)\s*kW/i);
+  const paraM = m(new RegExp(`(${NUM})\\s*kW.*para\\s+(${NUM})\\s*kW`, 'i'));
   if (paraM) {
-    const antes = parseFloat(paraM[1]);
-    const depois = parseFloat(paraM[2]);
+    const antes = lerNumeroBR(paraM[1]);
+    const depois = lerNumeroBR(paraM[2]);
     cab.demandaFutura = depois;
     if (antes === 0) {
       cab.tipoAtendimento = 'Ligação Nova';
@@ -85,9 +95,9 @@ export function analisarTexto(texto) {
       cab.cargaAtual = antes;
     }
   } else {
-    const kwM = m(/(\d+)\s*kW/i);
+    const kwM = m(new RegExp(`(${NUM})\\s*kW`, 'i'));
     if (kwM) {
-      cab.demandaFutura = parseFloat(kwM[1]);
+      cab.demandaFutura = lerNumeroBR(kwM[1]);
       cab.tipoAtendimento = 'Ligação Nova';
     }
   }
