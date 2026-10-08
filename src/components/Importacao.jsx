@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { getItemById, getValorPorAno } from '../data/tabelaCustos';
+import { chaveReferenciaAtual, getReferencia } from '../data/biblioteca';
 import { normalizarTipoAtendimento, rotuloTipoAtendimento, OBS_GERACAO_DISTRIBUIDA } from '../utils/tipoAtendimento';
 import { RETIRADA_IDS, OPCOES_BIBLIOTECA, matchRegras } from '../utils/regrasImportacao';
 import { kmParaPostes, postesParaKm } from '../utils/postes';
@@ -289,10 +290,10 @@ export function aplicarCabecalho(prev, cab) {
 }
 
 // ── Item detectado → item de obra ─────────────────────────────────────────────
-export function criarItemObraImportado(item, id) {
+export function criarItemObraImportado(item, id, anoReferencia = chaveReferenciaAtual()) {
   const tabItem = item.tipoSelecionado ? getItemById(item.tipoSelecionado) : null;
   const qtd = parseFloat(item.quantidade) || 0;
-  const unitario = tabItem ? (getValorPorAno(tabItem, 2024, 'unitario') || 0) : 0;
+  const unitario = tabItem ? (getValorPorAno(tabItem, anoReferencia, 'unitario') || 0) : 0;
   const valor = tabItem && qtd > 0 ? qtd * unitario * 1000 : 0;
 
   return {
@@ -303,7 +304,7 @@ export function criarItemObraImportado(item, id) {
     percentualCemig: item.categoria === 'pp' ? parseFloat(item.percentualCemig) || 0 : 0,
     quantidade: qtd || null,
     unidade: tabItem ? tabItem.unidade : (item.unidade || ''),
-    ...(tabItem ? { origem: 'biblioteca', itemOrigem: tabItem.id, valorUnitario: unitario * 1000, anoReferencia: 2024 } : {}),
+    ...(tabItem ? { origem: 'biblioteca', itemOrigem: tabItem.id, valorUnitario: unitario * 1000, anoReferencia } : {}),
   };
 }
 
@@ -338,7 +339,7 @@ function BadgeRetiradaPendente() {
 }
 
 // ── Componente principal ─────────────────────────────────────────────────────
-export default function Importacao({ setOrcamento, importacao, updateImportacao }) {
+export default function Importacao({ setOrcamento, importacao, updateImportacao, anoReferencia = chaveReferenciaAtual() }) {
   const fileRef = useRef(null);
 
   const {
@@ -407,7 +408,7 @@ export default function Importacao({ setOrcamento, importacao, updateImportacao 
     });
 
   const adicionar = (idx) => {
-    const novo = criarItemObraImportado(itens[idx], Date.now());
+    const novo = criarItemObraImportado(itens[idx], Date.now(), anoReferencia);
     setOrcamento(prev => ({ ...prev, itensObra: [...prev.itensObra, novo] }));
     updateImportacao({ itensDetectados: itens.filter((_, i) => i !== idx) });
   };
@@ -535,6 +536,9 @@ export default function Importacao({ setOrcamento, importacao, updateImportacao 
           <div style={S.step}>Passo 3</div>
           <h2 style={S.title}>
             Itens Detectados
+            <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', fontWeight: 400, color: '#AAA', marginLeft: '10px', textTransform: 'none', letterSpacing: 0 }}>
+              custos de {getReferencia(anoReferencia)?.rotulo || anoReferencia}
+            </span>
             {itens.length > 0 && (
               <span style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '13px', fontWeight: 400, color: '#888', marginLeft: '10px', textTransform: 'none', letterSpacing: 0 }}>
                 {itens.length} restante{itens.length !== 1 ? 's' : ''}

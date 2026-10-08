@@ -3,6 +3,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { formatarMoeda, formatarData, calcularPrazoEstimado } from './calculos';
 import { hojeISO } from './datas';
+import { rotuloReferenciasUsadas } from '../data/biblioteca';
 import { diferencaDoItem, baseRateioDoItem } from './diferencaCabo';
 import { formatarQuantidade } from './postes';
 
@@ -120,6 +121,7 @@ export const exportarExcel = (orcamento) => {
 
     // Validade e emissão
     ['Validade', '', formatarData(orcamento.dataValidade)],
+    ...(rotuloReferenciasUsadas(orcamento.itensObra) ? [['Referência de Custos', '', rotuloReferenciasUsadas(orcamento.itensObra)]] : []),
     ['Data Base', '', formatarData(orcamento.dataBase)],
     [`${orcamento.municipio || ''}`, '', formatarData(orcamento.dataBase)],
   ];
@@ -181,6 +183,8 @@ export const exportarPDF = (orcamento) => {
   doc.setFontSize(9);
   doc.setTextColor(100);
   doc.text(`Emissão: ${formatarData(new Date())}`, 190, y, { align: 'right' });
+  const refCustos = rotuloReferenciasUsadas(orcamento.itensObra);
+  if (refCustos) doc.text(`Custos: ${refCustos}`, 20, y);
   doc.setTextColor(0);
   y += 8;
 
@@ -349,7 +353,8 @@ export const exportarPDF = (orcamento) => {
     doc.setFontSize(7);
     doc.setTextColor(150);
     doc.text(
-      `Validade: ${formatarData(orcamento.dataValidade)}  |  Data Base: ${formatarData(orcamento.dataBase)}`,
+      `Validade: ${formatarData(orcamento.dataValidade)}  |  Data Base: ${formatarData(orcamento.dataBase)}`
+      + (rotuloReferenciasUsadas(orcamento.itensObra) ? `  |  Custos: ${rotuloReferenciasUsadas(orcamento.itensObra)}` : ''),
       20, 290
     );
     if (orcamento.dataEstudo) {

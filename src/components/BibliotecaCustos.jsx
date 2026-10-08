@@ -6,8 +6,10 @@ import {
   getSubcategorias,
   buscarItens,
   getValorPorAno,
+  custosDaReferencia,
+  getReferencia,
   formatarValor,
-} from '../data/tabelaCustos';
+} from '../data/biblioteca';
 import { kmParaPostes, postesParaKm } from '../utils/postes';
 
 /* ── Estilos base ── */
@@ -124,12 +126,12 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
         border: '1px solid #E0E0E0', padding: '16px 20px',
         marginBottom: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
       }}>
-        <p style={labelStyle}>Ano de Referência</p>
+        <p style={labelStyle}>Referência de Custos</p>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           {ANOS_DISPONIVEIS.map(ano => (
             <button
-              key={ano.ano}
-              onClick={() => setAnoReferencia(ano.ano)}
+              key={ano.chave}
+              onClick={() => setAnoReferencia(ano.chave)}
               style={{
                 padding: '6px 16px',
                 borderRadius: '20px',
@@ -139,14 +141,19 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                 border: '1.5px solid #00A859',
                 cursor: 'pointer',
                 transition: 'all 0.15s',
-                background: anoReferencia === ano.ano ? '#007A3D' : '#fff',
-                color:      anoReferencia === ano.ano ? '#fff'    : '#007A3D',
+                background: anoReferencia === ano.chave ? '#007A3D' : '#fff',
+                color:      anoReferencia === ano.chave ? '#fff'    : '#007A3D',
               }}
             >
               {ano.label}
             </button>
           ))}
         </div>
+        {getReferencia(anoReferencia)?.fonte && (
+          <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '11px', color: '#AAA', margin: '8px 0 0 0' }}>
+            Fonte: {getReferencia(anoReferencia).fonte}
+          </p>
+        )}
       </div>
 
       {/* ── Filtros ── */}
@@ -276,6 +283,12 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                       </td>
                       <td style={{ padding: '10px 14px', fontSize: '13px', fontWeight: 500, color: '#222', borderBottom: '1px solid #F0F0F0' }}>
                         {item.tipo}
+                        {custosDaReferencia(item, anoReferencia).naoAtualizadoPeloProorc && (
+                          <span title="Esta referência copiou o valor da anterior: o projeto-padrão não veio no relatório do PROORC."
+                            style={{ marginLeft: '8px', padding: '1px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#F0F0F0', color: '#777', border: '1px solid #DDD', whiteSpace: 'nowrap' }}>
+                            não atualizado
+                          </span>
+                        )}
                       </td>
                       <td style={{ padding: '10px 14px', fontSize: '13px', textAlign: 'center', color: '#666', borderBottom: '1px solid #F0F0F0' }}>
                         {item.unidade}

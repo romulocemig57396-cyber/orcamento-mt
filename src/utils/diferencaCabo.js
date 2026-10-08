@@ -5,8 +5,11 @@
 // como Condição Técnica (CTC). O rateio com o cliente (PP, Parcela Regulatória,
 // CTI) é feito apenas sobre o cabo necessário.
 import { TABELA_CUSTOS, getValorPorAno, getItemById } from '../data/tabelaCustos';
+import { chaveReferenciaAtual } from '../data/biblioteca';
 
-export const ANO_PADRAO = 2024;
+// Referência usada quando o item não guarda a sua. Vem da biblioteca, para não
+// ficar presa a 2024 quando uma referência nova entrar.
+export const referenciaPadrao = () => chaveReferenciaAtual();
 
 // Categorias da biblioteca que envolvem cabo e admitem diferença de cabo
 const CATEGORIAS_COM_CABO = ['Extensão', 'Conversão Mono→Tri', 'Recondutoramento'];
@@ -36,7 +39,7 @@ export const itemPermiteDiferencaCabo = (itemObra) => {
 // Cabos que podem ser o "cabo necessário" para um item superior:
 // mesma categoria, subcategoria, unidade e grupo; unitário maior que zero
 // e menor que o do cabo superior, no mesmo ano de referência.
-export const getCabosCompativeis = (superiorId, ano = ANO_PADRAO) => {
+export const getCabosCompativeis = (superiorId, ano = referenciaPadrao()) => {
   const superior = getItemById(superiorId);
   if (!superior || !CATEGORIAS_COM_CABO.includes(superior.categoria)) return [];
   const unitSuperior = getValorPorAno(superior, ano, 'unitario') || 0;
@@ -55,7 +58,7 @@ export const getCabosCompativeis = (superiorId, ano = ANO_PADRAO) => {
 
 // Diferença (R$) = (unitário superior − unitário necessário) × quantidade × 1000
 // Considera o custo total do cabo (material + mão de obra + US construção).
-export const calcularDiferencaCabo = (superiorId, necessarioId, quantidade, ano = ANO_PADRAO) => {
+export const calcularDiferencaCabo = (superiorId, necessarioId, quantidade, ano = referenciaPadrao()) => {
   const superior = getItemById(superiorId);
   const necessario = getItemById(necessarioId);
   const qtd = parseFloat(quantidade) || 0;

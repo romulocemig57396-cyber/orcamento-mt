@@ -118,3 +118,19 @@ export const getComposicao = (item, ref) =>
 export const getCatalogoMateriais = (ref) => biblioteca.catalogoMateriais[normalizarChaveReferencia(ref)] || {};
 
 export const MAPEAMENTO_PROORC = biblioteca.mapeamentoProorc;
+
+/* Referências de custos que os itens de um orçamento usam, para o PDF informar
+   com que custos o orçamento foi feito. Itens manuais não têm referência.    */
+export const referenciasUsadas = (itensObra = []) => {
+  const chaves = [...new Set(
+    itensObra.map(i => i.anoReferencia).filter(x => x !== undefined && x !== null && x !== '')
+      .map(normalizarChaveReferencia)
+  )];
+  return chaves.map(chave => getReferencia(chave)).filter(Boolean);
+};
+
+export const rotuloReferenciasUsadas = (itensObra = []) => {
+  const refs = referenciasUsadas(itensObra);
+  if (refs.length === 0) return null;
+  return refs.map(r => r.rotulo).join(' e ');
+};

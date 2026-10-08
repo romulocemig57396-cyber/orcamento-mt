@@ -11,6 +11,7 @@ import BibliotecaCustos from './components/BibliotecaCustos';
 import Importacao from './components/Importacao';
 import AtualizarProorc from './components/AtualizarProorc';
 import { ehModoAdmin } from './utils/modoAdmin';
+import { chaveReferenciaAtual } from './data/biblioteca';
 
 const ABAS_ADMIN = [
   { id: 'proorc', nome: 'Atualizar pelo PROORC' },
@@ -35,7 +36,8 @@ function App() {
     salvamentoSuspenso, carregarVersaoOutraAba, manterEstaVersao,
   } = useOrcamento();
   const [abaAtiva, setAbaAtiva] = useState('atendimento');
-  const [anoReferencia, setAnoReferencia] = useState(2024);
+  // Referência de custos em uso no app; começa na marcada como atual
+  const [anoReferencia, setAnoReferencia] = useState(chaveReferenciaAtual);
 
   const abasVisiveis = modoAdmin ? [...abas, ...ABAS_ADMIN] : abas;
   const abaAtual = abasVisiveis.find(a => a.id === abaAtiva);
@@ -232,6 +234,7 @@ function App() {
                 setOrcamento={setOrcamento}
                 importacao={orcamento.importacao}
                 updateImportacao={updateImportacao}
+                anoReferencia={anoReferencia}
               />
             )}
             {abaAtiva === 'biblioteca' && (
