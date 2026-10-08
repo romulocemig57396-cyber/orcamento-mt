@@ -127,7 +127,7 @@ export const calcularNovaReferencia = ({
     registrar(item, copiar(anterior(item)), {
       motivo: ligacao
         ? `O projeto ${ligacao.projeto} não veio neste relatório`
-        : 'Projeto-padrão ainda não exportado do PROORC',
+        : item.formacao.observacao || 'Projeto-padrão ainda não exportado do PROORC',
       naoAtualizado: true,
     });
   });
