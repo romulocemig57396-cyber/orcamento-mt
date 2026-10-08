@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import ComposicaoModal from './ComposicaoModal';
 import {
   TABELA_CUSTOS,
   ANOS_DISPONIVEIS,
@@ -48,6 +49,7 @@ const labelStyle = {
 };
 
 export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoReferencia }) {
+  const [itemComposicao, setItemComposicao] = useState(null);
   const [textoBusca, setTextoBusca]             = useState('');
   const [categoriaFiltro, setCategoriaFiltro]   = useState('');
   const [subcategoriaFiltro, setSubcategoriaFiltro] = useState('');
@@ -318,6 +320,20 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                         >
                           + Adicionar
                         </button>
+                        <button
+                          onClick={() => setItemComposicao(item)}
+                          title="Ver como este custo foi formado"
+                          style={{
+                            background: '#fff', color: '#007A3D',
+                            border: '1px solid #B8E6CC', padding: '6px 12px',
+                            borderRadius: '6px', fontSize: '12px',
+                            fontWeight: 600, cursor: 'pointer',
+                            fontFamily: "'Open Sans', sans-serif",
+                            whiteSpace: 'nowrap', marginLeft: '6px',
+                          }}
+                        >
+                          Composição
+                        </button>
                       </td>
                     </tr>
                   );
@@ -548,6 +564,14 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
         </div>
       )}
 
+      {itemComposicao && (
+        <ComposicaoModal
+          item={itemComposicao}
+          referencia={anoReferencia}
+          onFechar={() => setItemComposicao(null)}
+          onAbrirItem={(id) => setItemComposicao(TABELA_CUSTOS.find(i => i.id === id) || null)}
+        />
+      )}
     </div>
   );
 }

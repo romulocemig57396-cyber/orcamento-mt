@@ -69,8 +69,17 @@ export const ANOS_DISPONIVEIS = REFERENCIAS.map(r => ({
 }));
 
 /* ── Acesso aos custos ────────────────────────────────────────────────────── */
+/* Quando o próprio objeto traz a chave pedida, ela vale — é o caso de um item
+   que veio de um arquivo gerado (uma referência nova ou uma proposta) e ainda
+   não está registrado aqui. Só quando falta é que cai na referência atual.  */
+const chavePresente = (mapa, ref) => {
+  const chave = String(ref ?? '').trim();
+  if (mapa && Object.prototype.hasOwnProperty.call(mapa, chave)) return chave;
+  return normalizarChaveReferencia(ref);
+};
+
 export const custosDaReferencia = (item, ref) =>
-  (item && item.custos && item.custos[normalizarChaveReferencia(ref)]) || {};
+  (item && item.custos && item.custos[chavePresente(item.custos, ref)]) || {};
 
 // Mesma assinatura de sempre: (item, referência, campo) → valor em R$ mil
 export const getValorPorAno = (item, ano, campo = 'unitario') => {
@@ -113,7 +122,7 @@ export const getSubcategorias = (categoria) =>
 export const getPrecosUS = (ref) => biblioteca.precosUS[normalizarChaveReferencia(ref)] || { construcao: null, projeto: null };
 
 export const getComposicao = (item, ref) =>
-  (item && item.composicoes && item.composicoes[normalizarChaveReferencia(ref)]) || null;
+  (item && item.composicoes && item.composicoes[chavePresente(item.composicoes, ref)]) || null;
 
 export const getCatalogoMateriais = (ref) => biblioteca.catalogoMateriais[normalizarChaveReferencia(ref)] || {};
 
