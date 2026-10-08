@@ -1,13 +1,16 @@
 import React, { useState, useMemo } from 'react';
+import ComposicaoModal from './ComposicaoModal';
+import { lerPropostas } from '../utils/propostas';
 import {
   TABELA_CUSTOS,
   ANOS_DISPONIVEIS,
   getCategorias,
   getSubcategorias,
-  buscarItens,
   getValorPorAno,
+  custosDaReferencia,
+  getReferencia,
   formatarValor,
-} from '../data/tabelaCustos';
+} from '../data/biblioteca';
 import { kmParaPostes, postesParaKm } from '../utils/postes';
 
 /* ── Estilos base ── */
@@ -46,6 +49,7 @@ const labelStyle = {
 };
 
 export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoReferencia }) {
+  const [itemComposicao, setItemComposicao] = useState(null);
   const [textoBusca, setTextoBusca]             = useState('');
   const [categoriaFiltro, setCategoriaFiltro]   = useState('');
   const [subcategoriaFiltro, setSubcategoriaFiltro] = useState('');
@@ -57,12 +61,22 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
   const [distanciaKm, setDistanciaKm]           = useState('');
   const [hoveredRow, setHoveredRow]             = useState(null);
 
+  // Propostas dos analistas aparecem junto dos itens oficiais, com selo próprio
+  const propostas = useMemo(() => lerPropostas(), []);
+  const todosItens = useMemo(() => [...TABELA_CUSTOS, ...propostas], [propostas]);
+
   const itensFiltrados = useMemo(() => {
-    let itens = textoBusca ? buscarItens(textoBusca) : TABELA_CUSTOS;
+    const texto = textoBusca.trim().toLowerCase();
+    let itens = texto
+      ? todosItens.filter(i =>
+        i.tipo.toLowerCase().includes(texto)
+        || i.categoria.toLowerCase().includes(texto)
+        || (i.subcategoria || '').toLowerCase().includes(texto))
+      : todosItens;
     if (categoriaFiltro)    itens = itens.filter(i => i.categoria    === categoriaFiltro);
     if (subcategoriaFiltro) itens = itens.filter(i => i.subcategoria === subcategoriaFiltro);
     return itens;
-  }, [textoBusca, categoriaFiltro, subcategoriaFiltro]);
+  }, [textoBusca, categoriaFiltro, subcategoriaFiltro, todosItens]);
 
   const categorias    = getCategorias();
   const subcategorias = categoriaFiltro ? getSubcategorias(categoriaFiltro) : [];
@@ -103,6 +117,7 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
         unidade: itemSelecionado.unidade,
         valorUnitario: unitario * 1000,
         anoReferencia,
+        ...(itemSelecionado.status === 'proposta' ? { naoOficial: true, autorProposta: itemSelecionado.autor } : {}),
       }],
     }));
     alert(`Item adicionado ao orçamento: ${itemSelecionado.tipo}`);
@@ -124,12 +139,12 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
         border: '1px solid #E0E0E0', padding: '16px 20px',
         marginBottom: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
       }}>
-        <p style={labelStyle}>Ano de Referência</p>
+        <p style={labelStyle}>Referência de Custos</p>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           {ANOS_DISPONIVEIS.map(ano => (
             <button
-              key={ano.ano}
-              onClick={() => setAnoReferencia(ano.ano)}
+              key={ano.chave}
+              onClick={() => setAnoReferencia(ano.chave)}
               style={{
                 padding: '6px 16px',
                 borderRadius: '20px',
@@ -139,14 +154,19 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                 border: '1.5px solid #00A859',
                 cursor: 'pointer',
                 transition: 'all 0.15s',
-                background: anoReferencia === ano.ano ? '#007A3D' : '#fff',
-                color:      anoReferencia === ano.ano ? '#fff'    : '#007A3D',
+                background: anoReferencia === ano.chave ? '#007A3D' : '#fff',
+                color:      anoReferencia === ano.chave ? '#fff'    : '#007A3D',
               }}
             >
               {ano.label}
             </button>
           ))}
         </div>
+        {getReferencia(anoReferencia)?.fonte && (
+          <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '11px', color: '#AAA', margin: '8px 0 0 0' }}>
+            Fonte: {getReferencia(anoReferencia).fonte}
+          </p>
+        )}
       </div>
 
       {/* ── Filtros ── */}
@@ -276,6 +296,18 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                       </td>
                       <td style={{ padding: '10px 14px', fontSize: '13px', fontWeight: 500, color: '#222', borderBottom: '1px solid #F0F0F0' }}>
                         {item.tipo}
+                        {item.status === 'proposta' && (
+                          <span title={`Proposta de ${item.autor}, ainda não aprovada pelo responsável.`}
+                            style={{ marginLeft: '8px', padding: '1px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#F3E5F5', color: '#6A1B9A', border: '1px solid #CE93D8', whiteSpace: 'nowrap' }}>
+                            Proposta — não oficial
+                          </span>
+                        )}
+                        {custosDaReferencia(item, anoReferencia).naoAtualizadoPeloProorc && (
+                          <span title="Esta referência copiou o valor da anterior: o projeto-padrão não veio no relatório do PROORC."
+                            style={{ marginLeft: '8px', padding: '1px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#F0F0F0', color: '#777', border: '1px solid #DDD', whiteSpace: 'nowrap' }}>
+                            não atualizado
+                          </span>
+                        )}
                       </td>
                       <td style={{ padding: '10px 14px', fontSize: '13px', textAlign: 'center', color: '#666', borderBottom: '1px solid #F0F0F0' }}>
                         {item.unidade}
@@ -304,6 +336,20 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                           onMouseLeave={e => { e.currentTarget.style.background = '#00A859'; }}
                         >
                           + Adicionar
+                        </button>
+                        <button
+                          onClick={() => setItemComposicao(item)}
+                          title="Ver como este custo foi formado"
+                          style={{
+                            background: '#fff', color: '#007A3D',
+                            border: '1px solid #B8E6CC', padding: '6px 12px',
+                            borderRadius: '6px', fontSize: '12px',
+                            fontWeight: 600, cursor: 'pointer',
+                            fontFamily: "'Open Sans', sans-serif",
+                            whiteSpace: 'nowrap', marginLeft: '6px',
+                          }}
+                        >
+                          Composição
                         </button>
                       </td>
                     </tr>
@@ -535,6 +581,14 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
         </div>
       )}
 
+      {itemComposicao && (
+        <ComposicaoModal
+          item={itemComposicao}
+          referencia={anoReferencia}
+          onFechar={() => setItemComposicao(null)}
+          onAbrirItem={(id) => setItemComposicao(TABELA_CUSTOS.find(i => i.id === id) || null)}
+        />
+      )}
     </div>
   );
 }

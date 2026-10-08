@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { getItemById, getValorPorAno, formatarValor } from '../data/tabelaCustos';
-import { getCabosCompativeis, calcularDiferencaCabo, ANO_PADRAO } from '../utils/diferencaCabo';
+import { getCabosCompativeis, calcularDiferencaCabo, referenciaPadrao } from '../utils/diferencaCabo';
 import { formatarMoeda } from '../utils/calculos';
 
 const F = "'Open Sans',sans-serif";
@@ -9,7 +9,7 @@ const input = { width: '100%', padding: '10px 14px', borderRadius: '8px', border
 const linha = { display: 'flex', justifyContent: 'space-between', fontFamily: F, fontSize: '13px', padding: '4px 0' };
 
 export default function DiferencaCaboModal({ item, onAplicar, onRemover, onFechar }) {
-  const ano = item.anoReferencia || ANO_PADRAO;
+  const ano = item.anoReferencia || referenciaPadrao();
   const superior = getItemById(item.itemOrigem);
   const compativeis = useMemo(() => getCabosCompativeis(item.itemOrigem, ano), [item.itemOrigem, ano]);
   const [necessarioId, setNecessarioId] = useState(item.caboNecessarioId || '');

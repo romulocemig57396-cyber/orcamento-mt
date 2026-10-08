@@ -1,6 +1,7 @@
 import { tipoParaId } from './regrasImportacao';
 import { normalizarTipoAtendimento } from './tipoAtendimento';
 import { normalizarDataISO } from './datas';
+import { normalizarChaveReferencia } from '../data/biblioteca';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    migracao.js — converte orçamentos salvos em formatos antigos no localStorage
@@ -34,6 +35,17 @@ export const migrarOrcamento = (salvo) => {
     if (o.obrasVinculadas?.temObrasVinculadas && !o.temObrasVinculadas) o.temObrasVinculadas = true;
     delete o.obrasVinculadas;
   }
+  // Etapa 4: a referência de custos dos itens virou texto ('2024'), porque as
+  // referências novas têm chave como '2026-10'. Orçamentos antigos gravaram o
+  // ano como número.
+  if (Array.isArray(o.itensObra)) {
+    o.itensObra = o.itensObra.map(item => (
+      item && item.anoReferencia !== undefined && item.anoReferencia !== null && item.anoReferencia !== ''
+        ? { ...item, anoReferencia: normalizarChaveReferencia(item.anoReferencia) }
+        : item
+    ));
+  }
+
   // A9: datas gravadas como ISO completo (Date) → AAAA-MM-DD
   if ('dataBase' in o) o.dataBase = normalizarDataISO(o.dataBase);
   if ('dataValidade' in o) o.dataValidade = normalizarDataISO(o.dataValidade);

@@ -9,11 +9,22 @@ import ResumoFinanceiro from './components/ResumoFinanceiro';
 import Exportacao from './components/Exportacao';
 import BibliotecaCustos from './components/BibliotecaCustos';
 import Importacao from './components/Importacao';
+import AtualizarProorc from './components/AtualizarProorc';
+import CriarItem from './components/CriarItem';
+import PropostasAdmin from './components/PropostasAdmin';
+import { ehModoAdmin } from './utils/modoAdmin';
+import { chaveReferenciaAtual } from './data/biblioteca';
+
+const ABAS_ADMIN = [
+  { id: 'proorc', nome: 'Atualizar pelo PROORC' },
+  { id: 'propostas', nome: 'Propostas de Itens' },
+];
 
 const abas = [
   { id: 'atendimento', nome: 'Atendimento' },
   { id: 'importacao',  nome: 'Importar' },
   { id: 'biblioteca',  nome: 'Biblioteca Custos' },
+  { id: 'criarItem',   nome: 'Criar Item' },
   { id: 'itens',       nome: 'Itens de Obra' },
   { id: 'rateio',      nome: 'Rateio' },
   { id: 'materiais',   nome: 'Materiais' },
@@ -23,14 +34,17 @@ const abas = [
 ];
 
 function App() {
+  const modoAdmin = ehModoAdmin();
   const {
     orcamento, updateField, updateImportacao, resetOrcamento, setOrcamento,
     salvamentoSuspenso, carregarVersaoOutraAba, manterEstaVersao,
   } = useOrcamento();
   const [abaAtiva, setAbaAtiva] = useState('atendimento');
-  const [anoReferencia, setAnoReferencia] = useState(2024);
+  // Referência de custos em uso no app; começa na marcada como atual
+  const [anoReferencia, setAnoReferencia] = useState(chaveReferenciaAtual);
 
-  const abaAtual = abas.find(a => a.id === abaAtiva);
+  const abasVisiveis = modoAdmin ? [...abas, ...ABAS_ADMIN] : abas;
+  const abaAtual = abasVisiveis.find(a => a.id === abaAtiva);
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#F5F5F5' }}>
@@ -75,7 +89,7 @@ function App() {
             padding: '0 8px', marginBottom: '8px', marginTop: '4px',
           }}>Navegação</p>
 
-          {abas.map(aba => (
+          {abasVisiveis.map(aba => (
             <button
               key={aba.id}
               onClick={() => setAbaAtiva(aba.id)}
@@ -177,6 +191,21 @@ function App() {
           </div>
         </header>
 
+        {/* Faixa do modo administrador (ligado por ?admin=1 na URL) */}
+        {modoAdmin && (
+          <div style={{
+            background: '#FFFBE6', borderBottom: '1px solid #FFE57A', padding: '8px 32px',
+            display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0,
+          }}>
+            <span style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '12px', fontWeight: 700, color: '#8B6D00' }}>
+              Modo administrador
+            </span>
+            <span style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '12px', color: '#8B6D00', flex: 1 }}>
+              As telas de manutenção da biblioteca estão visíveis.
+            </span>
+          </div>
+        )}
+
         {/* Aviso: orçamento alterado em outra aba */}
         {salvamentoSuspenso && (
           <div role="alert" style={{
@@ -209,6 +238,7 @@ function App() {
                 setOrcamento={setOrcamento}
                 importacao={orcamento.importacao}
                 updateImportacao={updateImportacao}
+                anoReferencia={anoReferencia}
               />
             )}
             {abaAtiva === 'biblioteca' && (
@@ -238,6 +268,15 @@ function App() {
             )}
             {abaAtiva === 'exportacao' && (
               <Exportacao orcamento={orcamento} resetOrcamento={resetOrcamento} />
+            )}
+            {abaAtiva === 'criarItem' && (
+              <CriarItem anoReferencia={anoReferencia} />
+            )}
+            {abaAtiva === 'proorc' && modoAdmin && (
+              <AtualizarProorc />
+            )}
+            {abaAtiva === 'propostas' && modoAdmin && (
+              <PropostasAdmin anoReferencia={anoReferencia} />
             )}
 
           </div>
