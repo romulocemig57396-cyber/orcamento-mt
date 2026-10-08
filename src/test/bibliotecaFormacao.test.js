@@ -125,11 +125,11 @@ describe('Etapa 1 — itens copiados e sem custo', () => {
     fixos.forEach(i => expect(i.formacao.motivo, i.id).toBeTruthy());
   });
 
-  test('os 6 itens sem custo em 2024 estão marcados como tal', () => {
+  test('os 5 itens sem custo em 2024 estão marcados como tal', () => {
     const semCusto = BIBLIOTECA.itens.filter(i => !custosDaReferencia(i, '2024').unitario);
     expect(semCusto.map(i => i.id).sort()).toEqual([
       'ext_urbano_rdi185', 'ext_urbano_rdi50', 'recon_urb_4_0_ca',
-      'recon_urb_rdi185', 'recon_urb_rdi50', 'sub_13_8kv',
+      'recon_urb_rdi185', 'recon_urb_rdi50',
     ]);
     semCusto.forEach(i => expect(i.formacao.motivo, i.id).toMatch(/Sem custo cadastrado/));
   });
@@ -141,6 +141,21 @@ describe('Etapa 1 — itens copiados e sem custo', () => {
       'ext_rural_tri_caa2', 'ext_rural_tri_caa336', 'ext_rural_tri_caa4_0',
     ]);
     semProjeto.forEach(i => expect(i.formacao.observacao, i.id).toMatch(/ainda não exportado/));
+  });
+});
+
+describe('R2 — Seção 13,8 kV = 750', () => {
+  test('2024: material 750, unitário 750, como a Seção 22,0 kV; 2022 e 2021 sem mudança', () => {
+    const item = getItemById('sub_13_8kv');
+    expect(item.custos['2024']).toEqual({ material: 750, maoObra: 0, usConstr: 0, unitario: 750 });
+    expect(item.custos['2022'].unitario).toBe(0);
+    expect(item.custos['2021'].unitario).toBe(0);
+    expect(item.formacao).toEqual({ origem: 'fixo', motivo: 'Valor da planilha de origem (material 750).' });
+    expect(item.verificacao).toBeUndefined();
+  });
+
+  test('1 Seção 13,8 kV no orçamento = R$ 750.000,00', () => {
+    expect(custoDe('sub_13_8kv').unitario * 1 * 1000).toBe(750000);
   });
 });
 

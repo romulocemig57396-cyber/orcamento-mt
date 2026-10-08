@@ -21,6 +21,14 @@ const EXCECOES_DOCUMENTADAS = {
     valor: 28.906259280000004,
     motivo: 'Rodada 3 (R1): o unitário 12 estava errado; passa a ser a mão de obra, 10,236 US × 2,82398.',
   },
+  'sub_13_8kv.material2024': {
+    valor: 750,
+    motivo: 'Rodada 3 (R2): a planilha de origem tinha material 750, que não tinha sido migrado.',
+  },
+  'sub_13_8kv.unitario2024': {
+    valor: 750,
+    motivo: 'Rodada 3 (R2): o unitário ficou vazio na planilha de origem; o valor correto é 750 (igual ao material).',
+  },
 };
 
 describe('Etapa 1 — biblioteca.json é idêntica à tabela antiga', () => {
@@ -122,7 +130,7 @@ describe('Etapa 1 — estrutura do JSON', () => {
     const marcados = BIBLIOTECA.itens.filter(i => i.verificacao).map(i => i.id);
     expect(marcados.sort()).toEqual([
       'equip_brt_167_urbano', 'equip_relig_tri_36kv', 'recon_urb_4_0_ca',
-      'recon_urb_rdi185', 'recon_urb_rdi50', 'sub_13_8kv',
+      'recon_urb_rdi185', 'recon_urb_rdi50',
     ]);
   });
 

@@ -1458,7 +1458,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Sem custo cadastrado."
+        "motivo": "Valor da planilha de origem (material 750)."
       },
       "custos": {
         "2021": {
@@ -1474,14 +1474,13 @@
           "unitario": 0
         },
         "2024": {
-          "material": 0,
+          "material": 750,
           "maoObra": 0,
           "usConstr": 0,
-          "unitario": 0
+          "unitario": 750
         }
       },
-      "composicoes": {},
-      "verificacao": "A planilha traz material 750, mas o unitário ficou vazio (0 ou 750)."
+      "composicoes": {}
     },
     {
       "id": "sub_22kv",
