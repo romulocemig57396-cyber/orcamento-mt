@@ -23,7 +23,7 @@ const abas = [
 ];
 
 function App() {
-  const { orcamento, updateField, updateImportacao, updateObrasVinculadas, resetOrcamento, setOrcamento } = useOrcamento();
+  const { orcamento, updateField, updateImportacao, resetOrcamento, setOrcamento } = useOrcamento();
   const [abaAtiva, setAbaAtiva] = useState('atendimento');
   const [anoReferencia, setAnoReferencia] = useState(2024);
 
@@ -182,12 +182,9 @@ function App() {
             )}
             {abaAtiva === 'importacao' && (
               <Importacao
-                updateField={updateField}
                 setOrcamento={setOrcamento}
                 importacao={orcamento.importacao}
                 updateImportacao={updateImportacao}
-                obrasVinculadas={orcamento.obrasVinculadas}
-                updateObrasVinculadas={updateObrasVinculadas}
               />
             )}
             {abaAtiva === 'biblioteca' && (

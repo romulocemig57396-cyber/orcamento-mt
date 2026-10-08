@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { getItemById, getValorPorAno } from '../data/tabelaCustos';
 import { normalizarTipoAtendimento, rotuloTipoAtendimento, OBS_GERACAO_DISTRIBUIDA } from '../utils/tipoAtendimento';
 import { RETIRADA_IDS, OPCOES_BIBLIOTECA, matchRegras } from '../utils/regrasImportacao';
@@ -212,6 +212,11 @@ export function analisarTexto(texto) {
       });
     });
 
+  // Obras vinculadas / alta tensão — gravadas no orçamento só ao "Preencher Atendimento"
+  cab.temObrasVinculadas = textosAltaTensao.length > 0;
+  const conclusaoM = texto.match(/Conclus[ãa]o estimada:\s*(\d{2})\/(\d{2})\/(\d{4})/i);
+  cab.dataObrasVinculadas = conclusaoM ? `${conclusaoM[3]}-${conclusaoM[2]}-${conclusaoM[1]}` : '';
+
   return { cab, itens, textosAltaTensao };
 }
 
@@ -222,6 +227,10 @@ export function aplicarCabecalho(prev, cab) {
   const novo = { ...prev };
   CAMPOS_CABECALHO.forEach(c => { if (cab[c] !== '' && cab[c] != null) novo[c] = cab[c]; });
   if (novo.tipoAtendimento) novo.tipoAtendimento = normalizarTipoAtendimento(novo.tipoAtendimento);
+
+  // Obras vinculadas: marca e preenche a data; nunca desmarca o que foi marcado no Rateio
+  if (cab.temObrasVinculadas) novo.temObrasVinculadas = true;
+  if (cab.dataObrasVinculadas) novo.dataObrasVinculadas = cab.dataObrasVinculadas;
 
   if (cab.geracaoDistribuida) {
     const obs = (prev.observacoes || '').trim();
@@ -282,7 +291,7 @@ function BadgeRetiradaPendente() {
 }
 
 // ── Componente principal ─────────────────────────────────────────────────────
-export default function Importacao({ updateField, setOrcamento, importacao, updateImportacao, obrasVinculadas, updateObrasVinculadas }) {
+export default function Importacao({ setOrcamento, importacao, updateImportacao }) {
   const fileRef = useRef(null);
 
   const {
@@ -293,16 +302,6 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
     textoAltaTensao,
     analisado,
   } = importacao;
-
-  useEffect(() => {
-    const temObrasVinculadas = textosAltaTensao.length > 0;
-    if (
-      obrasVinculadas.temObrasVinculadas !== temObrasVinculadas ||
-      obrasVinculadas.descricao !== textoAltaTensao
-    ) {
-      updateObrasVinculadas({ temObrasVinculadas, descricao: textoAltaTensao });
-    }
-  }, [textosAltaTensao, textoAltaTensao]);
 
   const handleArquivo = (e) => {
     const file = e.target.files[0];
@@ -428,6 +427,9 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
               ['Tipo de Atendimento', rotuloTipoAtendimento(cabecalho.tipoAtendimento)],
               ...(cabecalho.geracaoDistribuida ? [['Geração Distribuída', 'Sim — será anotada nas Observações']] : []),
               ['Data do Estudo', cabecalho.dataEstudo],
+              ...(cabecalho.temObrasVinculadas ? [['Obras Vinculadas', cabecalho.dataObrasVinculadas
+                ? `Sim — conclusão ${cabecalho.dataObrasVinculadas.split('-').reverse().join('/')}`
+                : 'Sim — sem data de conclusão']] : []),
             ].map(([label, valor]) => (
               <div key={label} style={{ padding: '12px 14px', background: '#F9FFF9', borderRadius: '8px', border: '1px solid #D4ECD9' }}>
                 <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888', margin: '0 0 4px 0' }}>{label}</p>

@@ -28,6 +28,11 @@ const migrarImportacao = (importacao) => {
 export const migrarOrcamento = (salvo) => {
   const o = { ...salvo };
   if (o.importacao) o.importacao = migrarImportacao(o.importacao);
+  // A6: obras vinculadas tinham dois estados; fica só o da raiz.
+  if ('obrasVinculadas' in o) {
+    if (o.obrasVinculadas?.temObrasVinculadas && !o.temObrasVinculadas) o.temObrasVinculadas = true;
+    delete o.obrasVinculadas;
+  }
   if (o.tipoAtendimento) o.tipoAtendimento = normalizarTipoAtendimento(o.tipoAtendimento);
   return o;
 };

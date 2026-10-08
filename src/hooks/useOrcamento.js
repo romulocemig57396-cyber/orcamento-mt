@@ -53,12 +53,6 @@ const initialState = {
     textoAltaTensao: '',
     analisado: false,
   },
-  obrasVinculadas: {
-    temObrasVinculadas: false,
-    descricao: '',
-    dataConclusao: '',
-    diasRestantes: null,
-  },
   temObrasVinculadas: false,
   dataObrasVinculadas: '',
   diasObrasVinculadas: null,
@@ -76,7 +70,6 @@ export const useOrcamento = () => {
           dataBase: new Date(parsed.dataBase),
           dataValidade: new Date(parsed.dataValidade),
           importacao: parsed.importacao || initialState.importacao,
-          obrasVinculadas: parsed.obrasVinculadas || initialState.obrasVinculadas,
         };
       } catch (e) {
         console.error('Erro ao carregar dados salvos:', e);
@@ -184,10 +177,6 @@ export const useOrcamento = () => {
     setOrcamento(prev => ({ ...prev, importacao: { ...prev.importacao, ...updates } }));
   };
 
-  const updateObrasVinculadas = (updates) => {
-    setOrcamento(prev => ({ ...prev, obrasVinculadas: { ...prev.obrasVinculadas, ...updates } }));
-  };
-
   const resetOrcamento = () => {
     setOrcamento(initialState);
     localStorage.removeItem(STORAGE_KEY);
@@ -197,7 +186,6 @@ export const useOrcamento = () => {
     orcamento,
     updateField,
     updateImportacao,
-    updateObrasVinculadas,
     resetOrcamento,
     setOrcamento
   };
