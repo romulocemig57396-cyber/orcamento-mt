@@ -52,6 +52,7 @@ export const calcularNovaReferencia = ({
   chaveAnterior,
   mapeamento = biblioteca.mapeamentoProorc,
   escolhas = {},
+  itensNovos = [],
 }) => {
   const precoUSConstrucao = v(consolidado?.precosUS?.construcao);
   const { porItem } = indexarMapeamento(mapeamento);
@@ -89,7 +90,10 @@ export const calcularNovaReferencia = ({
     };
   };
 
-  const itens = biblioteca.itens;
+  // Itens novos criados a partir de projetos do relatório (R9): entram no
+  // cálculo como os demais `proorc`, mas ficam numa lista própria da prévia.
+  const idsNovos = new Set(itensNovos.map(i => i.id));
+  const itens = [...biblioteca.itens, ...itensNovos];
   const porId = new Map(itens.map(i => [i.id, i]));
 
   // ── 1. itens `proorc` com projeto no relatório ──────────────────────────────
@@ -103,12 +107,18 @@ export const calcularNovaReferencia = ({
 
   comProjeto.forEach(({ item, ligacao, projeto }) => {
     const formacao = { ...item.formacao, projeto: ligacao.projeto, unidadesPorProjeto: ligacao.unidadesPorProjeto };
-    const calculado = calcularPorProorc(formacao, projeto);
+    const calculado = calcularPorProorc(formacao, projeto, { precoUSConstrucao });
     const ehPT = formacao.regra === 'postoTransformacao';
+    const divisao = ligacao.unidadesPorProjeto > 1 ? `, dividido por ${ligacao.unidadesPorProjeto} unidades` : '';
+    const maoObraNovo = formacao.regra === 'maoObraPercentual'
+      ? `; mão de obra ${num(v(formacao.percentualMaoObra) * 100)}% do material`
+      : formacao.regra === 'maoObraPorUS'
+        ? `; mão de obra ${num(formacao.usConstrucao)} US × R$ ${num(precoUSConstrucao)}`
+        : '';
     registrar(item, calculado, {
       motivo: ehPT
         ? `Projeto ${ligacao.projeto} do PROORC, mais o religador adicional de R$ ${num(formacao.religadorAdicional)} e ${Math.round(v(formacao.percentualMaoObra) * 100)}% de mão de obra`
-        : `Projeto ${ligacao.projeto} do PROORC${ligacao.unidadesPorProjeto > 1 ? `, dividido por ${ligacao.unidadesPorProjeto} unidades` : ''}`,
+        : `${idsNovos.has(item.id) ? 'Item novo — p' : 'P'}rojeto ${ligacao.projeto} do PROORC${divisao}${maoObraNovo}`,
       detalhes: {
         projeto: ligacao.projeto,
         unidadesPorProjeto: ligacao.unidadesPorProjeto,
@@ -236,6 +246,10 @@ export const calcularNovaReferencia = ({
       ...(item.formacao.regra === 'postoTransformacao'
         ? { religadorAdicional: v(item.formacao.religadorAdicional), percentualMaoObra: v(item.formacao.percentualMaoObra) }
         : {}),
+      ...(item.formacao.regra === 'maoObraPercentual' ? { percentualMaoObra: v(item.formacao.percentualMaoObra) } : {}),
+      ...(item.formacao.regra === 'maoObraPorUS'
+        ? { usConstrucaoInformada: v(item.formacao.usConstrucao), precoUSConstrucao }
+        : {}),
     };
   });
 
@@ -245,12 +259,18 @@ export const calcularNovaReferencia = ({
     .filter(p => !usados.has(p.chave))
     .map(p => ({ chave: p.chave, descricao: p.descricao, total: p.total }));
 
-  const linhas = itens.map(i => previa[i.id]).filter(Boolean);
+  const linhas = biblioteca.itens.map(i => previa[i.id]).filter(Boolean);
+  const linhasNovos = itensNovos.map(i => previa[i.id] && ({
+    ...previa[i.id],
+    novo: true,
+    totalMateriaisComposicao: composicoes[i.id]?.materiais.length || 0,
+  })).filter(Boolean);
 
   return {
     custos: novos,
     composicoes,
     previa: linhas,
+    previaNovos: linhasNovos,
     precosUS: { construcao: precoUSConstrucao, projeto: v(consolidado?.precosUS?.projeto) },
     catalogoMateriais: consolidado?.catalogoMateriais || {},
     projetosNaoUsados,
@@ -261,6 +281,7 @@ export const calcularNovaReferencia = ({
       emVerificacao: linhas.filter(l => l.emVerificacao).length,
       mantidos: linhas.filter(l => l.escolha === 'anterior').length,
       comMudanca: linhas.filter(l => Math.abs(v(l.efetivo.unitario) - v(l.anterior.unitario)) > 0.00001).length,
+      itensNovos: linhasNovos.length,
     },
   };
 };

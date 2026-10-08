@@ -17,8 +17,21 @@ export const usDaMaoObra = (maoObraMil, precoUSConstrucao) => {
 
 /* ── Origem `proorc` — projeto-padrão do PROORC ───────────────────────────────
    projeto: { materiais, servicos, usConstrucao } em R$ e em US.             */
-export const calcularPorProorc = (formacao, projeto) => {
+export const calcularPorProorc = (formacao, projeto, { precoUSConstrucao } = {}) => {
   const unidades = v(formacao.unidadesPorProjeto) || 1;
+
+  // Itens criados de um projeto sem serviços contratados (R9): a mão de obra
+  // é um percentual do material, ou as US informadas × preço da US.
+  if (formacao.regra === 'maoObraPercentual') {
+    const material = v(projeto.materiais) / unidades / MIL;
+    const maoObra = material * v(formacao.percentualMaoObra);
+    return { material, maoObra, usConstr: 0, unitario: material + maoObra };
+  }
+  if (formacao.regra === 'maoObraPorUS') {
+    const material = v(projeto.materiais) / unidades / MIL;
+    const maoObra = (v(formacao.usConstrucao) * v(precoUSConstrucao)) / unidades / MIL;
+    return { material, maoObra, usConstr: v(formacao.usConstrucao) / unidades, unitario: material + maoObra };
+  }
 
   // Regra especial dos Postos de Transformação: o projeto vem sem religador e
   // sem serviços. Soma-se o religador adicional ao material e a mão de obra é
