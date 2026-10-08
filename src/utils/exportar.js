@@ -10,6 +10,9 @@ import { formatarQuantidade } from './postes';
 // A fonte padrão do PDF não tem os símbolos ≈ e →; usar texto equivalente.
 const Q = (item) => formatarQuantidade(item.quantidade, item.unidade).replace('≈ ', 'aprox. ');
 
+// Itens que vieram de uma proposta ainda não aprovada pelo responsável
+const descricaoItem = (item) => `${item.descricao}${item.naoOficial ? ' (item proposto, nao oficial)' : ''}`;
+
 // Itens com diferença de cabo (cabo superior → cabo necessário)
 const itensComDiferenca = (orcamento) => (orcamento.itensObra || []).filter(i => diferencaDoItem(i) > 0);
 
@@ -59,7 +62,7 @@ export const exportarExcel = (orcamento) => {
     ['CUSTOS DE OBRA'],
     ['#', 'Descrição', 'Categoria', 'Qtd', 'Unidade', 'Valor'],
     ...orcamento.itensObra.map((item, i) => [
-      i + 1, item.descricao, item.categoria,
+      i + 1, descricaoItem(item), item.categoria,
       item.quantidade || '', item.unidade || '', item.valor
     ]),
     ['', '', '', '', 'TOTAL DA OBRA', orcamento.totalObra],
@@ -259,7 +262,7 @@ export const exportarPDF = (orcamento) => {
     head: [['#', 'Descrição', 'Categoria', 'Qtd', 'Valor']],
     body: orcamento.itensObra.map((item, i) => [
       i + 1,
-      item.descricao,
+      descricaoItem(item),
       item.categoria.toUpperCase(),
       Q(item),
       formatarMoeda(item.valor),

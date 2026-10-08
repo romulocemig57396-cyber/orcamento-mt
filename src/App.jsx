@@ -10,6 +10,7 @@ import Exportacao from './components/Exportacao';
 import BibliotecaCustos from './components/BibliotecaCustos';
 import Importacao from './components/Importacao';
 import AtualizarProorc from './components/AtualizarProorc';
+import CriarItem from './components/CriarItem';
 import { ehModoAdmin } from './utils/modoAdmin';
 import { chaveReferenciaAtual } from './data/biblioteca';
 
@@ -21,6 +22,7 @@ const abas = [
   { id: 'atendimento', nome: 'Atendimento' },
   { id: 'importacao',  nome: 'Importar' },
   { id: 'biblioteca',  nome: 'Biblioteca Custos' },
+  { id: 'criarItem',   nome: 'Criar Item' },
   { id: 'itens',       nome: 'Itens de Obra' },
   { id: 'rateio',      nome: 'Rateio' },
   { id: 'materiais',   nome: 'Materiais' },
@@ -264,6 +266,9 @@ function App() {
             )}
             {abaAtiva === 'exportacao' && (
               <Exportacao orcamento={orcamento} resetOrcamento={resetOrcamento} />
+            )}
+            {abaAtiva === 'criarItem' && (
+              <CriarItem anoReferencia={anoReferencia} />
             )}
             {abaAtiva === 'proorc' && modoAdmin && (
               <AtualizarProorc />

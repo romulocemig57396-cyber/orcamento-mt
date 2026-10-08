@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import ComposicaoModal from './ComposicaoModal';
+import { lerPropostas } from '../utils/propostas';
 import {
   TABELA_CUSTOS,
   ANOS_DISPONIVEIS,
   getCategorias,
   getSubcategorias,
-  buscarItens,
   getValorPorAno,
   custosDaReferencia,
   getReferencia,
@@ -61,12 +61,22 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
   const [distanciaKm, setDistanciaKm]           = useState('');
   const [hoveredRow, setHoveredRow]             = useState(null);
 
+  // Propostas dos analistas aparecem junto dos itens oficiais, com selo próprio
+  const propostas = useMemo(() => lerPropostas(), []);
+  const todosItens = useMemo(() => [...TABELA_CUSTOS, ...propostas], [propostas]);
+
   const itensFiltrados = useMemo(() => {
-    let itens = textoBusca ? buscarItens(textoBusca) : TABELA_CUSTOS;
+    const texto = textoBusca.trim().toLowerCase();
+    let itens = texto
+      ? todosItens.filter(i =>
+        i.tipo.toLowerCase().includes(texto)
+        || i.categoria.toLowerCase().includes(texto)
+        || (i.subcategoria || '').toLowerCase().includes(texto))
+      : todosItens;
     if (categoriaFiltro)    itens = itens.filter(i => i.categoria    === categoriaFiltro);
     if (subcategoriaFiltro) itens = itens.filter(i => i.subcategoria === subcategoriaFiltro);
     return itens;
-  }, [textoBusca, categoriaFiltro, subcategoriaFiltro]);
+  }, [textoBusca, categoriaFiltro, subcategoriaFiltro, todosItens]);
 
   const categorias    = getCategorias();
   const subcategorias = categoriaFiltro ? getSubcategorias(categoriaFiltro) : [];
@@ -107,6 +117,7 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
         unidade: itemSelecionado.unidade,
         valorUnitario: unitario * 1000,
         anoReferencia,
+        ...(itemSelecionado.status === 'proposta' ? { naoOficial: true, autorProposta: itemSelecionado.autor } : {}),
       }],
     }));
     alert(`Item adicionado ao orçamento: ${itemSelecionado.tipo}`);
@@ -285,6 +296,12 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                       </td>
                       <td style={{ padding: '10px 14px', fontSize: '13px', fontWeight: 500, color: '#222', borderBottom: '1px solid #F0F0F0' }}>
                         {item.tipo}
+                        {item.status === 'proposta' && (
+                          <span title={`Proposta de ${item.autor}, ainda não aprovada pelo responsável.`}
+                            style={{ marginLeft: '8px', padding: '1px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#F3E5F5', color: '#6A1B9A', border: '1px solid #CE93D8', whiteSpace: 'nowrap' }}>
+                            Proposta — não oficial
+                          </span>
+                        )}
                         {custosDaReferencia(item, anoReferencia).naoAtualizadoPeloProorc && (
                           <span title="Esta referência copiou o valor da anterior: o projeto-padrão não veio no relatório do PROORC."
                             style={{ marginLeft: '8px', padding: '1px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#F0F0F0', color: '#777', border: '1px solid #DDD', whiteSpace: 'nowrap' }}>
