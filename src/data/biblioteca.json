@@ -2,10 +2,16 @@
   "versao": 1,
   "referencias": [
     {
+      "chave": "2026-10",
+      "rotulo": "2026 — PROORC 08/10/2026",
+      "fonte": "PROORC, relatórios de 08/10/2026",
+      "atual": true
+    },
+    {
       "chave": "2024",
       "rotulo": "2024 (Atual)",
       "fonte": "Planilha ORÇAMENTO ESTIMADO MT, aba \"Custos 2025\" (ref. dez/2024)",
-      "atual": true,
+      "atual": false,
       "observacao": "Preço da US de construção ambíguo nesta referência: a planilha usou 2,823 em três itens de mão de obra e 2,82398 nos cinco de retirada de rede."
     },
     {
@@ -35,9 +41,1280 @@
     "2024": {
       "construcao": null,
       "projeto": null
+    },
+    "2026-10": {
+      "construcao": 2823.98,
+      "projeto": 82.73
     }
   },
-  "catalogoMateriais": {},
+  "catalogoMateriais": {
+    "2026-10": {
+      "00002931": {
+        "codigo": "00002931",
+        "descricao": "CABO AÇO SM 1/4'' (6,4MM) 7 FIOS",
+        "unidade": "KG",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 14.24
+      },
+      "00002964": {
+        "codigo": "00002964",
+        "descricao": "CABO AÇO HS 3/8' (9,5MM) 7 FIOS",
+        "unidade": "KG",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 13.32
+      },
+      "00380855": {
+        "codigo": "00380855",
+        "descricao": "CABO AL 1X50MM² PROTEGIDO 15KV DUPL CAM",
+        "unidade": "M",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 5.44
+      },
+      "00231886": {
+        "codigo": "00231886",
+        "descricao": "CONETOR TERMINAL COMPRESSÃO 1F 50MM²",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 2.02
+      },
+      "00227389": {
+        "codigo": "00227389",
+        "descricao": "CONETOR TERMINAL COMPRESSÃO 1F AÇO 6,4MM / 21MM²",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 2.38
+      },
+      "00227850": {
+        "codigo": "00227850",
+        "descricao": "CONETOR CUNHA COBRE ITEM 1",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 4.44
+      },
+      "00214254": {
+        "codigo": "00214254",
+        "descricao": "CRUZETA CONTRAPOSTE EUCALIPTO 5M MÉDIO",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 180.61
+      },
+      "00075721": {
+        "codigo": "00075721",
+        "descricao": "ARRUELA QUADRADA 38X18X3MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 1.03
+      },
+      "00237172": {
+        "codigo": "00237172",
+        "descricao": "SUPORTE L PARA CRUZETA",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 22.26
+      },
+      "00377189": {
+        "codigo": "00377189",
+        "descricao": "SUPORTE DE TOPO PARA ISOLADOR PILAR",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 28.66
+      },
+      "00237768": {
+        "codigo": "00237768",
+        "descricao": "SAPATILHA",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 1.08
+      },
+      "00237503": {
+        "codigo": "00237503",
+        "descricao": "FP PINO DE TOPO 419MM PARA ISOLADOR 24,2 KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 9.8
+      },
+      "00074880": {
+        "codigo": "00074880",
+        "descricao": "PARAFUSO CABEÇA QUADRADA M16X550MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 21.29
+      },
+      "00074831": {
+        "codigo": "00074831",
+        "descricao": "PARAFUSO CABEÇA QUADRADA M16X300MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 10.99
+      },
+      "00066878": {
+        "codigo": "00066878",
+        "descricao": "PARAFUSO CABEÇA ABAULADA M16X45MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 3.41
+      },
+      "00066886": {
+        "codigo": "00066886",
+        "descricao": "PARAFUSO CABEÇA ABAULADA M16X70MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 5.81
+      },
+      "00237289": {
+        "codigo": "00237289",
+        "descricao": "OLHAL PARA PARAFUSO 50KN",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 8.95
+      },
+      "00237743": {
+        "codigo": "00237743",
+        "descricao": "HASTE ÂNCORA-OLHAL 1600MM C/2 PORCAS E 1 ARRUELA",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 48.61
+      },
+      "00222539": {
+        "codigo": "00222539",
+        "descricao": "HASTE ATERRAMENTO 2400MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 58.99
+      },
+      "00237396": {
+        "codigo": "00237396",
+        "descricao": "GANCHO-OLHAL DE AÇO 50KN",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 9.34
+      },
+      "00236851": {
+        "codigo": "00236851",
+        "descricao": "CINTA DE AÇO D 190MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 26.52
+      },
+      "00236869": {
+        "codigo": "00236869",
+        "descricao": "CINTA DE AÇO D 200MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 30.24
+      },
+      "00237727": {
+        "codigo": "00237727",
+        "descricao": "CHAPA PARA ÂNCORA 320X320MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 56.25
+      },
+      "00219659": {
+        "codigo": "00219659",
+        "descricao": "ISOLADOR DE ANCORAGEM POLIMÉRICO 15 KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 40.53
+      },
+      "00219477": {
+        "codigo": "00219477",
+        "descricao": "FP ISOLADOR DE PINO PORCELANA 36,2 KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 46.32
+      },
+      "00230391": {
+        "codigo": "00230391",
+        "descricao": "LAÇO PREFORMADO DE TOPO CA/CAA 170MM² (336,4MCM)",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 10.94
+      },
+      "00237677": {
+        "codigo": "00237677",
+        "descricao": "ALÇA PREFORMADA ESTAI CABO AÇO 9,5MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 12.97
+      },
+      "00237693": {
+        "codigo": "00237693",
+        "descricao": "FIXADOR PREFORMADO ESTAI 9,5MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 10.42
+      },
+      "00289058": {
+        "codigo": "00289058",
+        "descricao": "PÁRA-RAIOS 12KV 10KA ZNO",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 98.46
+      },
+      "00380087": {
+        "codigo": "00380087",
+        "descricao": "ALÇA PREFORMADA OLHAL CA/CAA 170MM²",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 48.35
+      },
+      "00376194": {
+        "codigo": "00376194",
+        "descricao": "ISOLADOR PILAR PORCELANA 25/35 KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 100.43
+      },
+      "00376195": {
+        "codigo": "00376195",
+        "descricao": "PINO CURTO PARA ISOLADOR PILAR",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 8.11
+      },
+      "00378842": {
+        "codigo": "00378842",
+        "descricao": "GRAMPO LINHA VIVA (1/0)53,4MM² 50-150MM²",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 57.52
+      },
+      "00374893": {
+        "codigo": "00374893",
+        "descricao": "ALÇA P/ CONECTOR ESTRIBO FECHADO 1/0AWG",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 21.59
+      },
+      "00207506": {
+        "codigo": "00207506",
+        "descricao": "POSTE CONCRETO CIRCULAR 12M 600DAN",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 2721.5
+      },
+      "00374953": {
+        "codigo": "00374953",
+        "descricao": "REGULADOR MONOFÁSICO 34,5KV 200KVA",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 91903.14
+      },
+      "00377508": {
+        "codigo": "00377508",
+        "descricao": "CHAVE FACA MONOPOLAR 36,2KV 630A",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 578.14
+      },
+      "00380334": {
+        "codigo": "00380334",
+        "descricao": "RELÉ CONTROLE P/ BANCO REGULADORES MONOF",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 29111.62
+      },
+      "00376738": {
+        "codigo": "00376738",
+        "descricao": "REGULADOR MONOFÁSICO 34,5KV 400KVA",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 129792.46
+      },
+      "00374388": {
+        "codigo": "00374388",
+        "descricao": "CHAVE FACA MONOPOLAR 15KV 300A",
+        "unidade": "CJ",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 326.64
+      },
+      "00231548": {
+        "codigo": "00231548",
+        "descricao": "CABO AL 1X50MM² PROTEGIDO 15KV",
+        "unidade": "M",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 4.63
+      },
+      "00246108": {
+        "codigo": "00246108",
+        "descricao": "REGULADOR MONOFÁSICO 15KV 167KVA",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 71507.89
+      },
+      "00377705": {
+        "codigo": "00377705",
+        "descricao": "CRUZETA PRFV RETANGULAR 2400X112,5X90MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 254.83
+      },
+      "00237156": {
+        "codigo": "00237156",
+        "descricao": "SELA PARA CRUZETA",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 19.02
+      },
+      "00075630": {
+        "codigo": "00075630",
+        "descricao": "PORCA QUADRADA M16 24X24X13MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 1.19
+      },
+      "00237545": {
+        "codigo": "00237545",
+        "descricao": "FP PINO DE CRUZETA 294MM PARA ISOLADOR 15 KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 7.16
+      },
+      "00074872": {
+        "codigo": "00074872",
+        "descricao": "PARAFUSO CABEÇA QUADRADA M16X500MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 18.24
+      },
+      "00066894": {
+        "codigo": "00066894",
+        "descricao": "PARAFUSO CABEÇA ABAULADA M16X150MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 10.23
+      },
+      "00074807": {
+        "codigo": "00074807",
+        "descricao": "PARAFUSO CABEÇA QUADRADA M16X150MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 7.08
+      },
+      "00237784": {
+        "codigo": "00237784",
+        "descricao": "MÃO-FRANCESA PERFILADA NORMAL 38X5X726MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 29.29
+      },
+      "00219451": {
+        "codigo": "00219451",
+        "descricao": "FP ISOLADOR DE PINO PORCELANA 15 KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 13.69
+      },
+      "00220434": {
+        "codigo": "00220434",
+        "descricao": "CABO CA 53MM² (1/0AWG)",
+        "unidade": "KG",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 44.56
+      },
+      "00380856": {
+        "codigo": "00380856",
+        "descricao": "CABO AL 1X150MM² PROTEGIDO 15KV DUPL CAM",
+        "unidade": "M",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 27.14
+      },
+      "00237230": {
+        "codigo": "00237230",
+        "descricao": "ARMAÇÃO SECUNDÁRIA 1 ESTRIBO",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 12.14
+      },
+      "00237164": {
+        "codigo": "00237164",
+        "descricao": "SUPORTE TL PARA CHAVE FACA TOPO POSTE",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 56.53
+      },
+      "00236265": {
+        "codigo": "00236265",
+        "descricao": "PINO P/ ISOLADOR PINO POLIMÉRICO BRAÇO C",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 22.07
+      },
+      "00375233": {
+        "codigo": "00375233",
+        "descricao": "PINO PARA ISOLADOR POLIMÉRICO - CRUZETA",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 27.36
+      },
+      "00237271": {
+        "codigo": "00237271",
+        "descricao": "MANILHA SAPATILHA CLASSE 50KN",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 11.69
+      },
+      "00236844": {
+        "codigo": "00236844",
+        "descricao": "CINTA DE AÇO D 180MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 27.92
+      },
+      "00236885": {
+        "codigo": "00236885",
+        "descricao": "CINTA DE AÇO D 220MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 32.52
+      },
+      "00219634": {
+        "codigo": "00219634",
+        "descricao": "ISOLADOR ROLDANA PORCELANA OU VIDRO",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 8.81
+      },
+      "00219642": {
+        "codigo": "00219642",
+        "descricao": "ISOLADOR DE PINO POLIMÉRICO 15 KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 15.06
+      },
+      "00228924": {
+        "codigo": "00228924",
+        "descricao": "ALÇA PREFORMADA CA/CAA 34MM² (2AWG)",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 8.81
+      },
+      "00211789": {
+        "codigo": "00211789",
+        "descricao": "BRAÇO SUPORTE TIPO C RDP 15KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 186.54
+      },
+      "00207415": {
+        "codigo": "00207415",
+        "descricao": "POSTE CONCRETO CIRCULAR 11M 300DAN",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 1563.16
+      },
+      "00273417": {
+        "codigo": "00273417",
+        "descricao": "CHAVE FACA UNIPOLAR 15KV 630A",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 569.73
+      },
+      "00293316": {
+        "codigo": "00293316",
+        "descricao": "CHAVE FUSÍVEL REPETIDORA MONOFÁSICA 15KV 7,1KA",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 1453.97
+      },
+      "00220475": {
+        "codigo": "00220475",
+        "descricao": "CABO CA 34MM² (2AWG)",
+        "unidade": "KG",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 38.83
+      },
+      "00234492": {
+        "codigo": "00234492",
+        "descricao": "FIO AL 5,1MM COBERTO P/AMARRAÇÃO DE RDP",
+        "unidade": "M",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 4.66
+      },
+      "00231175": {
+        "codigo": "00231175",
+        "descricao": "CONETOR PARA ATERRAMENTO DE FERRAGENS DE IP",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 1.67
+      },
+      "00231795": {
+        "codigo": "00231795",
+        "descricao": "CONETOR CUNHA AL 50MM² COM ESTRIBO",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 57.68
+      },
+      "00377602": {
+        "codigo": "00377602",
+        "descricao": "FP CRUZETA DE EUCALIPTO 2400MM ITEM 1",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 9.13
+      },
+      "00231555": {
+        "codigo": "00231555",
+        "descricao": "SUPORTE Z PARA CHAVE FUSÍVEL",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 25.84
+      },
+      "00074856": {
+        "codigo": "00074856",
+        "descricao": "PARAFUSO CABEÇA QUADRADA M16X400MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 16.03
+      },
+      "00074773": {
+        "codigo": "00074773",
+        "descricao": "PARAFUSO CABEÇA QUADRADA M12X150MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 8.23
+      },
+      "00074799": {
+        "codigo": "00074799",
+        "descricao": "PARAFUSO CABEÇA QUADRADA M16X125MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 6.16
+      },
+      "00066688": {
+        "codigo": "00066688",
+        "descricao": "PARAFUSO CABEÇA ABAULADA M12X 40MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 3.05
+      },
+      "00234567": {
+        "codigo": "00234567",
+        "descricao": "GRAMPO ANCORAGEM PARA CABO 50MM² 15KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 26.88
+      },
+      "00357255": {
+        "codigo": "00357255",
+        "descricao": "BRAÇO SUPORTE TIPO J RDP 15KV A 36,2KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 798.59
+      },
+      "00223818": {
+        "codigo": "00223818",
+        "descricao": "CANTONEIRA RETA PARA BRAÇO TIPO C RDP",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 135.98
+      },
+      "00285031": {
+        "codigo": "00285031",
+        "descricao": "CHAVE COMANDO CAPACITOR MONOFÁSICO",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 141.37
+      },
+      "00270439": {
+        "codigo": "00270439",
+        "descricao": "CHAVE FUSÍVEL 15KV COM PORTA FUSÍVEL 100A 7,1KA",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 208.29
+      },
+      "00039586": {
+        "codigo": "00039586",
+        "descricao": "COBERTURA PROTETORA PARA BUCHA DE EQUIPAMENTO",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 7.65
+      },
+      "00364562": {
+        "codigo": "00364562",
+        "descricao": "COBERTURA PROTETORA CONETOR RDP 15/25KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 11.35
+      },
+      "00378809": {
+        "codigo": "00378809",
+        "descricao": "CONECTOR TERMINAL P/ BUCHA,50 MM²,RETO,COMPRESSÃO",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 15.21
+      },
+      "00207449": {
+        "codigo": "00207449",
+        "descricao": "POSTE CONCRETO CIRCULAR 11M 600DAN",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 2427.61
+      },
+      "00284992": {
+        "codigo": "00284992",
+        "descricao": "CAPACITOR 15KV 100KVAR",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 3987.79
+      },
+      "00379366": {
+        "codigo": "00379366",
+        "descricao": "CONTROLE AUTOMÁTICO P/ BANCO CAPACITORES, 15KV",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 9697.16
+      },
+      "00220673": {
+        "codigo": "00220673",
+        "descricao": "CABO CA 170MM² (336,4MCM)",
+        "unidade": "KG",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 37.16
+      },
+      "00220418": {
+        "codigo": "00220418",
+        "descricao": "CABO CAA 53MM² (1/0AWG)",
+        "unidade": "KG",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 20.48
+      },
+      "00225813": {
+        "codigo": "00225813",
+        "descricao": "CABO CU 1X16MM² ISOLADO 750V",
+        "unidade": "M",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 18.89
+      },
+      "00373007": {
+        "codigo": "00373007",
+        "descricao": "CABO AL 1X70MM² PROTEGIDO 34,5KV",
+        "unidade": "M",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 27.09
+      },
+      "00225698": {
+        "codigo": "00225698",
+        "descricao": "CABO AL 1X120MM² ISOLADO 15KV",
+        "unidade": "M",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 35.4
+      },
+      "00375967": {
+        "codigo": "00375967",
+        "descricao": "CABO AL 3X1X70MM²+3/8'' ISOLADO 35KV",
+        "unidade": "M",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 303.2
+      },
+      "00231050": {
+        "codigo": "00231050",
+        "descricao": "CONETOR TERM COMP 2 FUROS 150MM²",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 22.26
+      },
+      "00227348": {
+        "codigo": "00227348",
+        "descricao": "CONETOR TERMINAL COMPRESSÃO 1F CABO AÇO 9,5MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 4.88
+      },
+      "00377357": {
+        "codigo": "00377357",
+        "descricao": "CONETOR TERMINAL ATERRAMENTO TEMPORÁRIO DE CHAVE",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 10.41
+      },
+      "00227066": {
+        "codigo": "00227066",
+        "descricao": "CONETOR TERM COMP 2 FUROS 54MM²/70MM²",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 5.9
+      },
+      "00375870": {
+        "codigo": "00375870",
+        "descricao": "PERFIL L-88,9X63,6X10X102MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 24.68
+      },
+      "00375873": {
+        "codigo": "00375873",
+        "descricao": "PERFIL L-127X127X24,1X513MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 180
+      },
+      "00375871": {
+        "codigo": "00375871",
+        "descricao": "PERFIL L-88,9X63,5X10X127MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 30
+      },
+      "00375872": {
+        "codigo": "00375872",
+        "descricao": "PERFIL L-88,9X63,5X10X922MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 149.12
+      },
+      "00075044": {
+        "codigo": "00075044",
+        "descricao": "PARAFUSO CABEÇA SEXTAVADA M12X 50MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 24.41
+      },
+      "00074914": {
+        "codigo": "00074914",
+        "descricao": "PARAFUSO CABEÇA QUADRADA M16X700MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 28.85
+      },
+      "00074815": {
+        "codigo": "00074815",
+        "descricao": "PARAFUSO CABEÇA QUADRADA M16X200MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 8.77
+      },
+      "00074864": {
+        "codigo": "00074864",
+        "descricao": "PARAFUSO CABEÇA QUADRADA M16X450MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 19.86
+      },
+      "00374439": {
+        "codigo": "00374439",
+        "descricao": "GRAMPO ANCORAGEM PARA CABO 70MM² 35KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 244.94
+      },
+      "00236984": {
+        "codigo": "00236984",
+        "descricao": "CINTA DE AÇO D 320MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 43.88
+      },
+      "00237032": {
+        "codigo": "00237032",
+        "descricao": "CINTA DE AÇO D 380MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 50.05
+      },
+      "00236927": {
+        "codigo": "00236927",
+        "descricao": "CINTA DE AÇO D 260MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 37.15
+      },
+      "00237719": {
+        "codigo": "00237719",
+        "descricao": "CHAPA PARA ESTAI",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 9.01
+      },
+      "00219667": {
+        "codigo": "00219667",
+        "descricao": "ISOLADOR DE ANCORAGEM POLIMÉRICO 36,2 KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 69.39
+      },
+      "00228809": {
+        "codigo": "00228809",
+        "descricao": "ALÇA PREFORMADA CA/CAA 170MM² (336,4MCM)",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 47.88
+      },
+      "00219717": {
+        "codigo": "00219717",
+        "descricao": "ALÇA PREFORMADA OLHAL CA/CAA 54MM²",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 18.75
+      },
+      "00375258": {
+        "codigo": "00375258",
+        "descricao": "PÁRA-RAIOS 30KV 10KA ZNO",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 374.97
+      },
+      "00270488": {
+        "codigo": "00270488",
+        "descricao": "CHAVE FUSÍVEL 15KV PF 200A 7,1 KA",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 383.21
+      },
+      "00375586": {
+        "codigo": "00375586",
+        "descricao": "VIGA C-254X29,7X4028MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 1600
+      },
+      "00375588": {
+        "codigo": "00375588",
+        "descricao": "VIGA I-W 250X28,4X6200MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 2530
+      },
+      "00375441": {
+        "codigo": "00375441",
+        "descricao": "TERMINAL MODULAR EXTERNO - TME 70MM² 35KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 583.36
+      },
+      "00229823": {
+        "codigo": "00229823",
+        "descricao": "TERMINAL MODULAR EXTERNO - TME 120MM² 15KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 243.04
+      },
+      "00272013": {
+        "codigo": "00272013",
+        "descricao": "ELO FUSÍVEL BOTÃO 500MM 140K",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 78.77
+      },
+      "00327692": {
+        "codigo": "00327692",
+        "descricao": "BRAÇADEIRA AMARRAR CABO MULTIPLEXADO BT",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 2.02
+      },
+      "00378698": {
+        "codigo": "00378698",
+        "descricao": "ISOLADOR PILAR POLIMÉRICO C/PINO 165MM M20 36,2 KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 88
+      },
+      "00378810": {
+        "codigo": "00378810",
+        "descricao": "CONECTOR TERMINAL P/ BUCHA,150 MM²,RETO,COMPRESSÃO",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 32.89
+      },
+      "00379577": {
+        "codigo": "00379577",
+        "descricao": "CRUZETA PRFV RETANGULAR 2800X112,5X90MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 291.91
+      },
+      "00379680": {
+        "codigo": "00379680",
+        "descricao": "CONETOR CUNHA CU ITEM 8",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 4.4
+      },
+      "00380253": {
+        "codigo": "00380253",
+        "descricao": "CRUZETA METÁLICA 6000X90X90MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 1684.09
+      },
+      "00376072": {
+        "codigo": "00376072",
+        "descricao": "PARAFUSO CABEÇA QUADRADA M12X75MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 2
+      },
+      "00228858": {
+        "codigo": "00228858",
+        "descricao": "ALÇA,PREFORMADA,DISTRIBUIÇÃO,AÇO CARBONO.",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 26.17
+      },
+      "00207514": {
+        "codigo": "00207514",
+        "descricao": "POSTE CONCRETO CIRCULAR 12M1000DAN",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 3676.38
+      },
+      "00207571": {
+        "codigo": "00207571",
+        "descricao": "POSTE CONCRETO DUPLO T 12M 300DAN",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 1635.35
+      },
+      "00214577": {
+        "codigo": "00214577",
+        "descricao": "POSTE CONCRETO DUPLO T 12M 600DAN",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 2124.68
+      },
+      "00376739": {
+        "codigo": "00376739",
+        "descricao": "TRANSFORMADOR POTÊNCIA MONO 36,2KV 0,835MVA 7,9KV",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 58300
+      },
+      "00377194": {
+        "codigo": "00377194",
+        "descricao": "TUBO ISOLANTE TERMOCONTRÁTIL 100/40 MM",
+        "unidade": "M",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 181.12
+      },
+      "00082107": {
+        "codigo": "00082107",
+        "descricao": "TUBO ISOLANTE TERMOCONTRÁTIL 120/50 MM",
+        "unidade": "M",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 192.74
+      },
+      "00226092": {
+        "codigo": "00226092",
+        "descricao": "CABO CA 2X1X35+70MM² TRIPLEX 1KV",
+        "unidade": "M",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 17.34
+      },
+      "00225623": {
+        "codigo": "00225623",
+        "descricao": "CABO AL 1X16MM² ISOLADO 1KV",
+        "unidade": "M",
+        "ucUar": "MUT",
+        "classe": "cabo",
+        "precoUnitario": 1.51
+      },
+      "00338731": {
+        "codigo": "00338731",
+        "descricao": "CONETOR TERMINAL COMPRESSÃO 16MM²",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 1.87
+      },
+      "00231696": {
+        "codigo": "00231696",
+        "descricao": "CONETOR CUNHA COBRE ITEM 6",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 6.3
+      },
+      "00227868": {
+        "codigo": "00227868",
+        "descricao": "CONETOR CUNHA CU ITEM 2",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 3.39
+      },
+      "00231753": {
+        "codigo": "00231753",
+        "descricao": "CONETOR CUNHA ALUMÍNIO ITEM 3 150-50MM²",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 9.38
+      },
+      "00237081": {
+        "codigo": "00237081",
+        "descricao": "SUPORTE TRANSF 240MM POSTE CC MODEL1 IT4",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 138.6
+      },
+      "00237818": {
+        "codigo": "00237818",
+        "descricao": "SUPORTE TRANSF 255MM POSTE CC MODEL1 IT5",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 148.63
+      },
+      "00075036": {
+        "codigo": "00075036",
+        "descricao": "PARAFUSO CABEÇA SEXTAVADA M12X 40MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 22.09
+      },
+      "00234575": {
+        "codigo": "00234575",
+        "descricao": "GRAMPO ANCORAGEM PARA CABO 150MM² 15KV",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 31.13
+      },
+      "00236901": {
+        "codigo": "00236901",
+        "descricao": "CINTA DE AÇO D 240MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 34.85
+      },
+      "00236943": {
+        "codigo": "00236943",
+        "descricao": "CINTA DE AÇO D 280MM",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 39.27
+      },
+      "00219543": {
+        "codigo": "00219543",
+        "descricao": "ISOLADOR DISCO GARFO-OLHAL VIDRO",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 27.42
+      },
+      "00293357": {
+        "codigo": "00293357",
+        "descricao": "PÁRA-RAIOS REDE SECUNDÁRIA ISOLADA 280V 10KA",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 56.78
+      },
+      "00374393": {
+        "codigo": "00374393",
+        "descricao": "FP MANTA AUTO-ADESIVA PARA EMENDA CABO 15KV RDP",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 45.8
+      },
+      "00271338": {
+        "codigo": "00271338",
+        "descricao": "ELO FUSÍVEL BOTÃO 500MM 2H",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 7.38
+      },
+      "00375058": {
+        "codigo": "00375058",
+        "descricao": "COBERTURA PROTETORA P/ BCH BT TRANSFORMADOR ITEM 1",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 7.53
+      },
+      "00375376": {
+        "codigo": "00375376",
+        "descricao": "CONETOR CUNHA ALUMÍNIO ITEM 2",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 9.45
+      },
+      "00375377": {
+        "codigo": "00375377",
+        "descricao": "CONETOR CUNHA ALUMÍNIO ITEM 5",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 7.71
+      },
+      "00375381": {
+        "codigo": "00375381",
+        "descricao": "CONETOR CUNHA ALUMÍNIO ITEM 9",
+        "unidade": "PC",
+        "ucUar": "-",
+        "classe": "consumo",
+        "precoUnitario": 24.15
+      },
+      "00207530": {
+        "codigo": "00207530",
+        "descricao": "POSTE CONCRETO CIRCULAR 13M 600DAN",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 3343.83
+      },
+      "00273003": {
+        "codigo": "00273003",
+        "descricao": "FP RELIGADOR 3F 24KV 560A 12KA",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 53106.07
+      },
+      "00245779": {
+        "codigo": "00245779",
+        "descricao": "TRANSFORMADOR 1F 15KV 10KVA",
+        "unidade": "PC",
+        "ucUar": "SIM",
+        "classe": "patrimonial",
+        "precoUnitario": 3922.31
+      }
+    }
+  },
   "mapeamentoProorc": {
     "1000456789": {
       "item": "ext_urbano_rdp150_dupla",
@@ -50,6 +1327,18 @@
       "unidadesPorProjeto": 1,
       "situacao": "confirmado",
       "descricao": "Religador trifásico em RDR 15 kV + trafo (rural sem BT)"
+    },
+    "1254134998": {
+      "item": "equip_brt_400_kva_34_5_kv",
+      "unidadesPorProjeto": 1,
+      "situacao": "item novo",
+      "descricao": "BRT 400 kVA 34,5 kV"
+    },
+    "1255039294": {
+      "item": "equip_brt_200_kva_34_5_kv",
+      "unidadesPorProjeto": 1,
+      "situacao": "item novo",
+      "descricao": "BRT 200 kVA, 34,5 kV"
     },
     "1403202424": {
       "item": "equip_brt_167_urbano",
@@ -184,6 +1473,13 @@
           "maoObra": 0,
           "usConstr": 0,
           "unitario": 47.86
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 47.86,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -220,6 +1516,13 @@
           "maoObra": 26.96741,
           "usConstr": 9.549433777859617,
           "unitario": 50.356809999999996
+        },
+        "2026-10": {
+          "material": 23.3894,
+          "maoObra": 26.96741,
+          "usConstr": 9.54943378,
+          "unitario": 50.35681,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -253,6 +1556,13 @@
           "maoObra": 0,
           "usConstr": 0,
           "unitario": 68.91
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 68.91,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -289,6 +1599,13 @@
           "maoObra": 38.31981,
           "usConstr": 13.569433919503677,
           "unitario": 71.32147
+        },
+        "2026-10": {
+          "material": 33.00166,
+          "maoObra": 38.31981,
+          "usConstr": 13.56943392,
+          "unitario": 71.32147,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -325,6 +1642,13 @@
           "maoObra": 38.31981,
           "usConstr": 13.569433919503677,
           "unitario": 79.98689999999999
+        },
+        "2026-10": {
+          "material": 41.66709,
+          "maoObra": 38.31981,
+          "usConstr": 13.56943392,
+          "unitario": 79.9869,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -361,6 +1685,13 @@
           "maoObra": 49.41805,
           "usConstr": 17.49943342374946,
           "unitario": 127.24315000000001
+        },
+        "2026-10": {
+          "material": 77.8251,
+          "maoObra": 49.41805,
+          "usConstr": 17.49943342,
+          "unitario": 127.24315,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -397,6 +1728,13 @@
           "maoObra": 49.41805,
           "usConstr": 17.49943342374946,
           "unitario": 148.42361
+        },
+        "2026-10": {
+          "material": 99.00556,
+          "maoObra": 49.41805,
+          "usConstr": 17.49943342,
+          "unitario": 148.42361,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -431,6 +1769,13 @@
           "maoObra": 3.12698,
           "usConstr": 1.107295377446016,
           "unitario": 7.071020000000001
+        },
+        "2026-10": {
+          "material": 3.94404,
+          "maoObra": 3.12698,
+          "usConstr": 1.10729538,
+          "unitario": 7.07102,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -465,6 +1810,13 @@
           "maoObra": 3.12698,
           "usConstr": 1.107295377446016,
           "unitario": 9.05337
+        },
+        "2026-10": {
+          "material": 5.92639,
+          "maoObra": 3.12698,
+          "usConstr": 1.10729538,
+          "unitario": 9.05337,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -499,6 +1851,13 @@
           "maoObra": 3.12698,
           "usConstr": 1.107295377446016,
           "unitario": 10.36503
+        },
+        "2026-10": {
+          "material": 7.23805,
+          "maoObra": 3.12698,
+          "usConstr": 1.10729538,
+          "unitario": 10.36503,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -533,6 +1892,13 @@
           "maoObra": 3.12698,
           "usConstr": 1.107295377446016,
           "unitario": 7.173080000000001
+        },
+        "2026-10": {
+          "material": 4.0461,
+          "maoObra": 3.12698,
+          "usConstr": 1.10729538,
+          "unitario": 7.17308,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -567,9 +1933,475 @@
           "maoObra": 3.12698,
           "usConstr": 1.107295377446016,
           "unitario": 10.02861
+        },
+        "2026-10": {
+          "material": 6.9016272,
+          "maoObra": 3.1269804,
+          "usConstr": 1.078,
+          "unitario": 10.0286076
         }
       },
-      "composicoes": {}
+      "composicoes": {
+        "2026-10": {
+          "projeto": "1000456789",
+          "descricaoProjeto": "Extensão de 01 km de RDP 150mm² Dupla camada",
+          "dataReferencia": "08/10/2026",
+          "unidadesPorProjeto": 25,
+          "materiais": [
+            {
+              "codigo": "00002931",
+              "descricao": "CABO AÇO SM 1/4'' (6,4MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 27,
+              "precoUnitario": 14.24,
+              "total": 384.48
+            },
+            {
+              "codigo": "00220434",
+              "descricao": "CABO CA 53MM² (1/0AWG)",
+              "unidade": "KG",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 152.25,
+              "precoUnitario": 44.56,
+              "total": 6784.26
+            },
+            {
+              "codigo": "00002964",
+              "descricao": "CABO AÇO HS 3/8' (9,5MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 430.73,
+              "precoUnitario": 13.32,
+              "total": 5737.32
+            },
+            {
+              "codigo": "00380855",
+              "descricao": "CABO AL 1X50MM² PROTEGIDO 15KV DUPL CAM",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 4.5,
+              "precoUnitario": 5.44,
+              "total": 24.48
+            },
+            {
+              "codigo": "00380856",
+              "descricao": "CABO AL 1X150MM² PROTEGIDO 15KV DUPL CAM",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 3150,
+              "precoUnitario": 27.14,
+              "total": 85491
+            },
+            {
+              "codigo": "00231886",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F 50MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 15,
+              "precoUnitario": 2.02,
+              "total": 30.3
+            },
+            {
+              "codigo": "00227389",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F AÇO 6,4MM / 21MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 33,
+              "precoUnitario": 2.38,
+              "total": 78.54
+            },
+            {
+              "codigo": "00227850",
+              "descricao": "CONETOR CUNHA COBRE ITEM 1",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 4.44,
+              "total": 26.64
+            },
+            {
+              "codigo": "00377705",
+              "descricao": "CRUZETA PRFV RETANGULAR 2400X112,5X90MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 254.83,
+              "total": 1019.32
+            },
+            {
+              "codigo": "00237230",
+              "descricao": "ARMAÇÃO SECUNDÁRIA 1 ESTRIBO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 15,
+              "precoUnitario": 12.14,
+              "total": 182.1
+            },
+            {
+              "codigo": "00075721",
+              "descricao": "ARRUELA QUADRADA 38X18X3MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 22,
+              "precoUnitario": 1.03,
+              "total": 22.66
+            },
+            {
+              "codigo": "00237164",
+              "descricao": "SUPORTE TL PARA CHAVE FACA TOPO POSTE",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 56.53,
+              "total": 339.18
+            },
+            {
+              "codigo": "00237172",
+              "descricao": "SUPORTE L PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 15,
+              "precoUnitario": 22.26,
+              "total": 333.9
+            },
+            {
+              "codigo": "00237768",
+              "descricao": "SAPATILHA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 68,
+              "precoUnitario": 1.08,
+              "total": 73.44
+            },
+            {
+              "codigo": "00237156",
+              "descricao": "SELA PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 19.02,
+              "total": 76.08
+            },
+            {
+              "codigo": "00236265",
+              "descricao": "PINO P/ ISOLADOR PINO POLIMÉRICO BRAÇO C",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 69,
+              "precoUnitario": 22.07,
+              "total": 1522.83
+            },
+            {
+              "codigo": "00375233",
+              "descricao": "PINO PARA ISOLADOR POLIMÉRICO - CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 27.36,
+              "total": 164.16
+            },
+            {
+              "codigo": "00075630",
+              "descricao": "PORCA QUADRADA M16 24X24X13MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 20,
+              "precoUnitario": 1.19,
+              "total": 23.8
+            },
+            {
+              "codigo": "00074872",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X500MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 10,
+              "precoUnitario": 18.24,
+              "total": 182.4
+            },
+            {
+              "codigo": "00066878",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X45MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 27,
+              "precoUnitario": 3.41,
+              "total": 92.07
+            },
+            {
+              "codigo": "00066886",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X70MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 222,
+              "precoUnitario": 5.81,
+              "total": 1289.82
+            },
+            {
+              "codigo": "00066894",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X150MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 10.23,
+              "total": 40.92
+            },
+            {
+              "codigo": "00074807",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X150MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 7.08,
+              "total": 63.72
+            },
+            {
+              "codigo": "00237271",
+              "descricao": "MANILHA SAPATILHA CLASSE 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 24,
+              "precoUnitario": 11.69,
+              "total": 280.56
+            },
+            {
+              "codigo": "00237289",
+              "descricao": "OLHAL PARA PARAFUSO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 75,
+              "precoUnitario": 8.95,
+              "total": 671.25
+            },
+            {
+              "codigo": "00222539",
+              "descricao": "HASTE ATERRAMENTO 2400MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 58.99,
+              "total": 1061.82
+            },
+            {
+              "codigo": "00237396",
+              "descricao": "GANCHO-OLHAL DE AÇO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 9.34,
+              "total": 56.04
+            },
+            {
+              "codigo": "00236844",
+              "descricao": "CINTA DE AÇO D 180MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 40,
+              "precoUnitario": 27.92,
+              "total": 1116.8
+            },
+            {
+              "codigo": "00236869",
+              "descricao": "CINTA DE AÇO D 200MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 55,
+              "precoUnitario": 30.24,
+              "total": 1663.2
+            },
+            {
+              "codigo": "00236885",
+              "descricao": "CINTA DE AÇO D 220MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 32.52,
+              "total": 97.56
+            },
+            {
+              "codigo": "00219659",
+              "descricao": "ISOLADOR DE ANCORAGEM POLIMÉRICO 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 32,
+              "precoUnitario": 40.53,
+              "total": 1296.96
+            },
+            {
+              "codigo": "00219634",
+              "descricao": "ISOLADOR ROLDANA PORCELANA OU VIDRO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 15,
+              "precoUnitario": 8.81,
+              "total": 132.15
+            },
+            {
+              "codigo": "00219642",
+              "descricao": "ISOLADOR DE PINO POLIMÉRICO 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 75,
+              "precoUnitario": 15.06,
+              "total": 1129.5
+            },
+            {
+              "codigo": "00228924",
+              "descricao": "ALÇA PREFORMADA CA/CAA 34MM² (2AWG)",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 20,
+              "precoUnitario": 8.81,
+              "total": 176.2
+            },
+            {
+              "codigo": "00237677",
+              "descricao": "ALÇA PREFORMADA ESTAI CABO AÇO 9,5MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 48,
+              "precoUnitario": 12.97,
+              "total": 622.56
+            },
+            {
+              "codigo": "00289058",
+              "descricao": "PÁRA-RAIOS 12KV 10KA ZNO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 15,
+              "precoUnitario": 98.46,
+              "total": 1476.9
+            },
+            {
+              "codigo": "00211789",
+              "descricao": "BRAÇO SUPORTE TIPO C RDP 15KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 23,
+              "precoUnitario": 186.54,
+              "total": 4290.42
+            },
+            {
+              "codigo": "00378842",
+              "descricao": "GRAMPO LINHA VIVA (1/0)53,4MM² 50-150MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 15,
+              "precoUnitario": 57.52,
+              "total": 862.8
+            },
+            {
+              "codigo": "00374893",
+              "descricao": "ALÇA P/ CONECTOR ESTRIBO FECHADO 1/0AWG",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 45,
+              "precoUnitario": 21.59,
+              "total": 971.55
+            },
+            {
+              "codigo": "00207415",
+              "descricao": "POSTE CONCRETO CIRCULAR 11M 300DAN",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 20,
+              "precoUnitario": 1563.16,
+              "total": 31263.2
+            },
+            {
+              "codigo": "00207506",
+              "descricao": "POSTE CONCRETO CIRCULAR 12M 600DAN",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 5,
+              "precoUnitario": 2721.5,
+              "total": 13607.5
+            },
+            {
+              "codigo": "00273417",
+              "descricao": "CHAVE FACA UNIPOLAR 15KV 630A",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 6,
+              "precoUnitario": 569.73,
+              "total": 3418.38
+            },
+            {
+              "codigo": "00293316",
+              "descricao": "CHAVE FUSÍVEL REPETIDORA MONOFÁSICA 15KV 7,1KA",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 3,
+              "precoUnitario": 1453.97,
+              "total": 4361.91
+            }
+          ],
+          "servicos": [
+            {
+              "codigo": "USRDA",
+              "descricao": "MÃO-DE-OBRA BÁSICO CONSTRUÇÃO RDA",
+              "grupo": "construcao",
+              "quantidadeUS": 26.95,
+              "precoUS": 2823.98,
+              "total": 76106.26
+            },
+            {
+              "codigo": "USPROJ",
+              "descricao": "MÃO-DE-OBRA BÁSICO PROJETO RDA",
+              "grupo": "projeto",
+              "quantidadeUS": 25,
+              "precoUS": 82.73,
+              "total": 2068.25
+            }
+          ],
+          "totalMateriais": 172540.68,
+          "totalServicos": 78174.51,
+          "total": 250715.19
+        }
+      }
     },
     {
       "id": "ext_urbano_rdi50",
@@ -600,6 +2432,13 @@
           "maoObra": 0,
           "usConstr": 0,
           "unitario": 0
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -633,6 +2472,13 @@
           "maoObra": 0,
           "usConstr": 0,
           "unitario": 0
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -668,6 +2514,12 @@
           "material": 23.3894,
           "maoObra": 61.314400000000006,
           "usConstr": 21.7120517850693,
+          "unitario": 84.7038
+        },
+        "2026-10": {
+          "material": 23.3894,
+          "maoObra": 61.3144,
+          "usConstr": 21.71205179,
           "unitario": 84.7038
         }
       },
@@ -705,6 +2557,12 @@
           "maoObra": 63.725870000000015,
           "usConstr": 22.56597780437539,
           "unitario": 87.11527000000001
+        },
+        "2026-10": {
+          "material": 33.00166,
+          "maoObra": 54.11361,
+          "usConstr": 19.16217891,
+          "unitario": 87.11527
         }
       },
       "composicoes": {}
@@ -741,6 +2599,12 @@
           "maoObra": 54.11361000000001,
           "usConstr": 19.162178910615516,
           "unitario": 95.78070000000001
+        },
+        "2026-10": {
+          "material": 41.66709,
+          "maoObra": 54.11361,
+          "usConstr": 19.16217891,
+          "unitario": 95.7807
         }
       },
       "composicoes": {}
@@ -776,6 +2640,12 @@
           "material": 33.00166,
           "maoObra": 54.937557299999995,
           "usConstr": 19.453947018038367,
+          "unitario": 87.9392173
+        },
+        "2026-10": {
+          "material": 33.00166,
+          "maoObra": 54.9375573,
+          "usConstr": 19.45394702,
           "unitario": 87.9392173
         }
       },
@@ -813,6 +2683,12 @@
           "maoObra": 54.93755730000001,
           "usConstr": 19.453947018038374,
           "unitario": 96.60464730000001
+        },
+        "2026-10": {
+          "material": 41.66709,
+          "maoObra": 54.9375573,
+          "usConstr": 19.45394702,
+          "unitario": 96.6046473
         }
       },
       "composicoes": {}
@@ -848,6 +2724,12 @@
           "material": 77.8251,
           "maoObra": 66.0357973,
           "usConstr": 23.383946522284152,
+          "unitario": 143.8608973
+        },
+        "2026-10": {
+          "material": 77.8251,
+          "maoObra": 66.0357973,
+          "usConstr": 23.38394652,
           "unitario": 143.8608973
         }
       },
@@ -885,6 +2767,12 @@
           "maoObra": 66.03579729999998,
           "usConstr": 23.383946522284145,
           "unitario": 165.0413573
+        },
+        "2026-10": {
+          "material": 99.00556,
+          "maoObra": 66.0357973,
+          "usConstr": 23.38394652,
+          "unitario": 165.0413573
         }
       },
       "composicoes": {}
@@ -921,6 +2809,12 @@
           "maoObra": 61.06011000000001,
           "usConstr": 21.622005113350664,
           "unitario": 102.72720000000001
+        },
+        "2026-10": {
+          "material": 41.66709,
+          "maoObra": 61.06011,
+          "usConstr": 21.62200511,
+          "unitario": 102.7272
         }
       },
       "composicoes": {}
@@ -956,6 +2850,12 @@
           "material": 77.8251,
           "maoObra": 72.15835,
           "usConstr": 25.55200461759644,
+          "unitario": 149.98345
+        },
+        "2026-10": {
+          "material": 77.8251,
+          "maoObra": 72.15835,
+          "usConstr": 25.55200462,
           "unitario": 149.98345
         }
       },
@@ -993,6 +2893,12 @@
           "maoObra": 72.15834999999998,
           "usConstr": 25.552004617596435,
           "unitario": 171.16391
+        },
+        "2026-10": {
+          "material": 99.00556,
+          "maoObra": 72.15835,
+          "usConstr": 25.55200462,
+          "unitario": 171.16391
         }
       },
       "composicoes": {}
@@ -1028,6 +2934,12 @@
           "material": 41.66709,
           "maoObra": 61.8558951,
           "usConstr": 21.903800699721668,
+          "unitario": 103.5229851
+        },
+        "2026-10": {
+          "material": 41.66709,
+          "maoObra": 61.8558951,
+          "usConstr": 21.9038007,
           "unitario": 103.5229851
         }
       },
@@ -1065,6 +2977,12 @@
           "maoObra": 72.95413509999999,
           "usConstr": 25.833800203967446,
           "unitario": 150.7792351
+        },
+        "2026-10": {
+          "material": 77.8251,
+          "maoObra": 72.9541351,
+          "usConstr": 25.8338002,
+          "unitario": 150.7792351
         }
       },
       "composicoes": {}
@@ -1100,6 +3018,12 @@
           "material": 99.00556,
           "maoObra": 72.9541351,
           "usConstr": 25.83380020396745,
+          "unitario": 171.9596951
+        },
+        "2026-10": {
+          "material": 99.00556,
+          "maoObra": 72.9541351,
+          "usConstr": 25.8338002,
           "unitario": 171.9596951
         }
       },
@@ -1137,6 +3061,12 @@
           "maoObra": 75.81372699999999,
           "usConstr": 26.84641073945282,
           "unitario": 153.638827
+        },
+        "2026-10": {
+          "material": 77.8251,
+          "maoObra": 75.813727,
+          "usConstr": 26.84641074,
+          "unitario": 153.638827
         }
       },
       "composicoes": {}
@@ -1173,6 +3103,12 @@
           "maoObra": 75.813727,
           "usConstr": 26.84641073945283,
           "unitario": 174.819287
+        },
+        "2026-10": {
+          "material": 99.00556,
+          "maoObra": 75.813727,
+          "usConstr": 26.84641074,
+          "unitario": 174.819287
         }
       },
       "composicoes": {}
@@ -1207,6 +3143,12 @@
           "material": 3.94404,
           "maoObra": 3.283329,
           "usConstr": 1.1626601463183166,
+          "unitario": 7.227369
+        },
+        "2026-10": {
+          "material": 3.94404,
+          "maoObra": 3.283329,
+          "usConstr": 1.16266015,
           "unitario": 7.227369
         }
       },
@@ -1243,6 +3185,12 @@
           "maoObra": 3.283329,
           "usConstr": 1.1626601463183166,
           "unitario": 9.209719
+        },
+        "2026-10": {
+          "material": 5.92639,
+          "maoObra": 3.283329,
+          "usConstr": 1.16266015,
+          "unitario": 9.209719
         }
       },
       "composicoes": {}
@@ -1277,6 +3225,12 @@
           "material": 7.23805,
           "maoObra": 3.283329,
           "usConstr": 1.1626601463183166,
+          "unitario": 10.521379
+        },
+        "2026-10": {
+          "material": 7.23805,
+          "maoObra": 3.283329,
+          "usConstr": 1.16266015,
           "unitario": 10.521379
         }
       },
@@ -1313,6 +3267,12 @@
           "maoObra": 3.283329,
           "usConstr": 1.1626601463183166,
           "unitario": 7.329429
+        },
+        "2026-10": {
+          "material": 4.0461,
+          "maoObra": 3.283329,
+          "usConstr": 1.16266015,
+          "unitario": 7.329429
         }
       },
       "composicoes": {}
@@ -1348,6 +3308,12 @@
           "maoObra": 0,
           "usConstr": 0,
           "unitario": 10.184959
+        },
+        "2026-10": {
+          "material": 6.9016272,
+          "maoObra": 3.28332942,
+          "usConstr": 1.1626603,
+          "unitario": 10.18495662
         }
       },
       "composicoes": {}
@@ -1381,6 +3347,13 @@
           "maoObra": 0,
           "usConstr": 0,
           "unitario": 0
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1414,6 +3387,13 @@
           "maoObra": 0,
           "usConstr": 0,
           "unitario": 0
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1447,6 +3427,13 @@
           "maoObra": 0,
           "usConstr": 0,
           "unitario": 0
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1480,6 +3467,13 @@
           "maoObra": 0,
           "usConstr": 0,
           "unitario": 750
+        },
+        "2026-10": {
+          "material": 750,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 750,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1513,6 +3507,13 @@
           "maoObra": 0,
           "usConstr": 0,
           "unitario": 950
+        },
+        "2026-10": {
+          "material": 950,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 950,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1547,6 +3548,13 @@
           "maoObra": 44.66828,
           "usConstr": 4.98,
           "unitario": 186.97615000000002
+        },
+        "2026-10": {
+          "material": 142.30787,
+          "maoObra": 44.66828,
+          "usConstr": 4.98,
+          "unitario": 186.97615,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1581,9 +3589,415 @@
           "maoObra": 44.66828,
           "usConstr": 15.817491625294798,
           "unitario": 327.5743
+        },
+        "2026-10": {
+          "material": 282.90602,
+          "maoObra": 44.66828,
+          "usConstr": 15.63,
+          "unitario": 327.5743
         }
       },
-      "composicoes": {}
+      "composicoes": {
+        "2026-10": {
+          "projeto": "2003202424",
+          "descricaoProjeto": "BRT RURAL.",
+          "dataReferencia": "08/10/2026",
+          "unidadesPorProjeto": 1,
+          "materiais": [
+            {
+              "codigo": "00374388",
+              "descricao": "CHAVE FACA MONOPOLAR 15KV 300A",
+              "unidade": "CJ",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 9,
+              "precoUnitario": 326.64,
+              "total": 2939.76
+            },
+            {
+              "codigo": "00002931",
+              "descricao": "CABO AÇO SM 1/4'' (6,4MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 13.5,
+              "precoUnitario": 14.24,
+              "total": 192.24
+            },
+            {
+              "codigo": "00002964",
+              "descricao": "CABO AÇO HS 3/8' (9,5MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 128,
+              "precoUnitario": 13.32,
+              "total": 1704.96
+            },
+            {
+              "codigo": "00231548",
+              "descricao": "CABO AL 1X50MM² PROTEGIDO 15KV",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 9,
+              "precoUnitario": 4.63,
+              "total": 41.67
+            },
+            {
+              "codigo": "00231886",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F 50MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 27,
+              "precoUnitario": 2.02,
+              "total": 54.54
+            },
+            {
+              "codigo": "00227389",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F AÇO 6,4MM / 21MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 27,
+              "precoUnitario": 2.38,
+              "total": 64.26
+            },
+            {
+              "codigo": "00227850",
+              "descricao": "CONETOR CUNHA COBRE ITEM 1",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 4.44,
+              "total": 13.32
+            },
+            {
+              "codigo": "00214254",
+              "descricao": "CRUZETA CONTRAPOSTE EUCALIPTO 5M MÉDIO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 180.61,
+              "total": 722.44
+            },
+            {
+              "codigo": "00075721",
+              "descricao": "ARRUELA QUADRADA 38X18X3MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 49,
+              "precoUnitario": 1.03,
+              "total": 50.47
+            },
+            {
+              "codigo": "00237172",
+              "descricao": "SUPORTE L PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 22.26,
+              "total": 200.34
+            },
+            {
+              "codigo": "00377189",
+              "descricao": "SUPORTE DE TOPO PARA ISOLADOR PILAR",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 28.66,
+              "total": 85.98
+            },
+            {
+              "codigo": "00237768",
+              "descricao": "SAPATILHA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 26,
+              "precoUnitario": 1.08,
+              "total": 28.08
+            },
+            {
+              "codigo": "00237503",
+              "descricao": "FP PINO DE TOPO 419MM PARA ISOLADOR 24,2 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 9.8,
+              "total": 58.8
+            },
+            {
+              "codigo": "00074880",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X550MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 21.29,
+              "total": 127.74
+            },
+            {
+              "codigo": "00074831",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X300MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 33,
+              "precoUnitario": 10.99,
+              "total": 362.67
+            },
+            {
+              "codigo": "00066878",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X45MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 3.41,
+              "total": 10.23
+            },
+            {
+              "codigo": "00066886",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X70MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 5.81,
+              "total": 104.58
+            },
+            {
+              "codigo": "00237289",
+              "descricao": "OLHAL PARA PARAFUSO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 23,
+              "precoUnitario": 8.95,
+              "total": 205.85
+            },
+            {
+              "codigo": "00237743",
+              "descricao": "HASTE ÂNCORA-OLHAL 1600MM C/2 PORCAS E 1 ARRUELA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 48.61,
+              "total": 777.76
+            },
+            {
+              "codigo": "00222539",
+              "descricao": "HASTE ATERRAMENTO 2400MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 58.99,
+              "total": 530.91
+            },
+            {
+              "codigo": "00237396",
+              "descricao": "GANCHO-OLHAL DE AÇO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 9.34,
+              "total": 168.12
+            },
+            {
+              "codigo": "00236869",
+              "descricao": "CINTA DE AÇO D 200MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 30.24,
+              "total": 272.16
+            },
+            {
+              "codigo": "00237727",
+              "descricao": "CHAPA PARA ÂNCORA 320X320MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 56.25,
+              "total": 900
+            },
+            {
+              "codigo": "00219659",
+              "descricao": "ISOLADOR DE ANCORAGEM POLIMÉRICO 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 40.53,
+              "total": 729.54
+            },
+            {
+              "codigo": "00219477",
+              "descricao": "FP ISOLADOR DE PINO PORCELANA 36,2 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 46.32,
+              "total": 277.92
+            },
+            {
+              "codigo": "00230391",
+              "descricao": "LAÇO PREFORMADO DE TOPO CA/CAA 170MM² (336,4MCM)",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 10.94,
+              "total": 98.46
+            },
+            {
+              "codigo": "00237677",
+              "descricao": "ALÇA PREFORMADA ESTAI CABO AÇO 9,5MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 12.97,
+              "total": 207.52
+            },
+            {
+              "codigo": "00237693",
+              "descricao": "FIXADOR PREFORMADO ESTAI 9,5MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 10.42,
+              "total": 166.72
+            },
+            {
+              "codigo": "00289058",
+              "descricao": "PÁRA-RAIOS 12KV 10KA ZNO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 98.46,
+              "total": 1772.28
+            },
+            {
+              "codigo": "00380087",
+              "descricao": "ALÇA PREFORMADA OLHAL CA/CAA 170MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 48.35,
+              "total": 870.3
+            },
+            {
+              "codigo": "00376194",
+              "descricao": "ISOLADOR PILAR PORCELANA 25/35 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 100.43,
+              "total": 301.29
+            },
+            {
+              "codigo": "00376195",
+              "descricao": "PINO CURTO PARA ISOLADOR PILAR",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 8.11,
+              "total": 24.33
+            },
+            {
+              "codigo": "00378842",
+              "descricao": "GRAMPO LINHA VIVA (1/0)53,4MM² 50-150MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 57.52,
+              "total": 517.68
+            },
+            {
+              "codigo": "00374893",
+              "descricao": "ALÇA P/ CONECTOR ESTRIBO FECHADO 1/0AWG",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 21.59,
+              "total": 194.31
+            },
+            {
+              "codigo": "00207506",
+              "descricao": "POSTE CONCRETO CIRCULAR 12M 600DAN",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 9,
+              "precoUnitario": 2721.5,
+              "total": 24493.5
+            },
+            {
+              "codigo": "00246108",
+              "descricao": "REGULADOR MONOFÁSICO 15KV 167KVA",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 3,
+              "precoUnitario": 71507.89,
+              "total": 214523.67
+            },
+            {
+              "codigo": "00380334",
+              "descricao": "RELÉ CONTROLE P/ BANCO REGULADORES MONOF",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 1,
+              "precoUnitario": 29111.62,
+              "total": 29111.62
+            }
+          ],
+          "servicos": [
+            {
+              "codigo": "USRDR",
+              "descricao": "MÃO-DE-OBRA BÁSICO CONSTRUÇÃO RURAL",
+              "grupo": "construcao",
+              "quantidadeUS": 15.63,
+              "precoUS": 2823.98,
+              "total": 44138.81
+            },
+            {
+              "codigo": "USPROJ",
+              "descricao": "MÃO-DE-OBRA BÁSICO PROJETO RDA",
+              "grupo": "projeto",
+              "quantidadeUS": 6.4,
+              "precoUS": 82.73,
+              "total": 529.47
+            }
+          ],
+          "totalMateriais": 282906.02,
+          "totalServicos": 44668.28,
+          "total": 327574.3
+        }
+      }
     },
     {
       "id": "equip_brt_167_urbano",
@@ -1615,9 +4029,415 @@
           "maoObra": 24.03581,
           "usConstr": 8.511324442807668,
           "unitario": 302.48276000000004
+        },
+        "2026-10": {
+          "material": 278.44695,
+          "maoObra": 24.03581,
+          "usConstr": 8.51132444,
+          "unitario": 302.48276
         }
       },
-      "composicoes": {},
+      "composicoes": {
+        "2026-10": {
+          "projeto": "1403202424",
+          "descricaoProjeto": "BRT URBANO.",
+          "dataReferencia": "08/10/2026",
+          "unidadesPorProjeto": 1,
+          "materiais": [
+            {
+              "codigo": "00374388",
+              "descricao": "CHAVE FACA MONOPOLAR 15KV 300A",
+              "unidade": "CJ",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 9,
+              "precoUnitario": 326.64,
+              "total": 2939.76
+            },
+            {
+              "codigo": "00002931",
+              "descricao": "CABO AÇO SM 1/4'' (6,4MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 13.5,
+              "precoUnitario": 14.24,
+              "total": 192.24
+            },
+            {
+              "codigo": "00231548",
+              "descricao": "CABO AL 1X50MM² PROTEGIDO 15KV",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 9,
+              "precoUnitario": 4.63,
+              "total": 41.67
+            },
+            {
+              "codigo": "00231886",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F 50MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 27,
+              "precoUnitario": 2.02,
+              "total": 54.54
+            },
+            {
+              "codigo": "00227389",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F AÇO 6,4MM / 21MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 27,
+              "precoUnitario": 2.38,
+              "total": 64.26
+            },
+            {
+              "codigo": "00227850",
+              "descricao": "CONETOR CUNHA COBRE ITEM 1",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 4.44,
+              "total": 13.32
+            },
+            {
+              "codigo": "00377705",
+              "descricao": "CRUZETA PRFV RETANGULAR 2400X112,5X90MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 254.83,
+              "total": 1019.32
+            },
+            {
+              "codigo": "00075721",
+              "descricao": "ARRUELA QUADRADA 38X18X3MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 1.03,
+              "total": 9.27
+            },
+            {
+              "codigo": "00237172",
+              "descricao": "SUPORTE L PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 22.26,
+              "total": 200.34
+            },
+            {
+              "codigo": "00377189",
+              "descricao": "SUPORTE DE TOPO PARA ISOLADOR PILAR",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 28.66,
+              "total": 85.98
+            },
+            {
+              "codigo": "00237768",
+              "descricao": "SAPATILHA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 10,
+              "precoUnitario": 1.08,
+              "total": 10.8
+            },
+            {
+              "codigo": "00237156",
+              "descricao": "SELA PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 19.02,
+              "total": 76.08
+            },
+            {
+              "codigo": "00075630",
+              "descricao": "PORCA QUADRADA M16 24X24X13MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 12,
+              "precoUnitario": 1.19,
+              "total": 14.28
+            },
+            {
+              "codigo": "00237545",
+              "descricao": "FP PINO DE CRUZETA 294MM PARA ISOLADOR 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 7.16,
+              "total": 42.96
+            },
+            {
+              "codigo": "00074872",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X500MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 18.24,
+              "total": 72.96
+            },
+            {
+              "codigo": "00074831",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X300MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 5,
+              "precoUnitario": 10.99,
+              "total": 54.95
+            },
+            {
+              "codigo": "00066878",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X45MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 7,
+              "precoUnitario": 3.41,
+              "total": 23.87
+            },
+            {
+              "codigo": "00066886",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X70MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 26,
+              "precoUnitario": 5.81,
+              "total": 151.06
+            },
+            {
+              "codigo": "00066894",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X150MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 10.23,
+              "total": 40.92
+            },
+            {
+              "codigo": "00074807",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X150MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 7.08,
+              "total": 28.32
+            },
+            {
+              "codigo": "00237784",
+              "descricao": "MÃO-FRANCESA PERFILADA NORMAL 38X5X726MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 29.29,
+              "total": 117.16
+            },
+            {
+              "codigo": "00237289",
+              "descricao": "OLHAL PARA PARAFUSO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 23,
+              "precoUnitario": 8.95,
+              "total": 205.85
+            },
+            {
+              "codigo": "00222539",
+              "descricao": "HASTE ATERRAMENTO 2400MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 58.99,
+              "total": 530.91
+            },
+            {
+              "codigo": "00237396",
+              "descricao": "GANCHO-OLHAL DE AÇO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 9.34,
+              "total": 168.12
+            },
+            {
+              "codigo": "00236869",
+              "descricao": "CINTA DE AÇO D 200MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 13,
+              "precoUnitario": 30.24,
+              "total": 393.12
+            },
+            {
+              "codigo": "00219659",
+              "descricao": "ISOLADOR DE ANCORAGEM POLIMÉRICO 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 40.53,
+              "total": 729.54
+            },
+            {
+              "codigo": "00219451",
+              "descricao": "FP ISOLADOR DE PINO PORCELANA 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 13.69,
+              "total": 82.14
+            },
+            {
+              "codigo": "00230391",
+              "descricao": "LAÇO PREFORMADO DE TOPO CA/CAA 170MM² (336,4MCM)",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 10.94,
+              "total": 32.82
+            },
+            {
+              "codigo": "00289058",
+              "descricao": "PÁRA-RAIOS 12KV 10KA ZNO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 98.46,
+              "total": 1772.28
+            },
+            {
+              "codigo": "00380087",
+              "descricao": "ALÇA PREFORMADA OLHAL CA/CAA 170MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 48.35,
+              "total": 290.1
+            },
+            {
+              "codigo": "00376194",
+              "descricao": "ISOLADOR PILAR PORCELANA 25/35 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 100.43,
+              "total": 301.29
+            },
+            {
+              "codigo": "00376195",
+              "descricao": "PINO CURTO PARA ISOLADOR PILAR",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 8.11,
+              "total": 24.33
+            },
+            {
+              "codigo": "00378842",
+              "descricao": "GRAMPO LINHA VIVA (1/0)53,4MM² 50-150MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 57.52,
+              "total": 517.68
+            },
+            {
+              "codigo": "00374893",
+              "descricao": "ALÇA P/ CONECTOR ESTRIBO FECHADO 1/0AWG",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 21.59,
+              "total": 194.31
+            },
+            {
+              "codigo": "00207506",
+              "descricao": "POSTE CONCRETO CIRCULAR 12M 600DAN",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 5,
+              "precoUnitario": 2721.5,
+              "total": 13607.5
+            },
+            {
+              "codigo": "00246108",
+              "descricao": "REGULADOR MONOFÁSICO 15KV 167KVA",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 3,
+              "precoUnitario": 71507.89,
+              "total": 214523.67
+            },
+            {
+              "codigo": "00380334",
+              "descricao": "RELÉ CONTROLE P/ BANCO REGULADORES MONOF",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 1,
+              "precoUnitario": 29111.62,
+              "total": 29111.62
+            }
+          ],
+          "servicos": [
+            {
+              "codigo": "USRDR",
+              "descricao": "MÃO-DE-OBRA BÁSICO CONSTRUÇÃO RURAL",
+              "grupo": "construcao",
+              "quantidadeUS": 8.38,
+              "precoUS": 2823.98,
+              "total": 23664.95
+            },
+            {
+              "codigo": "USPROJ",
+              "descricao": "MÃO-DE-OBRA BÁSICO PROJETO RDA",
+              "grupo": "projeto",
+              "quantidadeUS": 6.4,
+              "precoUS": 82.73,
+              "total": 529.47
+            }
+          ],
+          "totalMateriais": 267739.34,
+          "totalServicos": 24194.42,
+          "total": 291933.76
+        }
+      },
       "verificacao": "Material da biblioteca 278,44695 contra 267,73934 no PROORC de 07/10/2026."
     },
     {
@@ -1650,6 +4470,13 @@
           "maoObra": 44.66828,
           "usConstr": 15.82,
           "unitario": 355.32388
+        },
+        "2026-10": {
+          "material": 310.6556,
+          "maoObra": 44.66828,
+          "usConstr": 15.82,
+          "unitario": 355.32388,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1684,6 +4511,13 @@
           "maoObra": 24.19442,
           "usConstr": 8.570464045341835,
           "unitario": 319.68334
+        },
+        "2026-10": {
+          "material": 295.48892,
+          "maoObra": 24.19442,
+          "usConstr": 8.57046405,
+          "unitario": 319.68334,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1718,6 +4552,13 @@
           "maoObra": 3.388,
           "usConstr": 1.200141693234148,
           "unitario": 28.90741
+        },
+        "2026-10": {
+          "material": 25.51941,
+          "maoObra": 3.388,
+          "usConstr": 1.20014169,
+          "unitario": 28.90741,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1752,9 +4593,635 @@
           "maoObra": 8.61115,
           "usConstr": 3.0492956748985476,
           "unitario": 85.3706
+        },
+        "2026-10": {
+          "material": 76.75945,
+          "maoObra": 8.61115,
+          "usConstr": 3.02,
+          "unitario": 85.3706
         }
       },
-      "composicoes": {}
+      "composicoes": {
+        "2026-10": {
+          "projeto": "1207191220",
+          "descricaoProjeto": "RELIGADOR TRIFÁSICO EM RDR 15KV A + TRAFO ( RURAL SEM BT)",
+          "dataReferencia": "08/10/2026",
+          "unidadesPorProjeto": 1,
+          "materiais": [
+            {
+              "codigo": "00002931",
+              "descricao": "CABO AÇO SM 1/4'' (6,4MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 14.24,
+              "total": 85.44
+            },
+            {
+              "codigo": "00234492",
+              "descricao": "FIO AL 5,1MM COBERTO P/AMARRAÇÃO DE RDP",
+              "unidade": "M",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 4.66,
+              "total": 13.98
+            },
+            {
+              "codigo": "00377194",
+              "descricao": "TUBO ISOLANTE TERMOCONTRÁTIL 100/40 MM",
+              "unidade": "M",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 181.12,
+              "total": 1086.72
+            },
+            {
+              "codigo": "00082107",
+              "descricao": "TUBO ISOLANTE TERMOCONTRÁTIL 120/50 MM",
+              "unidade": "M",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 192.74,
+              "total": 1156.44
+            },
+            {
+              "codigo": "00226092",
+              "descricao": "CABO CA 2X1X35+70MM² TRIPLEX 1KV",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 3,
+              "precoUnitario": 17.34,
+              "total": 52.02
+            },
+            {
+              "codigo": "00225623",
+              "descricao": "CABO AL 1X16MM² ISOLADO 1KV",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 2,
+              "precoUnitario": 1.51,
+              "total": 3.02
+            },
+            {
+              "codigo": "00380856",
+              "descricao": "CABO AL 1X150MM² PROTEGIDO 15KV DUPL CAM",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 18,
+              "precoUnitario": 27.14,
+              "total": 488.52
+            },
+            {
+              "codigo": "00231050",
+              "descricao": "CONETOR TERM COMP 2 FUROS 150MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 40,
+              "precoUnitario": 22.26,
+              "total": 890.4
+            },
+            {
+              "codigo": "00338731",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 16MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 1.87,
+              "total": 3.74
+            },
+            {
+              "codigo": "00227389",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F AÇO 6,4MM / 21MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 12,
+              "precoUnitario": 2.38,
+              "total": 28.56
+            },
+            {
+              "codigo": "00377357",
+              "descricao": "CONETOR TERMINAL ATERRAMENTO TEMPORÁRIO DE CHAVE",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 10.41,
+              "total": 62.46
+            },
+            {
+              "codigo": "00231696",
+              "descricao": "CONETOR CUNHA COBRE ITEM 6",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 6.3,
+              "total": 12.6
+            },
+            {
+              "codigo": "00227850",
+              "descricao": "CONETOR CUNHA COBRE ITEM 1",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 4.44,
+              "total": 79.92
+            },
+            {
+              "codigo": "00227868",
+              "descricao": "CONETOR CUNHA CU ITEM 2",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 3.39,
+              "total": 6.78
+            },
+            {
+              "codigo": "00231753",
+              "descricao": "CONETOR CUNHA ALUMÍNIO ITEM 3 150-50MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 9.38,
+              "total": 28.14
+            },
+            {
+              "codigo": "00075721",
+              "descricao": "ARRUELA QUADRADA 38X18X3MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 22,
+              "precoUnitario": 1.03,
+              "total": 22.66
+            },
+            {
+              "codigo": "00237172",
+              "descricao": "SUPORTE L PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 1,
+              "precoUnitario": 22.26,
+              "total": 22.26
+            },
+            {
+              "codigo": "00237081",
+              "descricao": "SUPORTE TRANSF 240MM POSTE CC MODEL1 IT4",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 1,
+              "precoUnitario": 138.6,
+              "total": 138.6
+            },
+            {
+              "codigo": "00237818",
+              "descricao": "SUPORTE TRANSF 255MM POSTE CC MODEL1 IT5",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 148.63,
+              "total": 445.89
+            },
+            {
+              "codigo": "00237768",
+              "descricao": "SAPATILHA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 1.08,
+              "total": 2.16
+            },
+            {
+              "codigo": "00237156",
+              "descricao": "SELA PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 19.02,
+              "total": 114.12
+            },
+            {
+              "codigo": "00075630",
+              "descricao": "PORCA QUADRADA M16 24X24X13MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 22,
+              "precoUnitario": 1.19,
+              "total": 26.18
+            },
+            {
+              "codigo": "00075036",
+              "descricao": "PARAFUSO CABEÇA SEXTAVADA M12X 40MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 22.09,
+              "total": 132.54
+            },
+            {
+              "codigo": "00074872",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X500MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 18.24,
+              "total": 36.48
+            },
+            {
+              "codigo": "00074880",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X550MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 21.29,
+              "total": 85.16
+            },
+            {
+              "codigo": "00066878",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X45MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 8,
+              "precoUnitario": 3.41,
+              "total": 27.28
+            },
+            {
+              "codigo": "00066886",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X70MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 30,
+              "precoUnitario": 5.81,
+              "total": 174.3
+            },
+            {
+              "codigo": "00066894",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X150MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 10.23,
+              "total": 61.38
+            },
+            {
+              "codigo": "00074799",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X125MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 6.16,
+              "total": 36.96
+            },
+            {
+              "codigo": "00237271",
+              "descricao": "MANILHA SAPATILHA CLASSE 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 11.69,
+              "total": 70.14
+            },
+            {
+              "codigo": "00237784",
+              "descricao": "MÃO-FRANCESA PERFILADA NORMAL 38X5X726MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 29.29,
+              "total": 175.74
+            },
+            {
+              "codigo": "00237289",
+              "descricao": "OLHAL PARA PARAFUSO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 7,
+              "precoUnitario": 8.95,
+              "total": 62.65
+            },
+            {
+              "codigo": "00066688",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M12X 40MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 12,
+              "precoUnitario": 3.05,
+              "total": 36.6
+            },
+            {
+              "codigo": "00234575",
+              "descricao": "GRAMPO ANCORAGEM PARA CABO 150MM² 15KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 31.13,
+              "total": 186.78
+            },
+            {
+              "codigo": "00236984",
+              "descricao": "CINTA DE AÇO D 320MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 43.88,
+              "total": 175.52
+            },
+            {
+              "codigo": "00236901",
+              "descricao": "CINTA DE AÇO D 240MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 34.85,
+              "total": 69.7
+            },
+            {
+              "codigo": "00236927",
+              "descricao": "CINTA DE AÇO D 260MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 10,
+              "precoUnitario": 37.15,
+              "total": 371.5
+            },
+            {
+              "codigo": "00236943",
+              "descricao": "CINTA DE AÇO D 280MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 5,
+              "precoUnitario": 39.27,
+              "total": 196.35
+            },
+            {
+              "codigo": "00236869",
+              "descricao": "CINTA DE AÇO D 200MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 30.24,
+              "total": 120.96
+            },
+            {
+              "codigo": "00236885",
+              "descricao": "CINTA DE AÇO D 220MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 32.52,
+              "total": 195.12
+            },
+            {
+              "codigo": "00219659",
+              "descricao": "ISOLADOR DE ANCORAGEM POLIMÉRICO 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 40.53,
+              "total": 243.18
+            },
+            {
+              "codigo": "00219543",
+              "descricao": "ISOLADOR DISCO GARFO-OLHAL VIDRO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 27.42,
+              "total": 164.52
+            },
+            {
+              "codigo": "00289058",
+              "descricao": "PÁRA-RAIOS 12KV 10KA ZNO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 7,
+              "precoUnitario": 98.46,
+              "total": 689.22
+            },
+            {
+              "codigo": "00293357",
+              "descricao": "PÁRA-RAIOS REDE SECUNDÁRIA ISOLADA 280V 10KA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 56.78,
+              "total": 113.56
+            },
+            {
+              "codigo": "00270439",
+              "descricao": "CHAVE FUSÍVEL 15KV COM PORTA FUSÍVEL 100A 7,1KA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 1,
+              "precoUnitario": 208.29,
+              "total": 208.29
+            },
+            {
+              "codigo": "00374393",
+              "descricao": "FP MANTA AUTO-ADESIVA PARA EMENDA CABO 15KV RDP",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 45.8,
+              "total": 274.8
+            },
+            {
+              "codigo": "00271338",
+              "descricao": "ELO FUSÍVEL BOTÃO 500MM 2H",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 1,
+              "precoUnitario": 7.38,
+              "total": 7.38
+            },
+            {
+              "codigo": "00375058",
+              "descricao": "COBERTURA PROTETORA P/ BCH BT TRANSFORMADOR ITEM 1",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 7.53,
+              "total": 15.06
+            },
+            {
+              "codigo": "00039586",
+              "descricao": "COBERTURA PROTETORA PARA BUCHA DE EQUIPAMENTO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 1,
+              "precoUnitario": 7.65,
+              "total": 7.65
+            },
+            {
+              "codigo": "00378810",
+              "descricao": "CONECTOR TERMINAL P/ BUCHA,150 MM²,RETO,COMPRESSÃO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 32.89,
+              "total": 197.34
+            },
+            {
+              "codigo": "00379577",
+              "descricao": "CRUZETA PRFV RETANGULAR 2800X112,5X90MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 291.91,
+              "total": 1751.46
+            },
+            {
+              "codigo": "00378842",
+              "descricao": "GRAMPO LINHA VIVA (1/0)53,4MM² 50-150MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 57.52,
+              "total": 345.12
+            },
+            {
+              "codigo": "00375376",
+              "descricao": "CONETOR CUNHA ALUMÍNIO ITEM 2",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 9.45,
+              "total": 18.9
+            },
+            {
+              "codigo": "00375377",
+              "descricao": "CONETOR CUNHA ALUMÍNIO ITEM 5",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 12,
+              "precoUnitario": 7.71,
+              "total": 92.52
+            },
+            {
+              "codigo": "00375381",
+              "descricao": "CONETOR CUNHA ALUMÍNIO ITEM 9",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 24.15,
+              "total": 144.9
+            },
+            {
+              "codigo": "00207530",
+              "descricao": "POSTE CONCRETO CIRCULAR 13M 600DAN",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 1,
+              "precoUnitario": 3343.83,
+              "total": 3343.83
+            },
+            {
+              "codigo": "00273003",
+              "descricao": "FP RELIGADOR 3F 24KV 560A 12KA",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 1,
+              "precoUnitario": 53106.07,
+              "total": 53106.07
+            },
+            {
+              "codigo": "00245779",
+              "descricao": "TRANSFORMADOR 1F 15KV 10KVA",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 1,
+              "precoUnitario": 3922.31,
+              "total": 3922.31
+            },
+            {
+              "codigo": "00273417",
+              "descricao": "CHAVE FACA UNIPOLAR 15KV 630A",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 9,
+              "precoUnitario": 569.73,
+              "total": 5127.57
+            }
+          ],
+          "servicos": [
+            {
+              "codigo": "USRDR",
+              "descricao": "MÃO-DE-OBRA BÁSICO CONSTRUÇÃO RURAL",
+              "grupo": "construcao",
+              "quantidadeUS": 3.02,
+              "precoUS": 2823.98,
+              "total": 8528.42
+            },
+            {
+              "codigo": "USPROJ",
+              "descricao": "MÃO-DE-OBRA BÁSICO PROJETO RDA",
+              "grupo": "projeto",
+              "quantidadeUS": 1,
+              "precoUS": 82.73,
+              "total": 82.73
+            }
+          ],
+          "totalMateriais": 76759.45,
+          "totalServicos": 8611.15,
+          "total": 85370.6
+        }
+      }
     },
     {
       "id": "equip_relig_tri_24kv_urbano",
@@ -1786,6 +5253,13 @@
           "maoObra": 6.74931,
           "usConstr": 2.3899992209576557,
           "unitario": 63.8299
+        },
+        "2026-10": {
+          "material": 57.08059,
+          "maoObra": 6.74931,
+          "usConstr": 2.38999922,
+          "unitario": 63.8299,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1820,6 +5294,13 @@
           "maoObra": 8.52842,
           "usConstr": 3.0200001416440627,
           "unitario": 126.61692
+        },
+        "2026-10": {
+          "material": 118.0885,
+          "maoObra": 8.52842,
+          "usConstr": 3.02000014,
+          "unitario": 126.61692,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {},
@@ -1856,6 +5337,13 @@
           "maoObra": 9.71449,
           "usConstr": 3.439999575067812,
           "unitario": 32.63838
+        },
+        "2026-10": {
+          "material": 22.92389,
+          "maoObra": 9.71449,
+          "usConstr": 3.43999958,
+          "unitario": 32.63838,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1890,6 +5378,13 @@
           "maoObra": 9.71449,
           "usConstr": 3.439999575067812,
           "unitario": 35.31594
+        },
+        "2026-10": {
+          "material": 25.60145,
+          "maoObra": 9.71449,
+          "usConstr": 3.43999958,
+          "unitario": 35.31594,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1924,9 +5419,497 @@
           "maoObra": 9.71449,
           "usConstr": 3.439999575067812,
           "unitario": 42.380869999999994
+        },
+        "2026-10": {
+          "material": 32.66638,
+          "maoObra": 9.71449,
+          "usConstr": 3.44,
+          "unitario": 42.38087
         }
       },
-      "composicoes": {}
+      "composicoes": {
+        "2026-10": {
+          "projeto": "9912927400",
+          "descricaoProjeto": "Lista banco de capacitores automático 300 kVAR",
+          "dataReferencia": "08/10/2026",
+          "unidadesPorProjeto": 1,
+          "materiais": [
+            {
+              "codigo": "00002931",
+              "descricao": "CABO AÇO SM 1/4'' (6,4MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6.35,
+              "precoUnitario": 14.24,
+              "total": 90.42
+            },
+            {
+              "codigo": "00220475",
+              "descricao": "CABO CA 34MM² (2AWG)",
+              "unidade": "KG",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 0.97,
+              "precoUnitario": 38.83,
+              "total": 37.67
+            },
+            {
+              "codigo": "00002964",
+              "descricao": "CABO AÇO HS 3/8' (9,5MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 4.18,
+              "precoUnitario": 13.32,
+              "total": 55.68
+            },
+            {
+              "codigo": "00234492",
+              "descricao": "FIO AL 5,1MM COBERTO P/AMARRAÇÃO DE RDP",
+              "unidade": "M",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 4.66,
+              "total": 13.98
+            },
+            {
+              "codigo": "00380855",
+              "descricao": "CABO AL 1X50MM² PROTEGIDO 15KV DUPL CAM",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 42,
+              "precoUnitario": 5.44,
+              "total": 228.48
+            },
+            {
+              "codigo": "00227389",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F AÇO 6,4MM / 21MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 2.38,
+              "total": 14.28
+            },
+            {
+              "codigo": "00231175",
+              "descricao": "CONETOR PARA ATERRAMENTO DE FERRAGENS DE IP",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 1.67,
+              "total": 5.01
+            },
+            {
+              "codigo": "00227850",
+              "descricao": "CONETOR CUNHA COBRE ITEM 1",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 1,
+              "precoUnitario": 4.44,
+              "total": 4.44
+            },
+            {
+              "codigo": "00231795",
+              "descricao": "CONETOR CUNHA AL 50MM² COM ESTRIBO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 57.68,
+              "total": 173.04
+            },
+            {
+              "codigo": "00377705",
+              "descricao": "CRUZETA PRFV RETANGULAR 2400X112,5X90MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 254.83,
+              "total": 509.66
+            },
+            {
+              "codigo": "00377602",
+              "descricao": "FP CRUZETA DE EUCALIPTO 2400MM ITEM 1",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 1,
+              "precoUnitario": 9.13,
+              "total": 9.13
+            },
+            {
+              "codigo": "00231555",
+              "descricao": "SUPORTE Z PARA CHAVE FUSÍVEL",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 25.84,
+              "total": 103.36
+            },
+            {
+              "codigo": "00237768",
+              "descricao": "SAPATILHA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 1.08,
+              "total": 4.32
+            },
+            {
+              "codigo": "00237156",
+              "descricao": "SELA PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 19.02,
+              "total": 38.04
+            },
+            {
+              "codigo": "00074872",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X500MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 18.24,
+              "total": 36.48
+            },
+            {
+              "codigo": "00074856",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X400MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 16.03,
+              "total": 64.12
+            },
+            {
+              "codigo": "00066878",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X45MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 25,
+              "precoUnitario": 3.41,
+              "total": 85.25
+            },
+            {
+              "codigo": "00066886",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X70MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 36,
+              "precoUnitario": 5.81,
+              "total": 209.16
+            },
+            {
+              "codigo": "00074773",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M12X150MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 8.23,
+              "total": 49.38
+            },
+            {
+              "codigo": "00074799",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X125MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 6.16,
+              "total": 12.32
+            },
+            {
+              "codigo": "00237271",
+              "descricao": "MANILHA SAPATILHA CLASSE 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 11.69,
+              "total": 70.14
+            },
+            {
+              "codigo": "00237784",
+              "descricao": "MÃO-FRANCESA PERFILADA NORMAL 38X5X726MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 29.29,
+              "total": 58.58
+            },
+            {
+              "codigo": "00237289",
+              "descricao": "OLHAL PARA PARAFUSO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 8,
+              "precoUnitario": 8.95,
+              "total": 71.6
+            },
+            {
+              "codigo": "00066688",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M12X 40MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 3.05,
+              "total": 6.1
+            },
+            {
+              "codigo": "00222539",
+              "descricao": "HASTE ATERRAMENTO 2400MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 58.99,
+              "total": 176.97
+            },
+            {
+              "codigo": "00234567",
+              "descricao": "GRAMPO ANCORAGEM PARA CABO 50MM² 15KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 26.88,
+              "total": 161.28
+            },
+            {
+              "codigo": "00236844",
+              "descricao": "CINTA DE AÇO D 180MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 5,
+              "precoUnitario": 27.92,
+              "total": 139.6
+            },
+            {
+              "codigo": "00236869",
+              "descricao": "CINTA DE AÇO D 200MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 5,
+              "precoUnitario": 30.24,
+              "total": 151.2
+            },
+            {
+              "codigo": "00236885",
+              "descricao": "CINTA DE AÇO D 220MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 32.52,
+              "total": 97.56
+            },
+            {
+              "codigo": "00357255",
+              "descricao": "BRAÇO SUPORTE TIPO J RDP 15KV A 36,2KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 1,
+              "precoUnitario": 798.59,
+              "total": 798.59
+            },
+            {
+              "codigo": "00223818",
+              "descricao": "CANTONEIRA RETA PARA BRAÇO TIPO C RDP",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 135.98,
+              "total": 271.96
+            },
+            {
+              "codigo": "00219659",
+              "descricao": "ISOLADOR DE ANCORAGEM POLIMÉRICO 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 40.53,
+              "total": 243.18
+            },
+            {
+              "codigo": "00219642",
+              "descricao": "ISOLADOR DE PINO POLIMÉRICO 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 15.06,
+              "total": 45.18
+            },
+            {
+              "codigo": "00237677",
+              "descricao": "ALÇA PREFORMADA ESTAI CABO AÇO 9,5MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 12.97,
+              "total": 51.88
+            },
+            {
+              "codigo": "00289058",
+              "descricao": "PÁRA-RAIOS 12KV 10KA ZNO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 98.46,
+              "total": 295.38
+            },
+            {
+              "codigo": "00285031",
+              "descricao": "CHAVE COMANDO CAPACITOR MONOFÁSICO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 141.37,
+              "total": 424.11
+            },
+            {
+              "codigo": "00270439",
+              "descricao": "CHAVE FUSÍVEL 15KV COM PORTA FUSÍVEL 100A 7,1KA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 208.29,
+              "total": 624.87
+            },
+            {
+              "codigo": "00039586",
+              "descricao": "COBERTURA PROTETORA PARA BUCHA DE EQUIPAMENTO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 7.65,
+              "total": 22.95
+            },
+            {
+              "codigo": "00364562",
+              "descricao": "COBERTURA PROTETORA CONETOR RDP 15/25KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 11.35,
+              "total": 34.05
+            },
+            {
+              "codigo": "00378809",
+              "descricao": "CONECTOR TERMINAL P/ BUCHA,50 MM²,RETO,COMPRESSÃO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 15.21,
+              "total": 91.26
+            },
+            {
+              "codigo": "00376195",
+              "descricao": "PINO CURTO PARA ISOLADOR PILAR",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 8.11,
+              "total": 24.33
+            },
+            {
+              "codigo": "00211789",
+              "descricao": "BRAÇO SUPORTE TIPO C RDP 15KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 186.54,
+              "total": 373.08
+            },
+            {
+              "codigo": "00378842",
+              "descricao": "GRAMPO LINHA VIVA (1/0)53,4MM² 50-150MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 57.52,
+              "total": 172.56
+            },
+            {
+              "codigo": "00207449",
+              "descricao": "POSTE CONCRETO CIRCULAR 11M 600DAN",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 2,
+              "precoUnitario": 2427.61,
+              "total": 4855.22
+            },
+            {
+              "codigo": "00284992",
+              "descricao": "CAPACITOR 15KV 100KVAR",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 3,
+              "precoUnitario": 3987.79,
+              "total": 11963.37
+            },
+            {
+              "codigo": "00379366",
+              "descricao": "CONTROLE AUTOMÁTICO P/ BANCO CAPACITORES, 15KV",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 1,
+              "precoUnitario": 9697.16,
+              "total": 9697.16
+            }
+          ],
+          "servicos": [
+            {
+              "codigo": "USRDA",
+              "descricao": "MÃO-DE-OBRA BÁSICO CONSTRUÇÃO RDA",
+              "grupo": "construcao",
+              "quantidadeUS": 3.44,
+              "precoUS": 2823.98,
+              "total": 9714.49
+            }
+          ],
+          "totalMateriais": 32666.38,
+          "totalServicos": 9714.49,
+          "total": 42380.87
+        }
+      }
     },
     {
       "id": "equip_bcap_600_auto",
@@ -1958,6 +5941,13 @@
           "maoObra": 9.71449,
           "usConstr": 3.439999575067812,
           "unitario": 45.05843
+        },
+        "2026-10": {
+          "material": 35.34394,
+          "maoObra": 9.71449,
+          "usConstr": 3.43999958,
+          "unitario": 45.05843,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -1995,9 +5985,830 @@
           "maoObra": 71.688934,
           "usConstr": 25.39459227771874,
           "unitario": 430.133604
+        },
+        "2026-10": {
+          "material": 358.44467,
+          "maoObra": 71.688934,
+          "usConstr": 0,
+          "unitario": 430.133604
         }
       },
-      "composicoes": {}
+      "composicoes": {
+        "2026-10": {
+          "projeto": "9988776654",
+          "descricaoProjeto": "Posto de Transformação, Banco monofásico Elevador",
+          "dataReferencia": "08/10/2026",
+          "unidadesPorProjeto": 1,
+          "materiais": [
+            {
+              "codigo": "00002931",
+              "descricao": "CABO AÇO SM 1/4'' (6,4MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 21.11,
+              "precoUnitario": 14.24,
+              "total": 300.61
+            },
+            {
+              "codigo": "00002964",
+              "descricao": "CABO AÇO HS 3/8' (9,5MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 378,
+              "precoUnitario": 13.32,
+              "total": 5034.96
+            },
+            {
+              "codigo": "00220673",
+              "descricao": "CABO CA 170MM² (336,4MCM)",
+              "unidade": "KG",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 132.39,
+              "precoUnitario": 37.16,
+              "total": 4919.61
+            },
+            {
+              "codigo": "00220418",
+              "descricao": "CABO CAA 53MM² (1/0AWG)",
+              "unidade": "KG",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 21.91,
+              "precoUnitario": 20.48,
+              "total": 448.72
+            },
+            {
+              "codigo": "00234492",
+              "descricao": "FIO AL 5,1MM COBERTO P/AMARRAÇÃO DE RDP",
+              "unidade": "M",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 5,
+              "precoUnitario": 4.66,
+              "total": 23.3
+            },
+            {
+              "codigo": "00225813",
+              "descricao": "CABO CU 1X16MM² ISOLADO 750V",
+              "unidade": "M",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 100,
+              "precoUnitario": 18.89,
+              "total": 1889
+            },
+            {
+              "codigo": "00373007",
+              "descricao": "CABO AL 1X70MM² PROTEGIDO 34,5KV",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 6,
+              "precoUnitario": 27.09,
+              "total": 162.54
+            },
+            {
+              "codigo": "00225698",
+              "descricao": "CABO AL 1X120MM² ISOLADO 15KV",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 15,
+              "precoUnitario": 35.4,
+              "total": 531
+            },
+            {
+              "codigo": "00375967",
+              "descricao": "CABO AL 3X1X70MM²+3/8'' ISOLADO 35KV",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 13,
+              "precoUnitario": 303.2,
+              "total": 3941.6
+            },
+            {
+              "codigo": "00231548",
+              "descricao": "CABO AL 1X50MM² PROTEGIDO 15KV",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 53.25,
+              "precoUnitario": 4.63,
+              "total": 246.55
+            },
+            {
+              "codigo": "00231050",
+              "descricao": "CONETOR TERM COMP 2 FUROS 150MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 7,
+              "precoUnitario": 22.26,
+              "total": 155.82
+            },
+            {
+              "codigo": "00231886",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F 50MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 2.02,
+              "total": 6.06
+            },
+            {
+              "codigo": "00227389",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F AÇO 6,4MM / 21MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 2.38,
+              "total": 42.84
+            },
+            {
+              "codigo": "00227348",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F CABO AÇO 9,5MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 8,
+              "precoUnitario": 4.88,
+              "total": 39.04
+            },
+            {
+              "codigo": "00377357",
+              "descricao": "CONETOR TERMINAL ATERRAMENTO TEMPORÁRIO DE CHAVE",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 10.41,
+              "total": 31.23
+            },
+            {
+              "codigo": "00227066",
+              "descricao": "CONETOR TERM COMP 2 FUROS 54MM²/70MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 5.9,
+              "total": 17.7
+            },
+            {
+              "codigo": "00227850",
+              "descricao": "CONETOR CUNHA COBRE ITEM 1",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 4.44,
+              "total": 8.88
+            },
+            {
+              "codigo": "00214254",
+              "descricao": "CRUZETA CONTRAPOSTE EUCALIPTO 5M MÉDIO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 12,
+              "precoUnitario": 180.61,
+              "total": 2167.32
+            },
+            {
+              "codigo": "00075721",
+              "descricao": "ARRUELA QUADRADA 38X18X3MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 404,
+              "precoUnitario": 1.03,
+              "total": 416.12
+            },
+            {
+              "codigo": "00237172",
+              "descricao": "SUPORTE L PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 22.26,
+              "total": 200.34
+            },
+            {
+              "codigo": "00377189",
+              "descricao": "SUPORTE DE TOPO PARA ISOLADOR PILAR",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 28.66,
+              "total": 85.98
+            },
+            {
+              "codigo": "00237768",
+              "descricao": "SAPATILHA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 58,
+              "precoUnitario": 1.08,
+              "total": 62.64
+            },
+            {
+              "codigo": "00237156",
+              "descricao": "SELA PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 24,
+              "precoUnitario": 19.02,
+              "total": 456.48
+            },
+            {
+              "codigo": "00375233",
+              "descricao": "PINO PARA ISOLADOR POLIMÉRICO - CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 27.36,
+              "total": 109.44
+            },
+            {
+              "codigo": "00075630",
+              "descricao": "PORCA QUADRADA M16 24X24X13MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 163,
+              "precoUnitario": 1.19,
+              "total": 193.97
+            },
+            {
+              "codigo": "00375870",
+              "descricao": "PERFIL L-88,9X63,6X10X102MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 12,
+              "precoUnitario": 24.68,
+              "total": 296.16
+            },
+            {
+              "codigo": "00375873",
+              "descricao": "PERFIL L-127X127X24,1X513MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 8,
+              "precoUnitario": 180,
+              "total": 1440
+            },
+            {
+              "codigo": "00375871",
+              "descricao": "PERFIL L-88,9X63,5X10X127MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 30,
+              "total": 480
+            },
+            {
+              "codigo": "00375872",
+              "descricao": "PERFIL L-88,9X63,5X10X922MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 12,
+              "precoUnitario": 149.12,
+              "total": 1789.44
+            },
+            {
+              "codigo": "00075044",
+              "descricao": "PARAFUSO CABEÇA SEXTAVADA M12X 50MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 58,
+              "precoUnitario": 24.41,
+              "total": 1415.78
+            },
+            {
+              "codigo": "00074914",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X700MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 39,
+              "precoUnitario": 28.85,
+              "total": 1125.15
+            },
+            {
+              "codigo": "00074815",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X200MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 8.77,
+              "total": 157.86
+            },
+            {
+              "codigo": "00074864",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X450MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 19.86,
+              "total": 317.76
+            },
+            {
+              "codigo": "00066878",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X45MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 26,
+              "precoUnitario": 3.41,
+              "total": 88.66
+            },
+            {
+              "codigo": "00066886",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X70MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 52,
+              "precoUnitario": 5.81,
+              "total": 302.12
+            },
+            {
+              "codigo": "00066894",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X150MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 24,
+              "precoUnitario": 10.23,
+              "total": 245.52
+            },
+            {
+              "codigo": "00074799",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X125MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 6.16,
+              "total": 12.32
+            },
+            {
+              "codigo": "00074807",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X150MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 56,
+              "precoUnitario": 7.08,
+              "total": 396.48
+            },
+            {
+              "codigo": "00237271",
+              "descricao": "MANILHA SAPATILHA CLASSE 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 12,
+              "precoUnitario": 11.69,
+              "total": 140.28
+            },
+            {
+              "codigo": "00237784",
+              "descricao": "MÃO-FRANCESA PERFILADA NORMAL 38X5X726MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 66,
+              "precoUnitario": 29.29,
+              "total": 1933.14
+            },
+            {
+              "codigo": "00237289",
+              "descricao": "OLHAL PARA PARAFUSO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 36,
+              "precoUnitario": 8.95,
+              "total": 322.2
+            },
+            {
+              "codigo": "00237743",
+              "descricao": "HASTE ÂNCORA-OLHAL 1600MM C/2 PORCAS E 1 ARRUELA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 48.61,
+              "total": 874.98
+            },
+            {
+              "codigo": "00222539",
+              "descricao": "HASTE ATERRAMENTO 2400MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 10,
+              "precoUnitario": 58.99,
+              "total": 589.9
+            },
+            {
+              "codigo": "00374439",
+              "descricao": "GRAMPO ANCORAGEM PARA CABO 70MM² 35KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 244.94,
+              "total": 734.82
+            },
+            {
+              "codigo": "00234567",
+              "descricao": "GRAMPO ANCORAGEM PARA CABO 50MM² 15KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 26.88,
+              "total": 80.64
+            },
+            {
+              "codigo": "00237396",
+              "descricao": "GANCHO-OLHAL DE AÇO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 12,
+              "precoUnitario": 9.34,
+              "total": 112.08
+            },
+            {
+              "codigo": "00236984",
+              "descricao": "CINTA DE AÇO D 320MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 43.88,
+              "total": 87.76
+            },
+            {
+              "codigo": "00237032",
+              "descricao": "CINTA DE AÇO D 380MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 8,
+              "precoUnitario": 50.05,
+              "total": 400.4
+            },
+            {
+              "codigo": "00236927",
+              "descricao": "CINTA DE AÇO D 260MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 24,
+              "precoUnitario": 37.15,
+              "total": 891.6
+            },
+            {
+              "codigo": "00237719",
+              "descricao": "CHAPA PARA ESTAI",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 9.01,
+              "total": 162.18
+            },
+            {
+              "codigo": "00237727",
+              "descricao": "CHAPA PARA ÂNCORA 320X320MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 56.25,
+              "total": 1012.5
+            },
+            {
+              "codigo": "00219659",
+              "descricao": "ISOLADOR DE ANCORAGEM POLIMÉRICO 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 40.53,
+              "total": 121.59
+            },
+            {
+              "codigo": "00219667",
+              "descricao": "ISOLADOR DE ANCORAGEM POLIMÉRICO 36,2 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 15,
+              "precoUnitario": 69.39,
+              "total": 1040.85
+            },
+            {
+              "codigo": "00219642",
+              "descricao": "ISOLADOR DE PINO POLIMÉRICO 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 15.06,
+              "total": 90.36
+            },
+            {
+              "codigo": "00228809",
+              "descricao": "ALÇA PREFORMADA CA/CAA 170MM² (336,4MCM)",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 10,
+              "precoUnitario": 47.88,
+              "total": 478.8
+            },
+            {
+              "codigo": "00230391",
+              "descricao": "LAÇO PREFORMADO DE TOPO CA/CAA 170MM² (336,4MCM)",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 10.94,
+              "total": 43.76
+            },
+            {
+              "codigo": "00219717",
+              "descricao": "ALÇA PREFORMADA OLHAL CA/CAA 54MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 18.75,
+              "total": 112.5
+            },
+            {
+              "codigo": "00237677",
+              "descricao": "ALÇA PREFORMADA ESTAI CABO AÇO 9,5MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 50,
+              "precoUnitario": 12.97,
+              "total": 648.5
+            },
+            {
+              "codigo": "00289058",
+              "descricao": "PÁRA-RAIOS 12KV 10KA ZNO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 98.46,
+              "total": 295.38
+            },
+            {
+              "codigo": "00375258",
+              "descricao": "PÁRA-RAIOS 30KV 10KA ZNO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 374.97,
+              "total": 1124.91
+            },
+            {
+              "codigo": "00270488",
+              "descricao": "CHAVE FUSÍVEL 15KV PF 200A 7,1 KA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 383.21,
+              "total": 1149.63
+            },
+            {
+              "codigo": "00375586",
+              "descricao": "VIGA C-254X29,7X4028MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 1600,
+              "total": 6400
+            },
+            {
+              "codigo": "00375588",
+              "descricao": "VIGA I-W 250X28,4X6200MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 2530,
+              "total": 7590
+            },
+            {
+              "codigo": "00375441",
+              "descricao": "TERMINAL MODULAR EXTERNO - TME 70MM² 35KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 10,
+              "precoUnitario": 583.36,
+              "total": 5833.6
+            },
+            {
+              "codigo": "00229823",
+              "descricao": "TERMINAL MODULAR EXTERNO - TME 120MM² 15KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 12,
+              "precoUnitario": 243.04,
+              "total": 2916.48
+            },
+            {
+              "codigo": "00272013",
+              "descricao": "ELO FUSÍVEL BOTÃO 500MM 140K",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 78.77,
+              "total": 236.31
+            },
+            {
+              "codigo": "00327692",
+              "descricao": "BRAÇADEIRA AMARRAR CABO MULTIPLEXADO BT",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 100,
+              "precoUnitario": 2.02,
+              "total": 202
+            },
+            {
+              "codigo": "00364562",
+              "descricao": "COBERTURA PROTETORA CONETOR RDP 15/25KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 11.35,
+              "total": 68.1
+            },
+            {
+              "codigo": "00378698",
+              "descricao": "ISOLADOR PILAR POLIMÉRICO C/PINO 165MM M20 36,2 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 88,
+              "total": 352
+            },
+            {
+              "codigo": "00378810",
+              "descricao": "CONECTOR TERMINAL P/ BUCHA,150 MM²,RETO,COMPRESSÃO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 73,
+              "precoUnitario": 32.89,
+              "total": 2400.97
+            },
+            {
+              "codigo": "00379577",
+              "descricao": "CRUZETA PRFV RETANGULAR 2800X112,5X90MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 291.91,
+              "total": 583.82
+            },
+            {
+              "codigo": "00379680",
+              "descricao": "CONETOR CUNHA CU ITEM 8",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 66,
+              "precoUnitario": 4.4,
+              "total": 290.4
+            },
+            {
+              "codigo": "00380253",
+              "descricao": "CRUZETA METÁLICA 6000X90X90MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 2,
+              "precoUnitario": 1684.09,
+              "total": 3368.18
+            },
+            {
+              "codigo": "00376072",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M12X75MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 80,
+              "precoUnitario": 2,
+              "total": 160
+            },
+            {
+              "codigo": "00228858",
+              "descricao": "ALÇA,PREFORMADA,DISTRIBUIÇÃO,AÇO CARBONO.",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 26.17,
+              "total": 104.68
+            },
+            {
+              "codigo": "00378842",
+              "descricao": "GRAMPO LINHA VIVA (1/0)53,4MM² 50-150MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 57.52,
+              "total": 172.56
+            },
+            {
+              "codigo": "00207514",
+              "descricao": "POSTE CONCRETO CIRCULAR 12M1000DAN",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 4,
+              "precoUnitario": 3676.38,
+              "total": 14705.52
+            },
+            {
+              "codigo": "00207571",
+              "descricao": "POSTE CONCRETO DUPLO T 12M 300DAN",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 1,
+              "precoUnitario": 1635.35,
+              "total": 1635.35
+            },
+            {
+              "codigo": "00214577",
+              "descricao": "POSTE CONCRETO DUPLO T 12M 600DAN",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 3,
+              "precoUnitario": 2124.68,
+              "total": 6374.04
+            },
+            {
+              "codigo": "00376739",
+              "descricao": "TRANSFORMADOR POTÊNCIA MONO 36,2KV 0,835MVA 7,9KV",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 3,
+              "precoUnitario": 58300,
+              "total": 174900
+            }
+          ],
+          "servicos": [],
+          "totalMateriais": 270301.77,
+          "totalServicos": 0,
+          "total": 270301.77,
+          "religadorAdicional": 88142.9,
+          "percentualMaoObra": 0.2
+        }
+      }
     },
     {
       "id": "equip_pt_5mva",
@@ -2032,6 +6843,13 @@
           "maoObra": 166.490296,
           "usConstr": 58.97637123627347,
           "unitario": 998.9417759999999
+        },
+        "2026-10": {
+          "material": 832.45148,
+          "maoObra": 166.490296,
+          "usConstr": 58.97637124,
+          "unitario": 998.941776,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -2061,6 +6879,12 @@
           "unitario": 0.22584
         },
         "2024": {
+          "material": 0,
+          "maoObra": 0.22584,
+          "usConstr": 0.08,
+          "unitario": 0.22584
+        },
+        "2026-10": {
           "material": 0,
           "maoObra": 0.22584,
           "usConstr": 0.08,
@@ -2098,6 +6922,12 @@
           "maoObra": 0.8469,
           "usConstr": 0.3,
           "unitario": 0.8469
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 0.8469,
+          "usConstr": 0.3,
+          "unitario": 0.8469
         }
       },
       "composicoes": {}
@@ -2127,6 +6957,12 @@
           "unitario": 1.6938
         },
         "2024": {
+          "material": 0,
+          "maoObra": 1.6938,
+          "usConstr": 0.6,
+          "unitario": 1.6938
+        },
+        "2026-10": {
           "material": 0,
           "maoObra": 1.6938,
           "usConstr": 0.6,
@@ -2164,6 +7000,13 @@
           "maoObra": 0,
           "usConstr": 6.98,
           "unitario": 35
+        },
+        "2026-10": {
+          "material": 10.2,
+          "maoObra": 0,
+          "usConstr": 6.98,
+          "unitario": 35,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -2197,6 +7040,13 @@
           "maoObra": 0,
           "usConstr": 12.96,
           "unitario": 55
+        },
+        "2026-10": {
+          "material": 13.2,
+          "maoObra": 0,
+          "usConstr": 12.96,
+          "unitario": 55,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -2230,6 +7080,13 @@
           "maoObra": 0,
           "usConstr": 12.96,
           "unitario": 50
+        },
+        "2026-10": {
+          "material": 13.2,
+          "maoObra": 0,
+          "usConstr": 12.96,
+          "unitario": 50,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -2263,6 +7120,13 @@
           "maoObra": 0,
           "usConstr": 5.13,
           "unitario": 25
+        },
+        "2026-10": {
+          "material": 6.8,
+          "maoObra": 0,
+          "usConstr": 5.13,
+          "unitario": 25,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -2296,6 +7160,13 @@
           "maoObra": 0,
           "usConstr": 2.52,
           "unitario": 12
+        },
+        "2026-10": {
+          "material": 6.8,
+          "maoObra": 0,
+          "usConstr": 2.52,
+          "unitario": 12,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -2329,6 +7200,12 @@
           "maoObra": 15.435874680000001,
           "usConstr": 5.466,
           "unitario": 15.435874680000001
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 15.43587468,
+          "usConstr": 5.466,
+          "unitario": 15.43587468
         }
       },
       "composicoes": {}
@@ -2358,6 +7235,12 @@
           "unitario": 22.24731444
         },
         "2024": {
+          "material": 0,
+          "maoObra": 22.24731444,
+          "usConstr": 7.878,
+          "unitario": 22.24731444
+        },
+        "2026-10": {
           "material": 0,
           "maoObra": 22.24731444,
           "usConstr": 7.878,
@@ -2395,6 +7278,12 @@
           "maoObra": 28.906259280000004,
           "usConstr": 10.236,
           "unitario": 28.906259280000004
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 28.90625928,
+          "usConstr": 10.236,
+          "unitario": 28.90625928
         }
       },
       "composicoes": {}
@@ -2428,6 +7317,12 @@
           "maoObra": 15.435874680000001,
           "usConstr": 5.466,
           "unitario": 15.435874680000001
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 15.43587468,
+          "usConstr": 5.466,
+          "unitario": 15.43587468
         }
       },
       "composicoes": {}
@@ -2461,6 +7356,12 @@
           "maoObra": 28.906259280000004,
           "usConstr": 10.236,
           "unitario": 28.906259280000004
+        },
+        "2026-10": {
+          "material": 0,
+          "maoObra": 28.90625928,
+          "usConstr": 10.236,
+          "unitario": 28.90625928
         }
       },
       "composicoes": {}
@@ -2494,6 +7395,13 @@
           "maoObra": 0,
           "usConstr": 1.7,
           "unitario": 10
+        },
+        "2026-10": {
+          "material": 1.7,
+          "maoObra": 0,
+          "usConstr": 1.7,
+          "unitario": 10,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -2527,6 +7435,13 @@
           "maoObra": 0,
           "usConstr": 2.05,
           "unitario": 20
+        },
+        "2026-10": {
+          "material": 3.4,
+          "maoObra": 0,
+          "usConstr": 2.05,
+          "unitario": 20,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
@@ -2560,9 +7475,880 @@
           "maoObra": 0,
           "usConstr": 2,
           "unitario": 20
+        },
+        "2026-10": {
+          "material": 3.4,
+          "maoObra": 0,
+          "usConstr": 2,
+          "unitario": 20,
+          "naoAtualizadoPeloProorc": true
         }
       },
       "composicoes": {}
+    },
+    {
+      "id": "equip_brt_200_kva_34_5_kv",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "BRT 200 kVA, 34,5 kV",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1255039294",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2026-10": {
+          "material": 346.34024,
+          "maoObra": 44.66828,
+          "usConstr": 15.63,
+          "unitario": 391.00852
+        }
+      },
+      "composicoes": {
+        "2026-10": {
+          "projeto": "1255039294",
+          "descricaoProjeto": "BRT 200 kVA, 34,5 kV",
+          "dataReferencia": "08/10/2026",
+          "unidadesPorProjeto": 1,
+          "materiais": [
+            {
+              "codigo": "00002931",
+              "descricao": "CABO AÇO SM 1/4'' (6,4MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 13.5,
+              "precoUnitario": 14.24,
+              "total": 192.24
+            },
+            {
+              "codigo": "00002964",
+              "descricao": "CABO AÇO HS 3/8' (9,5MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 128,
+              "precoUnitario": 13.32,
+              "total": 1704.96
+            },
+            {
+              "codigo": "00380855",
+              "descricao": "CABO AL 1X50MM² PROTEGIDO 15KV DUPL CAM",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 9,
+              "precoUnitario": 5.44,
+              "total": 48.96
+            },
+            {
+              "codigo": "00231886",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F 50MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 27,
+              "precoUnitario": 2.02,
+              "total": 54.54
+            },
+            {
+              "codigo": "00227389",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F AÇO 6,4MM / 21MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 27,
+              "precoUnitario": 2.38,
+              "total": 64.26
+            },
+            {
+              "codigo": "00227850",
+              "descricao": "CONETOR CUNHA COBRE ITEM 1",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 4.44,
+              "total": 13.32
+            },
+            {
+              "codigo": "00214254",
+              "descricao": "CRUZETA CONTRAPOSTE EUCALIPTO 5M MÉDIO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 180.61,
+              "total": 722.44
+            },
+            {
+              "codigo": "00075721",
+              "descricao": "ARRUELA QUADRADA 38X18X3MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 49,
+              "precoUnitario": 1.03,
+              "total": 50.47
+            },
+            {
+              "codigo": "00237172",
+              "descricao": "SUPORTE L PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 22.26,
+              "total": 200.34
+            },
+            {
+              "codigo": "00377189",
+              "descricao": "SUPORTE DE TOPO PARA ISOLADOR PILAR",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 28.66,
+              "total": 85.98
+            },
+            {
+              "codigo": "00237768",
+              "descricao": "SAPATILHA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 26,
+              "precoUnitario": 1.08,
+              "total": 28.08
+            },
+            {
+              "codigo": "00237503",
+              "descricao": "FP PINO DE TOPO 419MM PARA ISOLADOR 24,2 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 9.8,
+              "total": 58.8
+            },
+            {
+              "codigo": "00074880",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X550MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 21.29,
+              "total": 127.74
+            },
+            {
+              "codigo": "00074831",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X300MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 33,
+              "precoUnitario": 10.99,
+              "total": 362.67
+            },
+            {
+              "codigo": "00066878",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X45MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 3.41,
+              "total": 10.23
+            },
+            {
+              "codigo": "00066886",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X70MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 5.81,
+              "total": 104.58
+            },
+            {
+              "codigo": "00237289",
+              "descricao": "OLHAL PARA PARAFUSO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 23,
+              "precoUnitario": 8.95,
+              "total": 205.85
+            },
+            {
+              "codigo": "00237743",
+              "descricao": "HASTE ÂNCORA-OLHAL 1600MM C/2 PORCAS E 1 ARRUELA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 48.61,
+              "total": 777.76
+            },
+            {
+              "codigo": "00222539",
+              "descricao": "HASTE ATERRAMENTO 2400MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 58.99,
+              "total": 530.91
+            },
+            {
+              "codigo": "00237396",
+              "descricao": "GANCHO-OLHAL DE AÇO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 9.34,
+              "total": 168.12
+            },
+            {
+              "codigo": "00236851",
+              "descricao": "CINTA DE AÇO D 190MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 26.52,
+              "total": 159.12
+            },
+            {
+              "codigo": "00236869",
+              "descricao": "CINTA DE AÇO D 200MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 30.24,
+              "total": 90.72
+            },
+            {
+              "codigo": "00237727",
+              "descricao": "CHAPA PARA ÂNCORA 320X320MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 56.25,
+              "total": 900
+            },
+            {
+              "codigo": "00219659",
+              "descricao": "ISOLADOR DE ANCORAGEM POLIMÉRICO 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 40.53,
+              "total": 729.54
+            },
+            {
+              "codigo": "00219477",
+              "descricao": "FP ISOLADOR DE PINO PORCELANA 36,2 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 46.32,
+              "total": 277.92
+            },
+            {
+              "codigo": "00230391",
+              "descricao": "LAÇO PREFORMADO DE TOPO CA/CAA 170MM² (336,4MCM)",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 10.94,
+              "total": 98.46
+            },
+            {
+              "codigo": "00237677",
+              "descricao": "ALÇA PREFORMADA ESTAI CABO AÇO 9,5MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 12.97,
+              "total": 207.52
+            },
+            {
+              "codigo": "00237693",
+              "descricao": "FIXADOR PREFORMADO ESTAI 9,5MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 10.42,
+              "total": 166.72
+            },
+            {
+              "codigo": "00289058",
+              "descricao": "PÁRA-RAIOS 12KV 10KA ZNO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 98.46,
+              "total": 1772.28
+            },
+            {
+              "codigo": "00380087",
+              "descricao": "ALÇA PREFORMADA OLHAL CA/CAA 170MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 48.35,
+              "total": 870.3
+            },
+            {
+              "codigo": "00376194",
+              "descricao": "ISOLADOR PILAR PORCELANA 25/35 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 100.43,
+              "total": 301.29
+            },
+            {
+              "codigo": "00376195",
+              "descricao": "PINO CURTO PARA ISOLADOR PILAR",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 8.11,
+              "total": 24.33
+            },
+            {
+              "codigo": "00378842",
+              "descricao": "GRAMPO LINHA VIVA (1/0)53,4MM² 50-150MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 57.52,
+              "total": 517.68
+            },
+            {
+              "codigo": "00374893",
+              "descricao": "ALÇA P/ CONECTOR ESTRIBO FECHADO 1/0AWG",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 21.59,
+              "total": 194.31
+            },
+            {
+              "codigo": "00207506",
+              "descricao": "POSTE CONCRETO CIRCULAR 12M 600DAN",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 9,
+              "precoUnitario": 2721.5,
+              "total": 24493.5
+            },
+            {
+              "codigo": "00374953",
+              "descricao": "REGULADOR MONOFÁSICO 34,5KV 200KVA",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 3,
+              "precoUnitario": 91903.14,
+              "total": 275709.42
+            },
+            {
+              "codigo": "00377508",
+              "descricao": "CHAVE FACA MONOPOLAR 36,2KV 630A",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 9,
+              "precoUnitario": 578.14,
+              "total": 5203.26
+            },
+            {
+              "codigo": "00380334",
+              "descricao": "RELÉ CONTROLE P/ BANCO REGULADORES MONOF",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 1,
+              "precoUnitario": 29111.62,
+              "total": 29111.62
+            }
+          ],
+          "servicos": [
+            {
+              "codigo": "USRDR",
+              "descricao": "MÃO-DE-OBRA BÁSICO CONSTRUÇÃO RURAL",
+              "grupo": "construcao",
+              "quantidadeUS": 15.63,
+              "precoUS": 2823.98,
+              "total": 44138.81
+            },
+            {
+              "codigo": "USPROJ",
+              "descricao": "MÃO-DE-OBRA BÁSICO PROJETO RDA",
+              "grupo": "projeto",
+              "quantidadeUS": 6.4,
+              "precoUS": 82.73,
+              "total": 529.47
+            }
+          ],
+          "totalMateriais": 346340.24,
+          "totalServicos": 44668.28,
+          "total": 391008.52
+        }
+      }
+    },
+    {
+      "id": "equip_brt_400_kva_34_5_kv",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "BRT 400 kVA 34,5 kV",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1254134998",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2026-10": {
+          "material": 460.0082,
+          "maoObra": 44.66828,
+          "usConstr": 15.63,
+          "unitario": 504.67648
+        }
+      },
+      "composicoes": {
+        "2026-10": {
+          "projeto": "1254134998",
+          "descricaoProjeto": "BRT 400 kVA 34,5 kV",
+          "dataReferencia": "08/10/2026",
+          "unidadesPorProjeto": 1,
+          "materiais": [
+            {
+              "codigo": "00002931",
+              "descricao": "CABO AÇO SM 1/4'' (6,4MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 13.5,
+              "precoUnitario": 14.24,
+              "total": 192.24
+            },
+            {
+              "codigo": "00002964",
+              "descricao": "CABO AÇO HS 3/8' (9,5MM) 7 FIOS",
+              "unidade": "KG",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 128,
+              "precoUnitario": 13.32,
+              "total": 1704.96
+            },
+            {
+              "codigo": "00380855",
+              "descricao": "CABO AL 1X50MM² PROTEGIDO 15KV DUPL CAM",
+              "unidade": "M",
+              "classe": "cabo",
+              "ucUar": "MUT",
+              "quantidade": 9,
+              "precoUnitario": 5.44,
+              "total": 48.96
+            },
+            {
+              "codigo": "00231886",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F 50MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 27,
+              "precoUnitario": 2.02,
+              "total": 54.54
+            },
+            {
+              "codigo": "00227389",
+              "descricao": "CONETOR TERMINAL COMPRESSÃO 1F AÇO 6,4MM / 21MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 27,
+              "precoUnitario": 2.38,
+              "total": 64.26
+            },
+            {
+              "codigo": "00227850",
+              "descricao": "CONETOR CUNHA COBRE ITEM 1",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 4.44,
+              "total": 13.32
+            },
+            {
+              "codigo": "00214254",
+              "descricao": "CRUZETA CONTRAPOSTE EUCALIPTO 5M MÉDIO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 4,
+              "precoUnitario": 180.61,
+              "total": 722.44
+            },
+            {
+              "codigo": "00075721",
+              "descricao": "ARRUELA QUADRADA 38X18X3MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 49,
+              "precoUnitario": 1.03,
+              "total": 50.47
+            },
+            {
+              "codigo": "00237172",
+              "descricao": "SUPORTE L PARA CRUZETA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 22.26,
+              "total": 200.34
+            },
+            {
+              "codigo": "00377189",
+              "descricao": "SUPORTE DE TOPO PARA ISOLADOR PILAR",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 28.66,
+              "total": 85.98
+            },
+            {
+              "codigo": "00237768",
+              "descricao": "SAPATILHA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 26,
+              "precoUnitario": 1.08,
+              "total": 28.08
+            },
+            {
+              "codigo": "00237503",
+              "descricao": "FP PINO DE TOPO 419MM PARA ISOLADOR 24,2 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 9.8,
+              "total": 58.8
+            },
+            {
+              "codigo": "00074880",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X550MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 21.29,
+              "total": 127.74
+            },
+            {
+              "codigo": "00074831",
+              "descricao": "PARAFUSO CABEÇA QUADRADA M16X300MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 33,
+              "precoUnitario": 10.99,
+              "total": 362.67
+            },
+            {
+              "codigo": "00066878",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X45MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 3.41,
+              "total": 10.23
+            },
+            {
+              "codigo": "00066886",
+              "descricao": "PARAFUSO CABEÇA ABAULADA M16X70MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 5.81,
+              "total": 104.58
+            },
+            {
+              "codigo": "00237289",
+              "descricao": "OLHAL PARA PARAFUSO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 23,
+              "precoUnitario": 8.95,
+              "total": 205.85
+            },
+            {
+              "codigo": "00237743",
+              "descricao": "HASTE ÂNCORA-OLHAL 1600MM C/2 PORCAS E 1 ARRUELA",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 48.61,
+              "total": 777.76
+            },
+            {
+              "codigo": "00222539",
+              "descricao": "HASTE ATERRAMENTO 2400MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 58.99,
+              "total": 530.91
+            },
+            {
+              "codigo": "00237396",
+              "descricao": "GANCHO-OLHAL DE AÇO 50KN",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 9.34,
+              "total": 168.12
+            },
+            {
+              "codigo": "00236851",
+              "descricao": "CINTA DE AÇO D 190MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 26.52,
+              "total": 159.12
+            },
+            {
+              "codigo": "00236869",
+              "descricao": "CINTA DE AÇO D 200MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 30.24,
+              "total": 90.72
+            },
+            {
+              "codigo": "00237727",
+              "descricao": "CHAPA PARA ÂNCORA 320X320MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 56.25,
+              "total": 900
+            },
+            {
+              "codigo": "00219659",
+              "descricao": "ISOLADOR DE ANCORAGEM POLIMÉRICO 15 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 40.53,
+              "total": 729.54
+            },
+            {
+              "codigo": "00219477",
+              "descricao": "FP ISOLADOR DE PINO PORCELANA 36,2 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 6,
+              "precoUnitario": 46.32,
+              "total": 277.92
+            },
+            {
+              "codigo": "00230391",
+              "descricao": "LAÇO PREFORMADO DE TOPO CA/CAA 170MM² (336,4MCM)",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 10.94,
+              "total": 98.46
+            },
+            {
+              "codigo": "00237677",
+              "descricao": "ALÇA PREFORMADA ESTAI CABO AÇO 9,5MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 12.97,
+              "total": 207.52
+            },
+            {
+              "codigo": "00237693",
+              "descricao": "FIXADOR PREFORMADO ESTAI 9,5MM",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 16,
+              "precoUnitario": 10.42,
+              "total": 166.72
+            },
+            {
+              "codigo": "00289058",
+              "descricao": "PÁRA-RAIOS 12KV 10KA ZNO",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 98.46,
+              "total": 1772.28
+            },
+            {
+              "codigo": "00380087",
+              "descricao": "ALÇA PREFORMADA OLHAL CA/CAA 170MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 18,
+              "precoUnitario": 48.35,
+              "total": 870.3
+            },
+            {
+              "codigo": "00376194",
+              "descricao": "ISOLADOR PILAR PORCELANA 25/35 KV",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 100.43,
+              "total": 301.29
+            },
+            {
+              "codigo": "00376195",
+              "descricao": "PINO CURTO PARA ISOLADOR PILAR",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 3,
+              "precoUnitario": 8.11,
+              "total": 24.33
+            },
+            {
+              "codigo": "00378842",
+              "descricao": "GRAMPO LINHA VIVA (1/0)53,4MM² 50-150MM²",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 57.52,
+              "total": 517.68
+            },
+            {
+              "codigo": "00374893",
+              "descricao": "ALÇA P/ CONECTOR ESTRIBO FECHADO 1/0AWG",
+              "unidade": "PC",
+              "classe": "consumo",
+              "ucUar": "-",
+              "quantidade": 9,
+              "precoUnitario": 21.59,
+              "total": 194.31
+            },
+            {
+              "codigo": "00207506",
+              "descricao": "POSTE CONCRETO CIRCULAR 12M 600DAN",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 9,
+              "precoUnitario": 2721.5,
+              "total": 24493.5
+            },
+            {
+              "codigo": "00376738",
+              "descricao": "REGULADOR MONOFÁSICO 34,5KV 400KVA",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 3,
+              "precoUnitario": 129792.46,
+              "total": 389377.38
+            },
+            {
+              "codigo": "00377508",
+              "descricao": "CHAVE FACA MONOPOLAR 36,2KV 630A",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 9,
+              "precoUnitario": 578.14,
+              "total": 5203.26
+            },
+            {
+              "codigo": "00380334",
+              "descricao": "RELÉ CONTROLE P/ BANCO REGULADORES MONOF",
+              "unidade": "PC",
+              "classe": "patrimonial",
+              "ucUar": "SIM",
+              "quantidade": 1,
+              "precoUnitario": 29111.62,
+              "total": 29111.62
+            }
+          ],
+          "servicos": [
+            {
+              "codigo": "USRDR",
+              "descricao": "MÃO-DE-OBRA BÁSICO CONSTRUÇÃO RURAL",
+              "grupo": "construcao",
+              "quantidadeUS": 15.63,
+              "precoUS": 2823.98,
+              "total": 44138.81
+            },
+            {
+              "codigo": "USPROJ",
+              "descricao": "MÃO-DE-OBRA BÁSICO PROJETO RDA",
+              "grupo": "projeto",
+              "quantidadeUS": 6.4,
+              "precoUS": 82.73,
+              "total": 529.47
+            }
+          ],
+          "totalMateriais": 460008.2,
+          "totalServicos": 44668.28,
+          "total": 504676.48
+        }
+      }
     }
   ]
 }
