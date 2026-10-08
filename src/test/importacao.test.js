@@ -119,32 +119,32 @@ describe('analisarTexto — match na biblioteca', () => {
     const { itens } = analisarTexto(TEXTO_2);
     const relacionados = itens.filter(i => /modificação de rdu/i.test(i.textoOriginal));
     expect(relacionados.length).toBe(2);
-    expect(relacionados.some(i => i.tipoSelecionado === 'RDP 150 Dupla Camada')).toBe(true);
+    expect(relacionados.some(i => i.tipoSelecionado === 'ext_urbano_rdp150_dupla')).toBe(true);
     expect(relacionados.some(i => i.retiradaPendente === true)).toBe(true);
   });
 
   test('Construção RDP 150 → RDP 150 Dupla Camada', () => {
     const { itens } = analisarTexto(TEXTO_1);
     const item = itens.find(i => /construção de rdp/i.test(i.textoOriginal));
-    expect(item.tipoSelecionado).toBe('RDP 150 Dupla Camada');
+    expect(item.tipoSelecionado).toBe('ext_urbano_rdp150_dupla');
   });
 
   test('Construção RDR 336 → Tri CAA 336,4', () => {
     const { itens } = analisarTexto(TEXTO_1);
     const item = itens.find(i => /construção de rdr/i.test(i.textoOriginal));
-    expect(item.tipoSelecionado).toBe('Tri CAA 336,4');
+    expect(item.tipoSelecionado).toBe('ext_rural_tri_caa336');
   });
 
   test('BRT 167 → BRT trif 167 kVA - Rural', () => {
     const { itens } = analisarTexto(TEXTO_2);
     const item = itens.find(i => /instalação de brt/i.test(i.textoOriginal));
-    expect(item.tipoSelecionado).toBe('BRT trif 167 kVA - Rural');
+    expect(item.tipoSelecionado).toBe('equip_brt_167_rural');
   });
 
   test('Religador 34,5 kV → Religador trifásico 36KV', () => {
     const { itens } = analisarTexto(TEXTO_1);
     const item = itens.find(i => /religador trifásico 34,5/i.test(i.textoOriginal));
-    expect(item.tipoSelecionado).toBe('Religador trifásico 36KV');
+    expect(item.tipoSelecionado).toBe('equip_relig_tri_36kv');
   });
 
   test('Alta tensão 138kV → vai para textosAltaTensao, não para itens', () => {
@@ -198,13 +198,13 @@ describe('analisarTexto — conversão km → postes (item vinculado a item de b
     expect(itens.length).toBe(2);
 
     const [item1, item2] = itens;
-    expect(item1.tipoSelecionado).toBe('RDP 150 Dupla Camada');
+    expect(item1.tipoSelecionado).toBe('ext_urbano_rdp150_dupla');
     expect(item1.categoria).toBe('ctc');
     expect(item1.unidade).toBe('poste');
     expect(item1.quantidadeKmOriginal).toBe(2.24);
     expect(item1.quantidade).toBe(56); // Math.round(2.24 * 1000 / 40)
 
-    expect(item2.tipoSelecionado).toBe('RDP 150 Dupla Camada');
+    expect(item2.tipoSelecionado).toBe('ext_urbano_rdp150_dupla');
     expect(item2.categoria).toBe('ctc');
     expect(item2.unidade).toBe('poste');
     expect(item2.quantidadeKmOriginal).toBe(12.02);

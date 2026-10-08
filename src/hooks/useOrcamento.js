@@ -6,6 +6,7 @@ import {
   calcularRateioERD,
   calcularTotaisItens
 } from '../utils/calculos';
+import { migrarOrcamento } from '../utils/migracao';
 
 const STORAGE_KEY = 'orcamento_mt_app';
 
@@ -69,7 +70,7 @@ export const useOrcamento = () => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
+        const parsed = migrarOrcamento(JSON.parse(saved));
         return {
           ...parsed,
           dataBase: new Date(parsed.dataBase),

@@ -1,60 +1,9 @@
 import React, { useRef, useEffect } from 'react';
-import { TABELA_CUSTOS, getValorPorAno } from '../data/tabelaCustos';
+import { getItemById, getValorPorAno } from '../data/tabelaCustos';
+import { RETIRADA_IDS, OPCOES_BIBLIOTECA, matchRegras } from '../utils/regrasImportacao';
 import { kmParaPostes, postesParaKm } from '../utils/postes';
 
-// ── Itens de retirada pendente — usuário escolhe entre estes 5 tipos ────────
-const RETIRADA_TIPOS = [
-  '1 Km de RDR 1ᴓ cabo 4 a 1/0',
-  '1 Km de RDR 3ᴓ cabo 4 a 1/0',
-  '1 Km de RDR 3ᴓ cabo 4/0 a 336,4',
-  '1 Km de RDP 1ᴓ cabo 50 mm2',
-  '1 Km de RDP 3ᴓ 50 a 150mm²',
-];
-
-// ── Regras de mapeamento Obras → Biblioteca ──────────────────────────────────
-// Cada regra retorna a lista de itens a gerar para a linha (1 ou 2 itens).
-const REGRAS = [
-  // --- Modificação RDU → RDP (gera DOIS itens: construção + retirada pendente)
-  [/modificação.*rdu.*rdp.*150/i, () => [{ tipo: 'RDP 150 Dupla Camada' }, { tipo: '', retiradaPendente: true }]],
-  [/modificação.*rdu.*rdp.*50/i,  () => [{ tipo: 'RDP 50 Dupla Camada' },  { tipo: '', retiradaPendente: true }]],
-  [/modificação.*rdu.*rdp.*240/i, () => [{ tipo: 'RDP 240' },              { tipo: '', retiradaPendente: true }]],
-
-  // --- Construção RDP (item único)
-  [/construção.*rdp.*150/i, () => [{ tipo: 'RDP 150 Dupla Camada' }]],
-  [/construção.*rdp.*50/i,  () => [{ tipo: 'RDP 50 Dupla Camada' }]],
-  [/construção.*rdp.*240/i, () => [{ tipo: 'RDP 240' }]],
-
-  // --- Recondutoramento Rural (gera DOIS itens: recondutoramento + retirada pendente)
-  [/(modificação|recondutoramento).*rdr.*336/i, () => [{ tipo: 'CAA 2 p/ 336' }, { tipo: '', retiradaPendente: true }]],
-  [/modificação.*rdr.*4\/0/i,                    () => [{ tipo: 'CAA 2 p/ 4/0' }, { tipo: '', retiradaPendente: true }]],
-  [/modificação.*rdr.*(1\/0|1\.0caa)/i,          () => [{ tipo: 'CAA 4 p/ 1/0' }, { tipo: '', retiradaPendente: true }]],
-  [/modificação.*rdr.*caa.*2/i,                  () => [{ tipo: 'CAA 2 p/ 2' },   { tipo: '', retiradaPendente: true }]],
-
-  // --- Construção RDR Rural (item único)
-  [/construção.*rdr.*336/i,    () => [{ tipo: 'Tri CAA 336,4' }]],
-  [/construção.*rdr.*4\/0/i,   () => [{ tipo: 'Tri CAA 4/0' }]],
-  [/construção.*rdr.*1\/0/i,   () => [{ tipo: 'Tri CAA 1/0' }]],
-  [/construção.*rdr.*caa.*2/i, () => [{ tipo: 'Tri CAA 2' }]],
-  [/construção.*rdr.*caa.*4/i, () => [{ tipo: 'Tri CAA 4' }]],
-
-  // --- Equipamentos
-  [/abertura.*chave|fechamento.*chave|instalação.*chave.*n\.f\./i,             () => [{ tipo: 'Abert/Fecha. De Chave' }]],
-  [/relocação.*religador.*monofásico|relocar.*religador.*mono/i,               () => [{ tipo: 'Religador monofásico' }]],
-  [/relocação.*religador|relocar.*religador/i,                                  () => [{ tipo: 'Religador trifásico' }]],
-  [/substituir.*religador.*chave|substituir.*religador.*faca/i,                () => [{ tipo: 'Religador trifásico' }]],
-  [/instalação.*religador.*34|religador.*34,5/i,                                () => [{ tipo: 'Religador trifásico 36KV' }]],
-  [/instalação.*religador.*trifásico.*24|religador.*trifásico.*24/i,           () => [{ tipo: 'Religador trifásico 24KV Rural' }]],
-  [/instalação.*religador.*monofásico|religador.*monofásico.*15/i,             () => [{ tipo: 'Religador monofásico 15KV' }]],
-  [/instalação.*brt.*167/i, () => [{ tipo: 'BRT trif 167 kVA - Rural' }]],
-  [/instalação.*brt.*250/i, () => [{ tipo: 'BRT trif 250 KVA - Rural' }]],
-  [/instalação.*brt.*76/i,  () => [{ tipo: 'BRT trif 76,2 kVA' }]],
-
-  // --- Sem correspondência na biblioteca — campo livre para o usuário
-  [/retirar.*sec|instalar.*sec|substituir.*sec/i,    () => [{ tipo: '' }]],
-  [/desativação.*equip|desligar.*banco.*cap/i,        () => [{ tipo: '' }]],
-];
-
-const TIPOS_BIBLIOTECA = [...new Set(TABELA_CUSTOS.map(t => t.tipo))];
+export { OPCOES_BIBLIOTECA };
 
 const CAT_META = {
   ctc:         { label: 'CTC', bg: '#FFFBE6', color: '#8B6D00', bd: '#FFE57A' },
@@ -76,13 +25,6 @@ const MARCADORES_FIM_BLOCO = [
 ];
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-function matchRegras(texto) {
-  for (const [re, gerar] of REGRAS) {
-    if (re.test(texto)) return gerar();
-  }
-  return null;
-}
-
 function encontrarFimBloco(bloco) {
   let fimIndex = -1;
   for (const re of MARCADORES_FIM_BLOCO) {
@@ -238,15 +180,15 @@ export function analisarTexto(texto) {
       // dois sinais e não devem poluir a lista de itens detectados.
       if (!specsMatch && unidade === '') return;
 
-      const specs = specsMatch || [{ tipo: '' }];
+      const specs = specsMatch || [{ id: '' }];
 
       specs.forEach(spec => {
-        const tabItem = spec.tipo ? TABELA_CUSTOS.find(ti => ti.tipo === spec.tipo) : null;
+        const tabItem = spec.id ? getItemById(spec.id) : null;
         const converterParaPoste = quantidadeKmOriginal != null && tabItem?.unidade === 'poste';
 
         itens.push({
           textoOriginal: t,
-          tipoSelecionado: spec.tipo || '',
+          tipoSelecionado: spec.id || '',
           descricaoManual: t.slice(0, 200),
           quantidade: converterParaPoste ? kmParaPostes(quantidadeKmOriginal) : quantidade,
           unidade: converterParaPoste ? 'poste' : unidade,
@@ -260,6 +202,25 @@ export function analisarTexto(texto) {
     });
 
   return { cab, itens, textosAltaTensao };
+}
+
+// ── Item detectado → item de obra ─────────────────────────────────────────────
+export function criarItemObraImportado(item, id) {
+  const tabItem = item.tipoSelecionado ? getItemById(item.tipoSelecionado) : null;
+  const qtd = parseFloat(item.quantidade) || 0;
+  const unitario = tabItem ? (getValorPorAno(tabItem, 2024, 'unitario') || 0) : 0;
+  const valor = tabItem && qtd > 0 ? qtd * unitario * 1000 : 0;
+
+  return {
+    id,
+    descricao: tabItem ? tabItem.tipo : (item.descricaoManual || item.textoOriginal.slice(0, 200)),
+    categoria: item.categoria,
+    valor,
+    percentualCemig: item.categoria === 'pp' ? parseFloat(item.percentualCemig) || 0 : 0,
+    quantidade: qtd || null,
+    unidade: tabItem ? tabItem.unidade : (item.unidade || ''),
+    ...(tabItem ? { origem: 'biblioteca', itemOrigem: tabItem.id, valorUnitario: unitario * 1000, anoReferencia: 2024 } : {}),
+  };
 }
 
 // ── Estilos ──────────────────────────────────────────────────────────────────
@@ -361,7 +322,7 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
         if (campo === 'tipoSelecionado' && it.quantidadeKmOriginal != null) {
           // Reaplica a conversão km → postes a partir do km bruto extraído do texto,
           // evitando erro de arredondamento acumulado ao trocar o item da biblioteca.
-          const tabItem = TABELA_CUSTOS.find(t => t.tipo === valor);
+          const tabItem = getItemById(valor);
           return tabItem?.unidade === 'poste'
             ? { ...it, tipoSelecionado: valor, quantidade: kmParaPostes(it.quantidadeKmOriginal), unidade: 'poste' }
             : { ...it, tipoSelecionado: valor, quantidade: it.quantidadeKmOriginal, unidade: 'km' };
@@ -371,25 +332,8 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
     });
 
   const adicionar = (idx) => {
-    const item = itens[idx];
-    const tabItem = TABELA_CUSTOS.find(t => t.tipo === item.tipoSelecionado);
-    const qtd = parseFloat(item.quantidade) || 0;
-    const unitario = tabItem ? (getValorPorAno(tabItem, 2024, 'unitario') || 0) : 0;
-    const valor = tabItem && qtd > 0 ? qtd * unitario * 1000 : 0;
-
-    setOrcamento(prev => ({
-      ...prev,
-      itensObra: [...prev.itensObra, {
-        id: Date.now(),
-        descricao: tabItem ? tabItem.tipo : (item.descricaoManual || item.textoOriginal.slice(0, 200)),
-        categoria: item.categoria,
-        valor,
-        percentualCemig: item.categoria === 'pp' ? parseFloat(item.percentualCemig) || 0 : 0,
-        quantidade: qtd || null,
-        unidade: tabItem ? tabItem.unidade : (item.unidade || ''),
-        ...(tabItem ? { origem: 'biblioteca', itemOrigem: tabItem.id, valorUnitario: unitario * 1000, anoReferencia: 2024 } : {}),
-      }],
-    }));
+    const novo = criarItemObraImportado(itens[idx], Date.now());
+    setOrcamento(prev => ({ ...prev, itensObra: [...prev.itensObra, novo] }));
     updateImportacao({ itensDetectados: itens.filter((_, i) => i !== idx) });
   };
 
@@ -565,8 +509,11 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
                           onChange={e => upd(idx, 'tipoSelecionado', e.target.value)}
                           style={{ ...S.input, padding: '5px 8px', fontSize: '11px' }}>
                           <option value="">— {item.retiradaPendente ? 'selecione a retirada' : 'sem correspondência'} —</option>
-                          {(item.retiradaPendente ? RETIRADA_TIPOS : TIPOS_BIBLIOTECA).map(t => (
-                            <option key={t} value={t}>{t}</option>
+                          {(item.retiradaPendente
+                            ? RETIRADA_IDS.map(id => ({ id, label: getItemById(id).tipo }))
+                            : OPCOES_BIBLIOTECA
+                          ).map(o => (
+                            <option key={o.id} value={o.id}>{o.label}</option>
                           ))}
                         </select>
                         {!item.tipoSelecionado && !item.retiradaPendente && (
