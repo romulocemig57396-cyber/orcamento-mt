@@ -163,8 +163,8 @@
       "unidade": "km",
       "status": "oficial",
       "formacao": {
-        "origem": "fixo",
-        "motivo": "Valor digitado na planilha; é base das fórmulas de conversão e recondutoramento."
+        "origem": "manual",
+        "motivo": "Calculado manualmente; não consta da TOD. Base de 6 itens de fórmula (conversões e recondutoramentos CAA 4 p/…)."
       },
       "custos": {
         "2021": {
@@ -196,10 +196,11 @@
       "unidade": "km",
       "status": "oficial",
       "formacao": {
-        "origem": "proorc",
-        "projeto": null,
-        "unidadesPorProjeto": 1,
-        "observacao": "Projeto-padrão ainda não exportado do PROORC; mantém o valor da referência anterior."
+        "origem": "tod",
+        "fonte": "TOD dez/2024",
+        "secao": "11. Expansão de Rede de Distribuição Rural Primária",
+        "descricaoTod": "Rede rural monofásica cabo 2 AWG CAA em poste duplo T",
+        "unidadeTod": "R$/km"
       },
       "custos": {
         "2021": {
@@ -231,8 +232,8 @@
       "unidade": "km",
       "status": "oficial",
       "formacao": {
-        "origem": "fixo",
-        "motivo": "Valor digitado na planilha; é base das fórmulas de conversão e recondutoramento."
+        "origem": "manual",
+        "motivo": "Calculado manualmente; não consta da TOD. Base de 6 itens de fórmula (conversões e recondutoramentos CAA 4 p/…)."
       },
       "custos": {
         "2021": {
@@ -264,10 +265,11 @@
       "unidade": "km",
       "status": "oficial",
       "formacao": {
-        "origem": "proorc",
-        "projeto": null,
-        "unidadesPorProjeto": 1,
-        "observacao": "Projeto-padrão ainda não exportado do PROORC; mantém o valor da referência anterior."
+        "origem": "tod",
+        "fonte": "TOD dez/2024",
+        "secao": "11. Expansão de Rede de Distribuição Rural Primária",
+        "descricaoTod": "Rede rural trifásica cabo 2 AWG CAA em poste duplo T",
+        "unidadeTod": "R$/km"
       },
       "custos": {
         "2021": {
@@ -299,10 +301,11 @@
       "unidade": "km",
       "status": "oficial",
       "formacao": {
-        "origem": "proorc",
-        "projeto": null,
-        "unidadesPorProjeto": 1,
-        "observacao": "Projeto-padrão ainda não exportado do PROORC; mantém o valor da referência anterior."
+        "origem": "tod",
+        "fonte": "TOD dez/2024",
+        "secao": "11. Expansão de Rede de Distribuição Rural Primária",
+        "descricaoTod": "Rede rural trifásica cabo 1/0 AWG CAA em poste duplo T",
+        "unidadeTod": "R$/km"
       },
       "custos": {
         "2021": {
@@ -334,10 +337,11 @@
       "unidade": "km",
       "status": "oficial",
       "formacao": {
-        "origem": "proorc",
-        "projeto": null,
-        "unidadesPorProjeto": 1,
-        "observacao": "Projeto-padrão ainda não exportado do PROORC; mantém o valor da referência anterior."
+        "origem": "tod",
+        "fonte": "TOD dez/2024",
+        "secao": "11. Expansão de Rede de Distribuição Rural Primária",
+        "descricaoTod": "Rede rural trifásica cabo 4/0 AWG CAA em poste duplo T",
+        "unidadeTod": "R$/km"
       },
       "custos": {
         "2021": {
@@ -369,10 +373,11 @@
       "unidade": "km",
       "status": "oficial",
       "formacao": {
-        "origem": "proorc",
-        "projeto": null,
-        "unidadesPorProjeto": 1,
-        "observacao": "Projeto-padrão ainda não exportado do PROORC; mantém o valor da referência anterior."
+        "origem": "tod",
+        "fonte": "TOD dez/2024",
+        "secao": "11. Expansão de Rede de Distribuição Rural Primária",
+        "descricaoTod": "Rede rural trifásica cabo 336 AWG CAA em poste duplo T",
+        "unidadeTod": "R$/km"
       },
       "custos": {
         "2021": {
@@ -1356,7 +1361,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Sem custo cadastrado."
+        "motivo": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
       },
       "custos": {
         "2021": {
@@ -1378,8 +1383,7 @@
           "unitario": 0
         }
       },
-      "composicoes": {},
-      "verificacao": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
+      "composicoes": {}
     },
     {
       "id": "recon_urb_rdi50",
@@ -1390,7 +1394,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Sem custo cadastrado."
+        "motivo": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
       },
       "custos": {
         "2021": {
@@ -1412,8 +1416,7 @@
           "unitario": 0
         }
       },
-      "composicoes": {},
-      "verificacao": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
+      "composicoes": {}
     },
     {
       "id": "recon_urb_rdi185",
@@ -1424,7 +1427,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Sem custo cadastrado."
+        "motivo": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
       },
       "custos": {
         "2021": {
@@ -1446,8 +1449,7 @@
           "unitario": 0
         }
       },
-      "composicoes": {},
-      "verificacao": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
+      "composicoes": {}
     },
     {
       "id": "sub_13_8kv",
@@ -1458,7 +1460,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Sem custo cadastrado."
+        "motivo": "Valor da planilha de origem (material 750)."
       },
       "custos": {
         "2021": {
@@ -1474,14 +1476,13 @@
           "unitario": 0
         },
         "2024": {
-          "material": 0,
+          "material": 750,
           "maoObra": 0,
           "usConstr": 0,
-          "unitario": 0
+          "unitario": 750
         }
       },
-      "composicoes": {},
-      "verificacao": "A planilha traz material 750, mas o unitário ficou vazio (0 ou 750)."
+      "composicoes": {}
     },
     {
       "id": "sub_22kv",
@@ -1492,7 +1493,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Valor digitado na planilha."
+        "motivo": "Fonte em verificação pelo responsável"
       },
       "custos": {
         "2021": {
@@ -2143,7 +2144,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Valor digitado na planilha."
+        "motivo": "Fonte em verificação pelo responsável"
       },
       "custos": {
         "2021": {
@@ -2176,7 +2177,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Valor digitado na planilha."
+        "motivo": "Fonte em verificação pelo responsável"
       },
       "custos": {
         "2021": {
@@ -2209,7 +2210,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Valor digitado na planilha."
+        "motivo": "Fonte em verificação pelo responsável"
       },
       "custos": {
         "2021": {
@@ -2242,7 +2243,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Valor digitado na planilha."
+        "motivo": "Fonte em verificação pelo responsável"
       },
       "custos": {
         "2021": {
@@ -2275,7 +2276,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Valor digitado na planilha."
+        "motivo": "Fonte em verificação pelo responsável"
       },
       "custos": {
         "2021": {
@@ -2459,11 +2460,10 @@
           "material": 0,
           "maoObra": 28.906259280000004,
           "usConstr": 10.236,
-          "unitario": 12
+          "unitario": 28.906259280000004
         }
       },
-      "composicoes": {},
-      "verificacao": "Unitário 12 digitado por cima da fórmula; o recálculo pelas 10,236 US dá 28,906."
+      "composicoes": {}
     },
     {
       "id": "deriv_rdu_ramal_sub",
@@ -2473,8 +2473,8 @@
       "unidade": "ponto",
       "status": "oficial",
       "formacao": {
-        "origem": "fixo",
-        "motivo": "Valor digitado na planilha."
+        "origem": "manual",
+        "motivo": "Calculado manualmente."
       },
       "custos": {
         "2021": {
@@ -2506,8 +2506,8 @@
       "unidade": "ponto",
       "status": "oficial",
       "formacao": {
-        "origem": "fixo",
-        "motivo": "Valor digitado na planilha."
+        "origem": "manual",
+        "motivo": "Calculado manualmente."
       },
       "custos": {
         "2021": {
@@ -2539,8 +2539,8 @@
       "unidade": "ponto",
       "status": "oficial",
       "formacao": {
-        "origem": "fixo",
-        "motivo": "Valor digitado na planilha."
+        "origem": "manual",
+        "motivo": "Calculado manualmente."
       },
       "custos": {
         "2021": {

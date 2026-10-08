@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { formatarMoeda } from '../utils/calculos';
 import DiferencaCaboModal from './DiferencaCaboModal';
+import SeloPendente from './SeloPendente';
+import { itemDoOrcamentoPendente } from '../data/biblioteca';
 import { formatarQuantidade } from '../utils/postes';
 import { itemPermiteDiferencaCabo, diferencaDoItem, baseRateioDoItem } from '../utils/diferencaCabo';
 
@@ -236,6 +238,7 @@ export default function ItensObra({ itens, setOrcamento }) {
                       <td style={{ padding: '6px 8px', borderBottom: '1px solid #F0F0F0' }}>
                         <input type="text" value={item.descricao} onChange={e => editar(item.id, 'descricao', e.target.value)}
                           style={{ ...S.input, padding: '6px 10px', fontSize: '13px' }} onFocus={onFocus} onBlur={onBlur} />
+                        {itemDoOrcamentoPendente(item) && <SeloPendente style={{ display: 'inline-block', margin: '4px 0 0 0' }} />}
                       </td>
                       <td style={{ padding: '8px 14px', textAlign: 'right', fontSize: '12px', color: '#555', borderBottom: '1px solid #F0F0F0', whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>
                         {formatarQuantidade(item.quantidade, item.unidade)}

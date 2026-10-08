@@ -71,7 +71,13 @@ export const calcularPorMaoDeObra = (formacao, { precoUSConstrucao }) => {
 /* ── Texto da conta, para a tela de composição ───────────────────────────── */
 export const ORIGENS = {
   proorc: 'Projeto-padrão do PROORC',
+  tod: 'TOD — Tabela de Orçamento da Distribuição',
   formula: 'Calculado a partir de outros itens',
   maoDeObra: 'Somente mão de obra',
+  manual: 'Calculado manualmente',
   fixo: 'Valor digitado, sem composição',
 };
+
+// Origens cujos valores não vêm do PROORC nem de cálculo: numa referência nova
+// pelo PROORC são copiados da anterior; mudam só pela tela "Editar valores".
+export const ORIGENS_DIGITADAS = ['tod', 'manual', 'fixo'];

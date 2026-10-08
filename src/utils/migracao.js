@@ -46,6 +46,9 @@ export const migrarOrcamento = (salvo) => {
     ));
   }
 
+  // R4: a aba Materiais Auxiliares foi removida; o campo é descartado
+  delete o.materiaisAuxiliares;
+
   // A9: datas gravadas como ISO completo (Date) → AAAA-MM-DD
   if ('dataBase' in o) o.dataBase = normalizarDataISO(o.dataBase);
   if ('dataValidade' in o) o.dataValidade = normalizarDataISO(o.dataValidade);

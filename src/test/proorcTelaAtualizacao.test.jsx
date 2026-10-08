@@ -60,7 +60,7 @@ describe.skipIf(!temTodos)('Etapa 3 — tela de atualização com os relatórios
 
     expect(screen.getByText('Todos (70)')).toBeInTheDocument();
     expect(screen.getByText('Não atualizados (26)')).toBeInTheDocument();
-    expect(screen.getByText('Em verificação (7)')).toBeInTheDocument();
+    expect(screen.getByText('Em verificação (2)')).toBeInTheDocument();
 
     // RDP 150 Dupla Camada: 10,02861 por poste
     const linha = screen.getByText('RDP 150 Dupla Camada').closest('tr');
@@ -69,11 +69,14 @@ describe.skipIf(!temTodos)('Etapa 3 — tela de atualização com os relatórios
     expect(within(linha).getAllByText('10,02861')).toHaveLength(2);
 
     // Item em verificação mostra a nota do responsável
+    const brt = screen.getByText('BRT trif 167 kVA - Urbano').closest('tr');
+    expect(within(brt).getByText('Em verificação')).toBeInTheDocument();
+    expect(within(brt).getByText(/267,73934 no PROORC/)).toBeInTheDocument();
+
+    // A retirada de RDP 3ᴓ já está com 28,906 (decisão R1): não muda
     const retirada = screen.getByText('1 Km de RDP 3ᴓ 50 a 150mm²').closest('tr');
-    expect(within(retirada).getByText('Em verificação')).toBeInTheDocument();
-    expect(within(retirada).getByText('12,00')).toBeInTheDocument();      // valor atual
-    expect(within(retirada).getByText('28,90626')).toBeInTheDocument();   // recalculado
-    expect(within(retirada).getByText(/Unitário 12 digitado por cima da fórmula/)).toBeInTheDocument();
+    expect(within(retirada).queryByText('Em verificação')).not.toBeInTheDocument();
+    expect(within(retirada).getAllByText('28,90626')).toHaveLength(2);
   });
 
   test('o filtro de não atualizados mostra o motivo da cópia', async () => {
@@ -129,12 +132,30 @@ describe.skipIf(!temTodos)('Etapa 3 — tela de atualização com os relatórios
     fireEvent.click(screen.getByText('Analisar relatórios'));
     await waitFor(() => expect(screen.getByText('Prévia da nova referência')).toBeInTheDocument());
 
-    const linha = screen.getByText('1 Km de RDP 3ᴓ 50 a 150mm²').closest('tr');
+    const linha = screen.getByText('Religador trifásico 36KV').closest('tr');
+    expect(within(linha).getByText('93,95449')).toBeInTheDocument();
     fireEvent.change(within(linha).getByRole('combobox'), { target: { value: 'anterior' } });
 
-    // Mantido o valor anterior, as colunas "2024" e "Nova" passam a mostrar 12,00
-    const depois = screen.getByText('1 Km de RDP 3ᴓ 50 a 150mm²').closest('tr');
-    expect(within(depois).getAllByText('12,00')).toHaveLength(2);
-    expect(within(depois).queryByText('28,90626')).not.toBeInTheDocument();
+    // Mantido o valor anterior, as colunas "2024" e "Nova" passam a mostrar 126,61692
+    const depois = screen.getByText('Religador trifásico 36KV').closest('tr');
+    expect(within(depois).getAllByText('126,61692')).toHaveLength(2);
+    expect(within(depois).queryByText('93,95449')).not.toBeInTheDocument();
   });
+
+  test('depois de gerar, "Continuar editando valores" edita a referência em preparação', async () => {
+    const { container } = render(<AtualizarProorc />);
+    await carregarTodos(container);
+    fireEvent.click(screen.getByText('Analisar relatórios'));
+    await waitFor(() => expect(screen.getByText('Prévia da nova referência')).toBeInTheDocument());
+    fireEvent.click(screen.getByText('Revisei a tabela e confirmo as ligações'));
+    fireEvent.click(screen.getByText('Gerar nova referência'));
+    fireEvent.click(screen.getByText('Continuar editando valores'));
+
+    // Busca só dentro da área de edição: a tela inteira do PROORC é grande e
+    // uma busca por rótulo nela toda leva segundos no jsdom.
+    const edicao = screen.getByRole('region', { name: 'Editar valores da referência em preparação' });
+    expect(within(edicao).getByText(/referência em preparação 2026-10/)).toBeInTheDocument();
+    fireEvent.change(within(edicao).getByLabelText('Tri CAA 1/0 — material'), { target: { value: '45' } });
+    expect(within(within(edicao).getByTestId('previa-edicao')).getByText('83,31981')).toBeInTheDocument();
+  }, 20000);
 });

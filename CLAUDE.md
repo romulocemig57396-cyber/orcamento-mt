@@ -41,20 +41,31 @@ Sistema web da Cemig para elaborar orçamentos de obras de Média Tensão (MT) e
 | `src/proorc/calcularReferencia.js` | Monta uma nova referência de custos e a prévia |
 | `src/proorc/gerarBibliotecaJson.js` | Grava a nova referência no arquivo e oferece o download |
 | `src/proorc/explicarFormacao.js` | Descreve em números como o custo foi formado (tela de composição) |
+| `src/proorc/editarReferencia.js` | Edição administrativa (TOD, manuais, fixos e parâmetros) e recálculo em cascata |
 | `src/proorc/propostasAdmin.js` | Recálculo e aprovação das propostas de item |
 | `src/components/Importacao.jsx` | Parser do texto do parecer técnico (`analisarTexto`) + tela de importação |
+| `src/components/EditarValores.jsx` | Tela "Editar valores" do modo administrador |
+| `src/components/SeloPendente.jsx` | Selo e aviso de item pendente (sem custo cadastrado) |
 | `src/components/*.jsx` | Uma aba por componente |
 
 ## Biblioteca de custos
 - Os custos vivem em `biblioteca.json`, versionado no repositório. Não há servidor: publicar uma atualização é commit + deploy.
 - **Referências** (`2024`, `2022`, `2021`, e as geradas pelo PROORC, ex.: `2026-10`). A chave é **texto**; orçamentos antigos gravaram ano numérico e são normalizados na leitura. Uma referência é marcada como `atual` e é a padrão dos novos orçamentos.
-- Cada item registra em `formacao` **como** o seu custo é formado, numa de 4 origens:
-  - `proorc` — projeto-padrão do PROORC: (materiais + serviços) ÷ unidades por projeto. A regra `postoTransformacao` soma um religador adicional ao material e calcula a mão de obra como percentual dele.
-  - `formula` — a partir de outros itens: `redeExistenteMaisNova` (fator × rede existente + rede nova) e `extensaoComAcrescimoMaoObra` (mesmo material, mão de obra × fator).
-  - `maoDeObra` — só mão de obra: US de construção × preço da US.
-  - `fixo` — valor digitado, sem composição.
+- Cada item registra em `formacao` **como** o seu custo é formado, e cada origem tem o seu caminho de atualização:
+
+  | Origem | O que é | Como é atualizada |
+  |---|---|---|
+  | `proorc` | Projeto-padrão do PROORC: (materiais + serviços) ÷ unidades por projeto. A regra `postoTransformacao` soma um religador adicional ao material e calcula a mão de obra como percentual dele. | Importação dos relatórios do PROORC (aba "Atualizar pelo PROORC"). O religador adicional e o % de mão de obra dos PT, pela tela "Editar valores". |
+  | `tod` | TOD — Tabela de Orçamento da Distribuição (hoje dez/2024, seção 11, as 5 extensões rurais), em R$/km. A mão de obra da TOD já inclui mão de obra própria, serviços de terceiros e taxa de administração: **não** é recalculada pelo preço da US. | Tela "Editar valores": material, mão de obra e a fonte/versão da TOD. Nunca é procurada no PROORC. |
+  | `formula` | A partir de outros itens: `redeExistenteMaisNova` (fator 0,33 × rede existente + rede nova) e `extensaoComAcrescimoMaoObra` (mesmo material, mão de obra × 1,05). | Recalculada automaticamente quando muda uma base ou um fator. Os fatores mudam pela tela "Editar valores". |
+  | `maoDeObra` | Só mão de obra: US de construção × preço da US. | Recalculada com o preço da US de cada importação do PROORC. |
+  | `manual` / `fixo` | `manual`: calculado manualmente pelo responsável (Mono CAA 4, Tri CAA 4, derivações). `fixo`: valor digitado, sem composição (relocações, seções, itens sem custo). | Tela "Editar valores": material, mão de obra e unitário (unitário = soma quando material e mão de obra são maiores que zero). |
+
+- Uma referência nova pelo PROORC copia da anterior os itens `tod`, `manual` e `fixo`. A tela "Editar valores" monta uma referência em preparação a partir de uma base (uma instalada, ou a recém-montada pelo PROORC, pelo botão "Continuar editando valores"); só os itens que dependem do que foi alterado são recalculados, e nenhuma referência existente é alterada. As duas telas terminam em "Baixar biblioteca.json".
+- **Item pendente:** um item é pendente numa referência quando o unitário dele ali é 0 (regra derivada do valor, sem campo próprio). Aparece em âmbar na Biblioteca, com o selo "Pendente — sem custo cadastrado", filtro e contagem; pode ser adicionado ao orçamento, mas com aviso de que entra com R$ 0,00, e a linha do item no orçamento leva o mesmo selo. A lista de cabos da diferença de cabo não oferece itens sem custo.
+- Itens com o campo `verificacao` estão em verificação pelo responsável (hoje `equip_brt_167_urbano` e `equip_relig_tri_36kv`); só mudam por decisão dele.
 - A referência 2021 é anterior a essas fórmulas: tem valores digitados que não as seguem.
-- **Modo administrador** (`?admin=1` na URL): abas "Atualizar pelo PROORC" e "Propostas de Itens". Não é segurança — o app é estático e público; só tira as telas de manutenção do caminho dos analistas.
+- **Modo administrador** (`?admin=1` na URL): abas "Atualizar pelo PROORC", "Editar valores" e "Propostas de Itens". Não é segurança — o app é estático e público; só tira as telas de manutenção do caminho dos analistas.
 - Os três relatórios do PROORC (`docs/proorc/`) **não** ficam no repositório, que é público. Os testes que dependem deles são ignorados quando os arquivos não estão presentes; a estrutura dos arquivos é coberta por planilhas montadas pelo próprio teste.
 
 ## Regras de negócio (não alterar sem pedido explícito)
@@ -63,7 +74,9 @@ Sistema web da Cemig para elaborar orçamentos de obras de Média Tensão (MT) e
 - **ERD** abate a Parcela Regulatória, limitado ao menor entre ERD, Parcela Regulatória e o que o cliente pagaria antes do ERD. **Não existe PFC negativa.**
 - PFC = Total − CTC − PP − ERD aplicado (mínimo zero). Parcela D = CTC + PP.
 - Cenário de referência (teste obrigatório): Total 7.361.977,53; CTC 556.081,53; PP 2.039.524,43; PFC 2.904.299,77; Parcela D 2.595.605,96.
-- **Não alterar os valores das referências de custos que já existem** (2024, 2022, 2021), inclusive os dos itens marcados como "em verificação". Uma atualização do PROORC cria uma referência nova.
+- **Não alterar os valores das referências de custos que já existem** (2024, 2022, 2021), inclusive os dos itens marcados como "em verificação". Uma atualização do PROORC ou da tela "Editar valores" cria uma referência nova. A única exceção é uma decisão explícita do responsável, registrada como exceção documentada (com o motivo) em `src/test/bibliotecaEquivalencia.test.js` — ex.: rodada 3, R1 (retirada RDP 3ᴓ 12 → 28,906) e R2 (Seção 13,8 kV = 750).
+- **Data Base = data de emissão** do orçamento. A validade é Data Base + 120 dias. PDFs e Excel imprimem "Emissão" e "Validade" pela Data Base, nunca pela data de hoje.
+- A aba **Materiais Auxiliares foi removida** (rodada 3, R4). Orçamentos antigos com `materiaisAuxiliares` abrem normalmente; o campo é descartado na leitura.
 
 ## Convenções
 - Tudo em português do Brasil: código de domínio, textos de tela, comentários, mensagens de commit.

@@ -3,7 +3,6 @@ import { useOrcamento } from './hooks/useOrcamento';
 import DadosAtendimento from './components/DadosAtendimento';
 import ItensObra from './components/ItensObra';
 import RateioTecnico from './components/RateioTecnico';
-import MateriaisAuxiliares from './components/MateriaisAuxiliares';
 import DescricaoTecnica from './components/DescricaoTecnica';
 import ResumoFinanceiro from './components/ResumoFinanceiro';
 import Exportacao from './components/Exportacao';
@@ -12,11 +11,13 @@ import Importacao from './components/Importacao';
 import AtualizarProorc from './components/AtualizarProorc';
 import CriarItem from './components/CriarItem';
 import PropostasAdmin from './components/PropostasAdmin';
+import EditarValores from './components/EditarValores';
 import { ehModoAdmin } from './utils/modoAdmin';
 import { chaveReferenciaAtual } from './data/biblioteca';
 
 const ABAS_ADMIN = [
   { id: 'proorc', nome: 'Atualizar pelo PROORC' },
+  { id: 'editarValores', nome: 'Editar valores' },
   { id: 'propostas', nome: 'Propostas de Itens' },
 ];
 
@@ -27,7 +28,6 @@ const abas = [
   { id: 'criarItem',   nome: 'Criar Item' },
   { id: 'itens',       nome: 'Itens de Obra' },
   { id: 'rateio',      nome: 'Rateio' },
-  { id: 'materiais',   nome: 'Materiais' },
   { id: 'descricao',   nome: 'Descrição Técnica' },
   { id: 'resumo',      nome: 'Resumo Financeiro' },
   { id: 'exportacao',  nome: 'Resumo e Exportação' },
@@ -254,12 +254,6 @@ function App() {
             {abaAtiva === 'rateio' && (
               <RateioTecnico dados={orcamento} setOrcamento={setOrcamento} />
             )}
-            {abaAtiva === 'materiais' && (
-              <MateriaisAuxiliares
-                materiais={orcamento.materiaisAuxiliares}
-                setOrcamento={setOrcamento}
-              />
-            )}
             {abaAtiva === 'descricao' && (
               <DescricaoTecnica dados={orcamento} setOrcamento={setOrcamento} />
             )}
@@ -274,6 +268,9 @@ function App() {
             )}
             {abaAtiva === 'proorc' && modoAdmin && (
               <AtualizarProorc />
+            )}
+            {abaAtiva === 'editarValores' && modoAdmin && (
+              <EditarValores />
             )}
             {abaAtiva === 'propostas' && modoAdmin && (
               <PropostasAdmin anoReferencia={anoReferencia} />

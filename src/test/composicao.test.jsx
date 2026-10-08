@@ -41,13 +41,13 @@ describe('Etapa 5 — explicação sem composição na referência', () => {
     const d = explicarFormacao(getItemById('sub_22kv'), '2024');
     expect(d.disponivel).toBe(false);
     expect(d.mensagem).toMatch(/Composição não disponível para esta referência/);
-    expect(d.mensagem).toMatch(/Valor digitado/);
+    expect(d.mensagem).toMatch(/Fonte em verificação pelo responsável/);
   });
 
   test('item do PROORC sem composição na referência explica por quê', () => {
     expect(explicarFormacao(getItemById('ext_urbano_rdp150_dupla'), '2024').mensagem)
       .toMatch(/O projeto 1000456789 não foi importado aqui/);
-    expect(explicarFormacao(getItemById('ext_rural_tri_caa336'), '2024').mensagem)
+    expect(explicarFormacao(getItemById('equip_bcap_300_fixo'), '2024').mensagem)
       .toMatch(/ainda não foi exportado do PROORC/);
   });
 
@@ -78,8 +78,9 @@ describe('Etapa 5 — explicação sem composição na referência', () => {
   });
 
   test('item em verificação carrega a nota do responsável', () => {
-    expect(explicarFormacao(getItemById('rede_ret_rdp_3f_50_150'), '2024').verificacao)
-      .toMatch(/Unitário 12 digitado/);
+    expect(explicarFormacao(getItemById('equip_brt_167_urbano'), '2024').verificacao)
+      .toMatch(/267,73934 no PROORC/);
+    expect(explicarFormacao(getItemById('rede_ret_rdp_3f_50_150'), '2024').verificacao).toBeNull();
   });
 
   test('subtotais por classe', () => {

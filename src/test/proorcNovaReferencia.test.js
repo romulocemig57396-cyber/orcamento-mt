@@ -103,10 +103,10 @@ describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 0
     expect(custo('recon_urb_rdp150_dupla').maoObra).toBeCloseTo(1.05 * 3.12698, 5);
   });
 
-  test('rede_ret_rdp_3f_50_150 = 28,906 e fica destacado em verificação', () => {
+  test('rede_ret_rdp_3f_50_150 = 28,906, igual à referência anterior desde a decisão R1', () => {
     expect(custo('rede_ret_rdp_3f_50_150').unitario).toBeCloseTo(28.906259, 5);
-    expect(linha('rede_ret_rdp_3f_50_150').emVerificacao).toBe(true);
-    expect(linha('rede_ret_rdp_3f_50_150').anterior.unitario).toBe(12);
+    expect(linha('rede_ret_rdp_3f_50_150').emVerificacao).toBe(false);
+    expect(linha('rede_ret_rdp_3f_50_150').anterior.unitario).toBe(28.906259280000004);
   });
 
   test('itens de fórmula rurais ficam iguais aos atuais, porque as bases não mudaram', () => {
@@ -120,7 +120,7 @@ describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 0
 
   test('itens do PROORC sem relatório e itens fixos são copiados, com aviso', () => {
     const naoAtualizados = r.previa.filter(l => l.naoAtualizado).map(l => l.id);
-    // 6 itens proorc sem projeto no relatório + 3 aguardando relatório + 17 fixos
+    // 1 item proorc sem projeto + 3 aguardando relatório + 12 fixos + 5 tod + 5 manuais
     expect(naoAtualizados).toHaveLength(26);
     ['ext_rural_mono_caa2', 'ext_rural_tri_caa336', 'equip_brt_250_rural', 'equip_brt_250_urbano',
       'equip_bcap_600_fixo', 'equip_bcap_300_fixo', 'sub_22kv', 'deriv_rdu_ramal_sub']
@@ -140,7 +140,7 @@ describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 0
   test('as referências 2024, 2022 e 2021 não são tocadas', () => {
     expect(BIBLIOTECA.referencias.map(x => x.chave)).toEqual(['2024', '2022', '2021']);
     expect(BIBLIOTECA.itens.find(i => i.id === 'equip_brt_76').custos['2024'].unitario).toBeCloseTo(186.97615, 5);
-    expect(BIBLIOTECA.itens.find(i => i.id === 'rede_ret_rdp_3f_50_150').custos['2024'].unitario).toBe(12);
+    expect(BIBLIOTECA.itens.find(i => i.id === 'rede_ret_rdp_3f_50_150').custos['2024'].unitario).toBe(28.906259280000004);
   });
 
   test('a composição é gravada só nos 16 itens ligados a um projeto', () => {
@@ -167,7 +167,7 @@ describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 0
   });
 
   test('o resumo conta atualizados, copiados e em verificação', () => {
-    expect(r.resumo).toMatchObject({ total: 70, atualizados: 44, naoAtualizados: 26, emVerificacao: 7, mantidos: 0 });
+    expect(r.resumo).toMatchObject({ total: 70, atualizados: 44, naoAtualizados: 26, emVerificacao: 2, mantidos: 0 });
   });
 
   test('nenhum projeto do relatório fica sem uso', () => {
@@ -179,7 +179,9 @@ describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 0
     expect(linha('equip_relig_tri_24kv_urbano').motivo).toBe('Projeto 1207191220-APP 3 do PROORC');
     expect(linha('equip_pt_5mva').motivo).toMatch(/religador adicional de R\$ 88.142,90 e 20% de mão de obra/);
     expect(linha('rede_ret_rdr_1f_4_1_0').motivo).toBe('5,466 US × R$ 2.823,98 (preço da US do relatório)');
-    expect(linha('sub_22kv').motivo).toMatch(/Valor digitado/);
+    expect(linha('sub_22kv').motivo).toBe('Fonte em verificação pelo responsável');
+    expect(linha('ext_rural_tri_caa336').motivo).toBe('TOD dez/2024 — não vem do PROORC; mantém o valor da referência anterior');
+    expect(linha('deriv_rdu_ramal_sub').motivo).toBe('Calculado manualmente — mantém o valor da referência anterior');
   });
 
   test('itens em verificação com preço novo do PROORC mostram a variação', () => {

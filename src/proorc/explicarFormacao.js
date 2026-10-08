@@ -150,6 +150,34 @@ export const explicarFormacao = (item, ref, { precosUS } = {}) => {
     };
   }
 
+  /* ── TOD (Tabela de Orçamento da Distribuição) ────────────────────────────
+     A mão de obra da TOD já inclui mão de obra própria, serviços de terceiros
+     e taxa de administração: não é recalculada pelo preço da US.            */
+  if (item.formacao.origem === 'tod') {
+    const f = item.formacao;
+    const secao = String(f.secao || '').split('.')[0].trim();
+    return {
+      ...base,
+      disponivel: true,
+      conta: `${f.fonte} — seção ${secao} — ${f.descricaoTod}: material ${reais(v(custos.material) * 1000)} + mão de obra ${reais(v(custos.maoObra) * 1000)} (inclui mão de obra própria, serviços de terceiros e taxa de administração)`,
+      passos: [
+        { rotulo: `Material (${f.unidadeTod || 'TOD'})`, valor: reais(v(custos.material) * 1000) },
+        { rotulo: `Mão de obra (${f.unidadeTod || 'TOD'})`, valor: reais(v(custos.maoObra) * 1000) },
+        { rotulo: `Unitário por ${item.unidade} (R$ mil)`, valor: mil(custos.unitario), destaque: true },
+      ],
+    };
+  }
+
+  /* ── Calculado manualmente ───────────────────────────────────────────────── */
+  if (item.formacao.origem === 'manual') {
+    const motivo = String(item.formacao.motivo || '').trim();
+    return {
+      ...base,
+      disponivel: false,
+      mensagem: /^Calculado manualmente/i.test(motivo) ? motivo : `Calculado manualmente. ${motivo}`.trim(),
+    };
+  }
+
   /* ── Valor digitado ──────────────────────────────────────────────────────── */
   return {
     ...base,

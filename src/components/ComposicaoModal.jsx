@@ -55,7 +55,9 @@ export default function ComposicaoModal({ item, referencia, onFechar, onAbrirIte
         {dados.naoAtualizado && (
           <div style={{ background: '#F5F5F5', border: '1px solid #DDD', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px' }}>
             <p style={{ fontFamily: F, fontSize: '12px', color: '#666', margin: 0 }}>
-              Nesta referência o valor foi copiado da anterior: o projeto-padrão não veio no relatório do PROORC.
+              {dados.origem === 'proorc'
+                ? 'Nesta referência o valor foi copiado da anterior: o projeto-padrão não veio no relatório do PROORC.'
+                : `Nesta referência o valor foi copiado da anterior: a origem deste item (${ORIGENS[dados.origem]}) não é atualizada pelo PROORC.`}
             </p>
           </div>
         )}

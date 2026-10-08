@@ -13,6 +13,24 @@ import * as compat from '../data/tabelaCustos';
 const CAMPOS_PLANOS = ['2024', '2022', '2021'].flatMap(ref => CAMPOS_CUSTO.map(c => c + ref));
 const IDENTIDADE = ['id', 'categoria', 'subcategoria', 'tipo', 'unidade'];
 
+/* Mudanças de valor decididas pelo responsável depois da migração. Cada uma é
+   uma exceção documentada: o teste confere que o item tem exatamente o valor
+   decidido, e todos os demais valores continuam iguais ao retrato antigo.   */
+const EXCECOES_DOCUMENTADAS = {
+  'rede_ret_rdp_3f_50_150.unitario2024': {
+    valor: 28.906259280000004,
+    motivo: 'Rodada 3 (R1): o unitário 12 estava errado; passa a ser a mão de obra, 10,236 US × 2,82398.',
+  },
+  'sub_13_8kv.material2024': {
+    valor: 750,
+    motivo: 'Rodada 3 (R2): a planilha de origem tinha material 750, que não tinha sido migrado.',
+  },
+  'sub_13_8kv.unitario2024': {
+    valor: 750,
+    motivo: 'Rodada 3 (R2): o unitário ficou vazio na planilha de origem; o valor correto é 750 (igual ao material).',
+  },
+};
+
 describe('Etapa 1 — biblioteca.json é idêntica à tabela antiga', () => {
   test('os 70 itens, na mesma ordem', () => {
     expect(antes).toHaveLength(70);
@@ -26,11 +44,23 @@ describe('Etapa 1 — biblioteca.json é idêntica à tabela antiga', () => {
     });
   });
 
-  test('os 12 valores de custo de cada item são exatamente os mesmos', () => {
+  test('os 12 valores de custo de cada item são exatamente os mesmos, salvo as exceções documentadas', () => {
     TABELA_CUSTOS.forEach((item, i) => {
       CAMPOS_PLANOS.forEach(campo => {
-        expect(item[campo], `${item.id}.${campo}`).toBe(antes[i][campo]);
+        const excecao = EXCECOES_DOCUMENTADAS[`${item.id}.${campo}`];
+        expect(item[campo], `${item.id}.${campo}`).toBe(excecao ? excecao.valor : antes[i][campo]);
       });
+    });
+  });
+
+  test('toda exceção documentada tem motivo, aponta para um valor que existe e de fato muda o retrato', () => {
+    Object.entries(EXCECOES_DOCUMENTADAS).forEach(([chave, { valor, motivo }]) => {
+      const [id, campo] = chave.split('.');
+      const original = antes.find(i => i.id === id);
+      expect(original, chave).toBeDefined();
+      expect(CAMPOS_PLANOS, chave).toContain(campo);
+      expect(motivo, chave).toBeTruthy();
+      expect(original[campo], chave).not.toBe(valor);
     });
   });
 
@@ -58,15 +88,16 @@ describe('Etapa 1 — estrutura do JSON', () => {
     expect(new Set(ids).size).toBe(ids.length);
     BIBLIOTECA.itens.forEach(i => {
       expect(i.status, i.id).toBe('oficial');
-      expect(['proorc', 'formula', 'maoDeObra', 'fixo'], i.id).toContain(i.formacao.origem);
+      expect(['proorc', 'tod', 'formula', 'maoDeObra', 'manual', 'fixo'], i.id).toContain(i.formacao.origem);
       expect(i.composicoes, i.id).toEqual({});
     });
   });
 
-  test('as 4 origens cobrem os 70 itens na contagem esperada', () => {
+  test('as 6 origens cobrem os 70 itens na contagem esperada', () => {
     const porOrigem = {};
     BIBLIOTECA.itens.forEach(i => { porOrigem[i.formacao.origem] = (porOrigem[i.formacao.origem] || 0) + 1; });
-    expect(porOrigem).toEqual({ proorc: 25, formula: 20, maoDeObra: 8, fixo: 17 });
+    // R6: 5 extensões rurais saíram de proorc para tod; 5 itens saíram de fixo para manual
+    expect(porOrigem).toEqual({ proorc: 20, tod: 5, formula: 20, maoDeObra: 8, manual: 5, fixo: 12 });
   });
 
   test('itens de fórmula apontam para bases que existem', () => {
@@ -96,12 +127,10 @@ describe('Etapa 1 — estrutura do JSON', () => {
     });
   });
 
-  test('os 7 itens em verificação estão marcados', () => {
+  test('os itens em verificação estão marcados', () => {
     const marcados = BIBLIOTECA.itens.filter(i => i.verificacao).map(i => i.id);
-    expect(marcados.sort()).toEqual([
-      'equip_brt_167_urbano', 'equip_relig_tri_36kv', 'recon_urb_4_0_ca',
-      'recon_urb_rdi185', 'recon_urb_rdi50', 'rede_ret_rdp_3f_50_150', 'sub_13_8kv',
-    ]);
+    // Os itens zerados deixaram de ser "em verificação": agora são pendentes (R3)
+    expect(marcados.sort()).toEqual(['equip_brt_167_urbano', 'equip_relig_tri_36kv']);
   });
 
   test('o preço da US de 2024 fica em branco, porque a planilha usou dois valores', () => {

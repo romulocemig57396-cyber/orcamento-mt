@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { formatarMoeda, formatarData, calcularPrazoEstimado } from './calculos';
+import { formatarMoeda, formatarData, calcularPrazoEstimado, calcularValidade } from './calculos';
 import { hojeISO } from './datas';
 import { rotuloReferenciasUsadas } from '../data/biblioteca';
 import { diferencaDoItem, baseRateioDoItem } from './diferencaCabo';
@@ -12,6 +12,13 @@ const Q = (item) => formatarQuantidade(item.quantidade, item.unidade).replace('�
 
 // Itens que vieram de uma proposta ainda não aprovada pelo responsável
 const descricaoItem = (item) => `${item.descricao}${item.naoOficial ? ' (item proposto, nao oficial)' : ''}`;
+
+/* A Data Base é a data de emissão do orçamento; a validade conta a partir dela
+   (+120 dias). Nada nos documentos usa a data de hoje.                       */
+const dataEmissao = (orcamento) => formatarData(orcamento.dataBase);
+const dataValidade = (orcamento) => formatarData(calcularValidade(orcamento.dataBase));
+const textoEmissaoValidade = (orcamento) =>
+  `Emissão: ${dataEmissao(orcamento)}  |  Validade: ${dataValidade(orcamento)}`;
 
 // Itens com diferença de cabo (cabo superior → cabo necessário)
 const itensComDiferenca = (orcamento) => (orcamento.itensObra || []).filter(i => diferencaDoItem(i) > 0);
@@ -123,36 +130,14 @@ export const exportarExcel = (orcamento) => {
     [],
 
     // Validade e emissão
-    ['Validade', '', formatarData(orcamento.dataValidade)],
+    ['Emissão (Data Base)', '', dataEmissao(orcamento)],
+    ['Validade', '', dataValidade(orcamento)],
     ...(rotuloReferenciasUsadas(orcamento.itensObra) ? [['Referência de Custos', '', rotuloReferenciasUsadas(orcamento.itensObra)]] : []),
-    ['Data Base', '', formatarData(orcamento.dataBase)],
-    [`${orcamento.municipio || ''}`, '', formatarData(orcamento.dataBase)],
+    [`${orcamento.municipio || ''}`, '', dataEmissao(orcamento)],
   ];
 
   const ws1 = XLSX.utils.aoa_to_sheet(dados);
   XLSX.utils.book_append_sheet(workbook, ws1, 'Orçamento');
-
-  // ── Aba Materiais ──────────────────────────────────────────────────────────
-  if (orcamento.materiaisAuxiliares && orcamento.materiaisAuxiliares.length > 0) {
-    const dadosMat = [
-      ['MATERIAIS AUXILIARES'],
-      [],
-      ['CABOS CA'],
-      ['Tipo', 'kg/m', 'Metragem (m)', 'Peso Total (kg)', 'Peso c/ Acréscimo (kg)'],
-      ...orcamento.materiaisAuxiliares
-        .filter(m => m.grupo === 'CA')
-        .map(m => [m.tipo, m.kgPorMetro, m.metragem, m.pesoTotal, m.pesoComAcrescimo]),
-      [],
-      ['CABOS CAA'],
-      ['Tipo', 'kg/m', 'Metragem (m)', 'Peso Total (kg)', 'Peso c/ Acréscimo (kg)'],
-      ...orcamento.materiaisAuxiliares
-        .filter(m => m.grupo === 'CAA')
-        .map(m => [m.tipo, m.kgPorMetro, m.metragem, m.pesoTotal, m.pesoComAcrescimo]),
-    ];
-
-    const ws2 = XLSX.utils.aoa_to_sheet(dadosMat);
-    XLSX.utils.book_append_sheet(workbook, ws2, 'Materiais');
-  }
 
   const nomeArquivo = `Orcamento_${(orcamento.cliente || 'sem-nome').replace(/\s+/g, '_')}_${hojeISO()}.xlsx`;
   XLSX.writeFile(workbook, nomeArquivo);
@@ -185,7 +170,7 @@ export const exportarPDF = (orcamento) => {
 
   doc.setFontSize(9);
   doc.setTextColor(100);
-  doc.text(`Emissão: ${formatarData(new Date())}`, 190, y, { align: 'right' });
+  doc.text(`Emissão: ${dataEmissao(orcamento)}`, 190, y, { align: 'right' });
   const refCustos = rotuloReferenciasUsadas(orcamento.itensObra);
   if (refCustos) doc.text(`Custos: ${refCustos}`, 20, y);
   doc.setTextColor(0);
@@ -356,7 +341,7 @@ export const exportarPDF = (orcamento) => {
     doc.setFontSize(7);
     doc.setTextColor(150);
     doc.text(
-      `Validade: ${formatarData(orcamento.dataValidade)}  |  Data Base: ${formatarData(orcamento.dataBase)}`
+      textoEmissaoValidade(orcamento)
       + (rotuloReferenciasUsadas(orcamento.itensObra) ? `  |  Custos: ${rotuloReferenciasUsadas(orcamento.itensObra)}` : ''),
       20, 290
     );
@@ -406,7 +391,7 @@ export const exportarRateio = (orcamento) => {
   doc.setFontSize(9);
   doc.setFont(undefined, 'normal');
   doc.setTextColor(100);
-  doc.text(`NS: ${orcamento.ns || '—'}   |   Cliente: ${orcamento.cliente || '—'}   |   Data: ${formatarData(orcamento.dataBase)}`, 105, y, { align: 'center' });
+  doc.text(`NS: ${orcamento.ns || '—'}   |   Cliente: ${orcamento.cliente || '—'}   |   Emissão: ${dataEmissao(orcamento)}`, 105, y, { align: 'center' });
   doc.setTextColor(0);
   y += 10;
 
@@ -535,7 +520,7 @@ export const exportarRateio = (orcamento) => {
     doc.setFontSize(7);
     doc.setTextColor(150);
     doc.text(
-      `Emissão: ${orcamento.municipio || ''}, ${formatarData(orcamento.dataBase)}`,
+      `${orcamento.municipio ? `${orcamento.municipio}  |  ` : ''}${textoEmissaoValidade(orcamento)}`,
       105, 285, { align: 'center' }
     );
     doc.text(`Página ${p} de ${totalPags}`, 105, 290, { align: 'center' });

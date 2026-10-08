@@ -24,8 +24,6 @@ const EXCECOES = {
   equip_abert_fecha_chave: ['unitario', 'maoObra'],
   equip_rem_trafo_1f: ['unitario', 'maoObra'],
   equip_rem_trafo_3f: ['unitario', 'maoObra'],
-  // Unitário 12 digitado por cima da fórmula; em verificação pelo responsável
-  rede_ret_rdp_3f_50_150: ['unitario'],
   // Só o unitário foi cadastrado; material e mão de obra ficaram em branco
   recon_urb_rdp150_dupla: ['material', 'maoObra', 'usConstr'],
   // A planilha usou o material do mono CAA 2 (23,3894) em vez do da rede nova,
@@ -106,37 +104,56 @@ describe('Etapa 1 — recálculo de 2024: itens só de mão de obra', () => {
     });
   });
 
-  test('rede_ret_rdp_3f_50_150 está com 12 e o recálculo dá 28,906', () => {
-    expect(custoDe('rede_ret_rdp_3f_50_150').unitario).toBe(12);
-    const calc = calcularPorMaoDeObra(getItemById('rede_ret_rdp_3f_50_150').formacao, { precoUSConstrucao: PRECO_US_2024 });
-    expect(calc.unitario).toBeCloseTo(28.906, 3);
-    expect(getItemById('rede_ret_rdp_3f_50_150').verificacao).toMatch(/28,906/);
+  test('rede_ret_rdp_3f_50_150 está com 28,906, igual ao recálculo (decisão R1)', () => {
+    const item = getItemById('rede_ret_rdp_3f_50_150');
+    const calc = calcularPorMaoDeObra(item.formacao, { precoUSConstrucao: PRECO_US_2024 });
+    expect(custoDe('rede_ret_rdp_3f_50_150').unitario).toBe(28.906259280000004);
+    expect(custoDe('rede_ret_rdp_3f_50_150').unitario).toBeCloseTo(calc.unitario, 10);
+    expect(custoDe('rede_ret_rdp_3f_50_150').unitario).toBe(custoDe('rede_ret_rdp_3f_50_150').maoObra);
+    expect(item.verificacao).toBeUndefined();
+  });
+
+  test('0,6 km dessa retirada geram R$ 17.343,76 no orçamento', () => {
+    expect(Math.round(0.6 * custoDe('rede_ret_rdp_3f_50_150').unitario * 1000 * 100) / 100).toBe(17343.76);
   });
 });
 
 describe('Etapa 1 — itens copiados e sem custo', () => {
-  test('os 17 itens fixos trazem o motivo', () => {
-    const fixos = itensDe('fixo');
-    expect(fixos).toHaveLength(17);
-    fixos.forEach(i => expect(i.formacao.motivo, i.id).toBeTruthy());
+  test('os 12 itens fixos e os 5 manuais trazem o motivo', () => {
+    expect(itensDe('fixo')).toHaveLength(12);
+    expect(itensDe('manual')).toHaveLength(5);
+    [...itensDe('fixo'), ...itensDe('manual')].forEach(i => expect(i.formacao.motivo, i.id).toBeTruthy());
   });
 
-  test('os 6 itens sem custo em 2024 estão marcados como tal', () => {
+  test('os 5 itens sem custo em 2024 estão marcados como tal', () => {
     const semCusto = BIBLIOTECA.itens.filter(i => !custosDaReferencia(i, '2024').unitario);
     expect(semCusto.map(i => i.id).sort()).toEqual([
       'ext_urbano_rdi185', 'ext_urbano_rdi50', 'recon_urb_4_0_ca',
-      'recon_urb_rdi185', 'recon_urb_rdi50', 'sub_13_8kv',
+      'recon_urb_rdi185', 'recon_urb_rdi50',
     ]);
-    semCusto.forEach(i => expect(i.formacao.motivo, i.id).toMatch(/Sem custo cadastrado/));
+    semCusto.forEach(i => expect(i.formacao.motivo, i.id).toMatch(/Sem custo cadastrado|Zerado em 2024/));
   });
 
-  test('os 6 itens do PROORC ainda sem projeto exportado estão identificados', () => {
+  test('o único item do PROORC ainda sem projeto exportado está identificado', () => {
+    // As extensões rurais vêm da TOD, não do PROORC (R6)
     const semProjeto = itensDe('proorc').filter(i => !i.formacao.projeto);
-    expect(semProjeto.map(i => i.id).sort()).toEqual([
-      'equip_bcap_300_fixo', 'ext_rural_mono_caa2', 'ext_rural_tri_caa1_0',
-      'ext_rural_tri_caa2', 'ext_rural_tri_caa336', 'ext_rural_tri_caa4_0',
-    ]);
+    expect(semProjeto.map(i => i.id)).toEqual(['equip_bcap_300_fixo']);
     semProjeto.forEach(i => expect(i.formacao.observacao, i.id).toMatch(/ainda não exportado/));
+  });
+});
+
+describe('R2 — Seção 13,8 kV = 750', () => {
+  test('2024: material 750, unitário 750, como a Seção 22,0 kV; 2022 e 2021 sem mudança', () => {
+    const item = getItemById('sub_13_8kv');
+    expect(item.custos['2024']).toEqual({ material: 750, maoObra: 0, usConstr: 0, unitario: 750 });
+    expect(item.custos['2022'].unitario).toBe(0);
+    expect(item.custos['2021'].unitario).toBe(0);
+    expect(item.formacao).toEqual({ origem: 'fixo', motivo: 'Valor da planilha de origem (material 750).' });
+    expect(item.verificacao).toBeUndefined();
+  });
+
+  test('1 Seção 13,8 kV no orçamento = R$ 750.000,00', () => {
+    expect(custoDe('sub_13_8kv').unitario * 1 * 1000).toBe(750000);
   });
 });
 
