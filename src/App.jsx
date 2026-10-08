@@ -23,7 +23,10 @@ const abas = [
 ];
 
 function App() {
-  const { orcamento, updateField, updateImportacao, resetOrcamento, setOrcamento } = useOrcamento();
+  const {
+    orcamento, updateField, updateImportacao, resetOrcamento, setOrcamento,
+    salvamentoSuspenso, carregarVersaoOutraAba, manterEstaVersao,
+  } = useOrcamento();
   const [abaAtiva, setAbaAtiva] = useState('atendimento');
   const [anoReferencia, setAnoReferencia] = useState(2024);
 
@@ -163,15 +166,36 @@ function App() {
           <div style={{
             display: 'flex', alignItems: 'center', gap: '6px',
             fontSize: '12px', fontWeight: 600, fontFamily: "'Open Sans', sans-serif",
-            color: '#007A3D', background: '#E7F4EE',
+            color: salvamentoSuspenso ? '#8B6D00' : '#007A3D',
+            background: salvamentoSuspenso ? '#FFFBE6' : '#E7F4EE',
             padding: '6px 14px', borderRadius: '20px',
-            border: '1px solid #B8E6CC',
+            border: `1px solid ${salvamentoSuspenso ? '#FFE57A' : '#B8E6CC'}`,
             flexShrink: 0,
           }}>
-            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#00A859', display: 'inline-block', flexShrink: 0 }} />
-            Salvo automaticamente
+            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: salvamentoSuspenso ? '#E6BC00' : '#00A859', display: 'inline-block', flexShrink: 0 }} />
+            {salvamentoSuspenso ? 'Salvamento suspenso' : 'Salvo automaticamente'}
           </div>
         </header>
+
+        {/* Aviso: orçamento alterado em outra aba */}
+        {salvamentoSuspenso && (
+          <div role="alert" style={{
+            background: '#FFFBE6', borderBottom: '1px solid #FFE57A', padding: '10px 32px',
+            display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', flexShrink: 0,
+          }}>
+            <span style={{ flex: 1, fontFamily: "'Open Sans', sans-serif", fontSize: '13px', fontWeight: 600, color: '#8B6D00' }}>
+              Este orçamento foi alterado em outra aba
+            </span>
+            <button onClick={carregarVersaoOutraAba}
+              style={{ background: '#007A3D', color: '#fff', border: 'none', borderRadius: '6px', padding: '6px 12px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Open Sans', sans-serif" }}>
+              Carregar versão da outra aba
+            </button>
+            <button onClick={manterEstaVersao}
+              style={{ background: '#fff', color: '#8B6D00', border: '1px solid #E6BC00', borderRadius: '6px', padding: '6px 12px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Open Sans', sans-serif" }}>
+              Manter esta versão
+            </button>
+          </div>
+        )}
 
         {/* Page content */}
         <main style={{ flex: 1, overflowY: 'auto', padding: '28px 32px', background: '#F5F5F5' }}>

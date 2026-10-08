@@ -68,30 +68,54 @@ const novoEstado = () => {
   return { ...initialState, dataBase: hoje, dataValidade: calcularValidade(hoje) };
 };
 
-export const useOrcamento = () => {
-  const [orcamento, setOrcamento] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = migrarOrcamento(JSON.parse(saved));
-        const dataBase = parsed.dataBase || hojeISO();
-        return {
-          ...parsed,
-          dataBase,
-          dataValidade: calcularValidade(dataBase),
-          importacao: parsed.importacao || initialState.importacao,
-        };
-      } catch (e) {
-        console.error('Erro ao carregar dados salvos:', e);
-        return novoEstado();
-      }
+// Lê o orçamento salvo no localStorage, aplicando as migrações de formato
+const carregarSalvo = () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const parsed = migrarOrcamento(JSON.parse(saved));
+      const dataBase = parsed.dataBase || hojeISO();
+      return {
+        ...parsed,
+        dataBase,
+        dataValidade: calcularValidade(dataBase),
+        importacao: parsed.importacao || initialState.importacao,
+      };
+    } catch (e) {
+      console.error('Erro ao carregar dados salvos:', e);
+      return novoEstado();
     }
-    return novoEstado();
-  });
+  }
+  return novoEstado();
+};
+
+export const useOrcamento = () => {
+  const [orcamento, setOrcamento] = useState(carregarSalvo);
+
+  // Outra aba alterou o orçamento: suspende o salvamento automático desta aba
+  // até o usuário escolher qual versão fica, para uma não apagar a outra.
+  const [salvamentoSuspenso, setSalvamentoSuspenso] = useState(false);
 
   useEffect(() => {
+    const aoAlterarStorage = (e) => {
+      if (e.key === STORAGE_KEY || e.key === null) setSalvamentoSuspenso(true);
+    };
+    window.addEventListener('storage', aoAlterarStorage);
+    return () => window.removeEventListener('storage', aoAlterarStorage);
+  }, []);
+
+  useEffect(() => {
+    if (salvamentoSuspenso) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(orcamento));
-  }, [orcamento]);
+  }, [orcamento, salvamentoSuspenso]);
+
+  const carregarVersaoOutraAba = () => {
+    setOrcamento(carregarSalvo());
+    setSalvamentoSuspenso(false);
+  };
+
+  // Retomar o salvamento grava esta versão por cima da outra (efeito acima)
+  const manterEstaVersao = () => setSalvamentoSuspenso(false);
 
   useEffect(() => {
     const diasObrasVinculadas = diasEntre(hojeISO(), orcamento.dataObrasVinculadas);
@@ -195,6 +219,9 @@ export const useOrcamento = () => {
     updateField,
     updateImportacao,
     resetOrcamento,
-    setOrcamento
+    setOrcamento,
+    salvamentoSuspenso,
+    carregarVersaoOutraAba,
+    manterEstaVersao,
   };
 };
