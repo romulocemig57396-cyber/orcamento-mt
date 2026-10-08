@@ -1,7 +1,6 @@
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ItensObra from '../components/ItensObra';
-import MateriaisAuxiliares from '../components/MateriaisAuxiliares';
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -42,23 +41,5 @@ describe('B3 — confirmação ao remover item de obra', () => {
     render(<ItensObra itens={ref.estado.itensObra} setOrcamento={ref.setOrcamento} />);
     fireEvent.click(screen.getByText('Remover'));
     expect(confirm).toHaveBeenCalledWith("Remover o item 'Abert/Fecha. De Chave'?");
-  });
-});
-
-describe('B3 — confirmação ao remover material auxiliar', () => {
-  const material = { id: 7, grupo: 'CAA', tipo: 'CAA336', kgPorMetro: 0.689, metragem: 100, pesoTotal: 68.9, pesoComAcrescimo: 70.97 };
-
-  test('cancelar mantém; confirmar remove', () => {
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
-    const ref = estadoCom({ materiaisAuxiliares: [material] });
-    const { rerender } = render(<MateriaisAuxiliares materiais={ref.estado.materiaisAuxiliares} setOrcamento={ref.setOrcamento} />);
-    fireEvent.click(screen.getByText('Remover'));
-    expect(confirm).toHaveBeenCalledWith("Remover o item 'CAA336'?");
-    expect(ref.estado.materiaisAuxiliares).toHaveLength(1);
-
-    confirm.mockReturnValue(true);
-    rerender(<MateriaisAuxiliares materiais={ref.estado.materiaisAuxiliares} setOrcamento={ref.setOrcamento} />);
-    fireEvent.click(screen.getByText('Remover'));
-    expect(ref.estado.materiaisAuxiliares).toHaveLength(0);
   });
 });

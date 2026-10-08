@@ -26,7 +26,6 @@ const initialState = {
   diferencaCabo: 0,
   erd: 0,
   erdAplicado: null,
-  materiaisAuxiliares: [],
   descricaoTecnica: '',
   musd: 0,
   totalObra: 0,

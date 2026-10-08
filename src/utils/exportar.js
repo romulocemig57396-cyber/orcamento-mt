@@ -132,28 +132,6 @@ export const exportarExcel = (orcamento) => {
   const ws1 = XLSX.utils.aoa_to_sheet(dados);
   XLSX.utils.book_append_sheet(workbook, ws1, 'Orçamento');
 
-  // ── Aba Materiais ──────────────────────────────────────────────────────────
-  if (orcamento.materiaisAuxiliares && orcamento.materiaisAuxiliares.length > 0) {
-    const dadosMat = [
-      ['MATERIAIS AUXILIARES'],
-      [],
-      ['CABOS CA'],
-      ['Tipo', 'kg/m', 'Metragem (m)', 'Peso Total (kg)', 'Peso c/ Acréscimo (kg)'],
-      ...orcamento.materiaisAuxiliares
-        .filter(m => m.grupo === 'CA')
-        .map(m => [m.tipo, m.kgPorMetro, m.metragem, m.pesoTotal, m.pesoComAcrescimo]),
-      [],
-      ['CABOS CAA'],
-      ['Tipo', 'kg/m', 'Metragem (m)', 'Peso Total (kg)', 'Peso c/ Acréscimo (kg)'],
-      ...orcamento.materiaisAuxiliares
-        .filter(m => m.grupo === 'CAA')
-        .map(m => [m.tipo, m.kgPorMetro, m.metragem, m.pesoTotal, m.pesoComAcrescimo]),
-    ];
-
-    const ws2 = XLSX.utils.aoa_to_sheet(dadosMat);
-    XLSX.utils.book_append_sheet(workbook, ws2, 'Materiais');
-  }
-
   const nomeArquivo = `Orcamento_${(orcamento.cliente || 'sem-nome').replace(/\s+/g, '_')}_${hojeISO()}.xlsx`;
   XLSX.writeFile(workbook, nomeArquivo);
 };
