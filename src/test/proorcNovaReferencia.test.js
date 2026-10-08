@@ -179,7 +179,9 @@ describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 0
     expect(linha('equip_relig_tri_24kv_urbano').motivo).toBe('Projeto 1207191220-APP 3 do PROORC');
     expect(linha('equip_pt_5mva').motivo).toMatch(/religador adicional de R\$ 88.142,90 e 20% de mão de obra/);
     expect(linha('rede_ret_rdr_1f_4_1_0').motivo).toBe('5,466 US × R$ 2.823,98 (preço da US do relatório)');
-    expect(linha('sub_22kv').motivo).toMatch(/Valor digitado/);
+    expect(linha('sub_22kv').motivo).toBe('Fonte em verificação pelo responsável');
+    expect(linha('ext_rural_tri_caa336').motivo).toBe('TOD dez/2024 — não vem do PROORC; mantém o valor da referência anterior');
+    expect(linha('deriv_rdu_ramal_sub').motivo).toBe('Calculado manualmente — mantém o valor da referência anterior');
   });
 
   test('itens em verificação com preço novo do PROORC mostram a variação', () => {

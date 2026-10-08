@@ -151,8 +151,11 @@ describe.skipIf(!temTodos)('Etapa 3 — tela de atualização com os relatórios
     fireEvent.click(screen.getByText('Gerar nova referência'));
     fireEvent.click(screen.getByText('Continuar editando valores'));
 
-    expect(screen.getByText(/referência em preparação 2026-10/)).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText('Tri CAA 1/0 — material'), { target: { value: '45' } });
-    expect(within(screen.getByTestId('previa-edicao')).getByText('83,31981')).toBeInTheDocument();
-  });
+    // Busca só dentro da área de edição: a tela inteira do PROORC é grande e
+    // uma busca por rótulo nela toda leva segundos no jsdom.
+    const edicao = screen.getByRole('region', { name: 'Editar valores da referência em preparação' });
+    expect(within(edicao).getByText(/referência em preparação 2026-10/)).toBeInTheDocument();
+    fireEvent.change(within(edicao).getByLabelText('Tri CAA 1/0 — material'), { target: { value: '45' } });
+    expect(within(within(edicao).getByTestId('previa-edicao')).getByText('83,31981')).toBeInTheDocument();
+  }, 20000);
 });

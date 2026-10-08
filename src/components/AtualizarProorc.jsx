@@ -483,9 +483,11 @@ export default function AtualizarProorc() {
           </div>
 
           {gerada && editando && (
-            <EditarValores
-              base={{ biblioteca: gerada, chave: chave.trim(), rotulo, fonte: `PROORC, relatórios de ${consolidado.dataReferencia}` }}
-            />
+            <section aria-label="Editar valores da referência em preparação">
+              <EditarValores
+                base={{ biblioteca: gerada, chave: chave.trim(), rotulo, fonte: `PROORC, relatórios de ${consolidado.dataReferencia}` }}
+              />
+            </section>
           )}
         </>
       )}
