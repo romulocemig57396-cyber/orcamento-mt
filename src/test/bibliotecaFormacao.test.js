@@ -24,8 +24,6 @@ const EXCECOES = {
   equip_abert_fecha_chave: ['unitario', 'maoObra'],
   equip_rem_trafo_1f: ['unitario', 'maoObra'],
   equip_rem_trafo_3f: ['unitario', 'maoObra'],
-  // Unitário 12 digitado por cima da fórmula; em verificação pelo responsável
-  rede_ret_rdp_3f_50_150: ['unitario'],
   // Só o unitário foi cadastrado; material e mão de obra ficaram em branco
   recon_urb_rdp150_dupla: ['material', 'maoObra', 'usConstr'],
   // A planilha usou o material do mono CAA 2 (23,3894) em vez do da rede nova,
@@ -106,11 +104,17 @@ describe('Etapa 1 — recálculo de 2024: itens só de mão de obra', () => {
     });
   });
 
-  test('rede_ret_rdp_3f_50_150 está com 12 e o recálculo dá 28,906', () => {
-    expect(custoDe('rede_ret_rdp_3f_50_150').unitario).toBe(12);
-    const calc = calcularPorMaoDeObra(getItemById('rede_ret_rdp_3f_50_150').formacao, { precoUSConstrucao: PRECO_US_2024 });
-    expect(calc.unitario).toBeCloseTo(28.906, 3);
-    expect(getItemById('rede_ret_rdp_3f_50_150').verificacao).toMatch(/28,906/);
+  test('rede_ret_rdp_3f_50_150 está com 28,906, igual ao recálculo (decisão R1)', () => {
+    const item = getItemById('rede_ret_rdp_3f_50_150');
+    const calc = calcularPorMaoDeObra(item.formacao, { precoUSConstrucao: PRECO_US_2024 });
+    expect(custoDe('rede_ret_rdp_3f_50_150').unitario).toBe(28.906259280000004);
+    expect(custoDe('rede_ret_rdp_3f_50_150').unitario).toBeCloseTo(calc.unitario, 10);
+    expect(custoDe('rede_ret_rdp_3f_50_150').unitario).toBe(custoDe('rede_ret_rdp_3f_50_150').maoObra);
+    expect(item.verificacao).toBeUndefined();
+  });
+
+  test('0,6 km dessa retirada geram R$ 17.343,76 no orçamento', () => {
+    expect(Math.round(0.6 * custoDe('rede_ret_rdp_3f_50_150').unitario * 1000 * 100) / 100).toBe(17343.76);
   });
 });
 

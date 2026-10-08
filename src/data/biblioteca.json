@@ -2459,11 +2459,10 @@
           "material": 0,
           "maoObra": 28.906259280000004,
           "usConstr": 10.236,
-          "unitario": 12
+          "unitario": 28.906259280000004
         }
       },
-      "composicoes": {},
-      "verificacao": "Unitário 12 digitado por cima da fórmula; o recálculo pelas 10,236 US dá 28,906."
+      "composicoes": {}
     },
     {
       "id": "deriv_rdu_ramal_sub",

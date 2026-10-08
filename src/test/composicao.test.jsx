@@ -78,8 +78,9 @@ describe('Etapa 5 — explicação sem composição na referência', () => {
   });
 
   test('item em verificação carrega a nota do responsável', () => {
-    expect(explicarFormacao(getItemById('rede_ret_rdp_3f_50_150'), '2024').verificacao)
-      .toMatch(/Unitário 12 digitado/);
+    expect(explicarFormacao(getItemById('equip_brt_167_urbano'), '2024').verificacao)
+      .toMatch(/267,73934 no PROORC/);
+    expect(explicarFormacao(getItemById('rede_ret_rdp_3f_50_150'), '2024').verificacao).toBeNull();
   });
 
   test('subtotais por classe', () => {

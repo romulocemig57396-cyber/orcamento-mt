@@ -103,10 +103,10 @@ describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 0
     expect(custo('recon_urb_rdp150_dupla').maoObra).toBeCloseTo(1.05 * 3.12698, 5);
   });
 
-  test('rede_ret_rdp_3f_50_150 = 28,906 e fica destacado em verificação', () => {
+  test('rede_ret_rdp_3f_50_150 = 28,906, igual à referência anterior desde a decisão R1', () => {
     expect(custo('rede_ret_rdp_3f_50_150').unitario).toBeCloseTo(28.906259, 5);
-    expect(linha('rede_ret_rdp_3f_50_150').emVerificacao).toBe(true);
-    expect(linha('rede_ret_rdp_3f_50_150').anterior.unitario).toBe(12);
+    expect(linha('rede_ret_rdp_3f_50_150').emVerificacao).toBe(false);
+    expect(linha('rede_ret_rdp_3f_50_150').anterior.unitario).toBe(28.906259280000004);
   });
 
   test('itens de fórmula rurais ficam iguais aos atuais, porque as bases não mudaram', () => {
@@ -140,7 +140,7 @@ describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 0
   test('as referências 2024, 2022 e 2021 não são tocadas', () => {
     expect(BIBLIOTECA.referencias.map(x => x.chave)).toEqual(['2024', '2022', '2021']);
     expect(BIBLIOTECA.itens.find(i => i.id === 'equip_brt_76').custos['2024'].unitario).toBeCloseTo(186.97615, 5);
-    expect(BIBLIOTECA.itens.find(i => i.id === 'rede_ret_rdp_3f_50_150').custos['2024'].unitario).toBe(12);
+    expect(BIBLIOTECA.itens.find(i => i.id === 'rede_ret_rdp_3f_50_150').custos['2024'].unitario).toBe(28.906259280000004);
   });
 
   test('a composição é gravada só nos 16 itens ligados a um projeto', () => {
@@ -167,7 +167,7 @@ describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 0
   });
 
   test('o resumo conta atualizados, copiados e em verificação', () => {
-    expect(r.resumo).toMatchObject({ total: 70, atualizados: 44, naoAtualizados: 26, emVerificacao: 7, mantidos: 0 });
+    expect(r.resumo).toMatchObject({ total: 70, atualizados: 44, naoAtualizados: 26, emVerificacao: 6, mantidos: 0 });
   });
 
   test('nenhum projeto do relatório fica sem uso', () => {

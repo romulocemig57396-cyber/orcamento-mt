@@ -13,6 +13,16 @@ import * as compat from '../data/tabelaCustos';
 const CAMPOS_PLANOS = ['2024', '2022', '2021'].flatMap(ref => CAMPOS_CUSTO.map(c => c + ref));
 const IDENTIDADE = ['id', 'categoria', 'subcategoria', 'tipo', 'unidade'];
 
+/* Mudanças de valor decididas pelo responsável depois da migração. Cada uma é
+   uma exceção documentada: o teste confere que o item tem exatamente o valor
+   decidido, e todos os demais valores continuam iguais ao retrato antigo.   */
+const EXCECOES_DOCUMENTADAS = {
+  'rede_ret_rdp_3f_50_150.unitario2024': {
+    valor: 28.906259280000004,
+    motivo: 'Rodada 3 (R1): o unitário 12 estava errado; passa a ser a mão de obra, 10,236 US × 2,82398.',
+  },
+};
+
 describe('Etapa 1 — biblioteca.json é idêntica à tabela antiga', () => {
   test('os 70 itens, na mesma ordem', () => {
     expect(antes).toHaveLength(70);
@@ -26,11 +36,23 @@ describe('Etapa 1 — biblioteca.json é idêntica à tabela antiga', () => {
     });
   });
 
-  test('os 12 valores de custo de cada item são exatamente os mesmos', () => {
+  test('os 12 valores de custo de cada item são exatamente os mesmos, salvo as exceções documentadas', () => {
     TABELA_CUSTOS.forEach((item, i) => {
       CAMPOS_PLANOS.forEach(campo => {
-        expect(item[campo], `${item.id}.${campo}`).toBe(antes[i][campo]);
+        const excecao = EXCECOES_DOCUMENTADAS[`${item.id}.${campo}`];
+        expect(item[campo], `${item.id}.${campo}`).toBe(excecao ? excecao.valor : antes[i][campo]);
       });
+    });
+  });
+
+  test('toda exceção documentada tem motivo, aponta para um valor que existe e de fato muda o retrato', () => {
+    Object.entries(EXCECOES_DOCUMENTADAS).forEach(([chave, { valor, motivo }]) => {
+      const [id, campo] = chave.split('.');
+      const original = antes.find(i => i.id === id);
+      expect(original, chave).toBeDefined();
+      expect(CAMPOS_PLANOS, chave).toContain(campo);
+      expect(motivo, chave).toBeTruthy();
+      expect(original[campo], chave).not.toBe(valor);
     });
   });
 
@@ -96,11 +118,11 @@ describe('Etapa 1 — estrutura do JSON', () => {
     });
   });
 
-  test('os 7 itens em verificação estão marcados', () => {
+  test('os itens em verificação estão marcados', () => {
     const marcados = BIBLIOTECA.itens.filter(i => i.verificacao).map(i => i.id);
     expect(marcados.sort()).toEqual([
       'equip_brt_167_urbano', 'equip_relig_tri_36kv', 'recon_urb_4_0_ca',
-      'recon_urb_rdi185', 'recon_urb_rdi50', 'rede_ret_rdp_3f_50_150', 'sub_13_8kv',
+      'recon_urb_rdi185', 'recon_urb_rdi50', 'sub_13_8kv',
     ]);
   });
 
