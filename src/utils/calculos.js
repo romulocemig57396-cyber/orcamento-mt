@@ -70,6 +70,34 @@ export const calcularRateioERD = ({ totalObra, ctcTotal, ppTotal, parcelaRegTota
   };
 };
 
+// ERD simulado — fator K por ano (R$/kW)
+export const FATOR_K = {
+  2026: 779.9937688857699,
+  2025: 747.8218066178199,
+};
+
+// MUSD ≤ 0 não gera ERD
+export const calcularErdSimulado = (musd, fatorK) => {
+  const m = parseFloat(musd) || 0;
+  return m > 0 ? m * fatorK : 0;
+};
+
+// Registro do ERD aplicado no Rateio, para detectar quando o MUSD muda depois
+export const criarErdAplicado = (musd, ano = 2026) => {
+  const fatorK = FATOR_K[ano];
+  return { musd, fatorK, ano, valor: parseFloat(calcularErdSimulado(musd, fatorK).toFixed(2)) };
+};
+
+// Aviso quando o ERD ainda é o aplicado, mas o MUSD atual é outro.
+// ERD digitado à mão (diferente do aplicado) não gera aviso.
+export const avisoErdDesatualizado = ({ erd, erdAplicado, musd }) => {
+  if (!erdAplicado) return null;
+  const erdAtual = parseFloat(erd) || 0;
+  if (Math.abs(erdAtual - erdAplicado.valor) > 0.005) return null;
+  if ((parseFloat(musd) || 0) === (parseFloat(erdAplicado.musd) || 0)) return null;
+  return { musdAplicado: erdAplicado.musd, musdAtual: musd };
+};
+
 // RN-009 — Parcela Demanda Regulada Técnica D
 export const calcularParcelaD = (ct, pp) => {
   return ct + pp;

@@ -23,6 +23,7 @@ const initialState = {
   itensObra: [],
   diferencaCabo: 0,
   erd: 0,
+  erdAplicado: null,
   materiaisAuxiliares: [],
   descricaoTecnica: '',
   musd: 0,
