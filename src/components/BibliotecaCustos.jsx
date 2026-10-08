@@ -326,7 +326,9 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                           </span>
                         )}
                         {custosDaReferencia(item, anoReferencia).naoAtualizadoPeloProorc && (
-                          <span title="Esta referência copiou o valor da anterior: o projeto-padrão não veio no relatório do PROORC."
+                          <span title={item.formacao?.origem === 'proorc'
+                            ? 'Esta referência copiou o valor da anterior: o projeto-padrão não veio no relatório do PROORC.'
+                            : 'Esta referência copiou o valor da anterior: a origem deste item não é atualizada pelo PROORC.'}
                             style={{ marginLeft: '8px', padding: '1px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#F0F0F0', color: '#777', border: '1px solid #DDD', whiteSpace: 'nowrap' }}>
                             não atualizado
                           </span>

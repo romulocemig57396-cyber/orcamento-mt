@@ -88,15 +88,16 @@ describe('Etapa 1 — estrutura do JSON', () => {
     expect(new Set(ids).size).toBe(ids.length);
     BIBLIOTECA.itens.forEach(i => {
       expect(i.status, i.id).toBe('oficial');
-      expect(['proorc', 'formula', 'maoDeObra', 'fixo'], i.id).toContain(i.formacao.origem);
+      expect(['proorc', 'tod', 'formula', 'maoDeObra', 'manual', 'fixo'], i.id).toContain(i.formacao.origem);
       expect(i.composicoes, i.id).toEqual({});
     });
   });
 
-  test('as 4 origens cobrem os 70 itens na contagem esperada', () => {
+  test('as 6 origens cobrem os 70 itens na contagem esperada', () => {
     const porOrigem = {};
     BIBLIOTECA.itens.forEach(i => { porOrigem[i.formacao.origem] = (porOrigem[i.formacao.origem] || 0) + 1; });
-    expect(porOrigem).toEqual({ proorc: 25, formula: 20, maoDeObra: 8, fixo: 17 });
+    // R6: 5 extensões rurais saíram de proorc para tod; 5 itens saíram de fixo para manual
+    expect(porOrigem).toEqual({ proorc: 20, tod: 5, formula: 20, maoDeObra: 8, manual: 5, fixo: 12 });
   });
 
   test('itens de fórmula apontam para bases que existem', () => {

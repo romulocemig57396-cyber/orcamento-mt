@@ -4,7 +4,8 @@
 
    Ordem de cálculo (a de cima alimenta a de baixo):
      1. itens `proorc` com projeto no relatório → calculados do projeto;
-     2. itens `proorc` sem projeto no relatório e itens `fixo` → copiados;
+     2. itens `proorc` sem projeto no relatório e itens `tod`, `manual` e
+        `fixo` → copiados (nunca são procurados no PROORC);
      3. itens `maoDeObra` → recalculados com o novo preço da US;
      4. itens `formula` → recalculados a partir dos valores NOVOS das bases.
 
@@ -132,9 +133,14 @@ export const calcularNovaReferencia = ({
     });
   });
 
-  itens.filter(i => i.formacao.origem === 'fixo').forEach(item => {
+  const MOTIVO_COPIA = {
+    tod: (f) => `${f.fonte || 'TOD'} — não vem do PROORC; mantém o valor da referência anterior`,
+    manual: () => 'Calculado manualmente — mantém o valor da referência anterior',
+    fixo: (f) => f.motivo || 'Valor digitado, sem composição',
+  };
+  itens.filter(i => MOTIVO_COPIA[i.formacao.origem]).forEach(item => {
     registrar(item, copiar(anterior(item)), {
-      motivo: item.formacao.motivo || 'Valor digitado, sem composição',
+      motivo: MOTIVO_COPIA[item.formacao.origem](item.formacao),
       naoAtualizado: true,
     });
   });

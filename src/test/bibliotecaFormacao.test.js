@@ -119,10 +119,10 @@ describe('Etapa 1 — recálculo de 2024: itens só de mão de obra', () => {
 });
 
 describe('Etapa 1 — itens copiados e sem custo', () => {
-  test('os 17 itens fixos trazem o motivo', () => {
-    const fixos = itensDe('fixo');
-    expect(fixos).toHaveLength(17);
-    fixos.forEach(i => expect(i.formacao.motivo, i.id).toBeTruthy());
+  test('os 12 itens fixos e os 5 manuais trazem o motivo', () => {
+    expect(itensDe('fixo')).toHaveLength(12);
+    expect(itensDe('manual')).toHaveLength(5);
+    [...itensDe('fixo'), ...itensDe('manual')].forEach(i => expect(i.formacao.motivo, i.id).toBeTruthy());
   });
 
   test('os 5 itens sem custo em 2024 estão marcados como tal', () => {
@@ -134,12 +134,10 @@ describe('Etapa 1 — itens copiados e sem custo', () => {
     semCusto.forEach(i => expect(i.formacao.motivo, i.id).toMatch(/Sem custo cadastrado|Zerado em 2024/));
   });
 
-  test('os 6 itens do PROORC ainda sem projeto exportado estão identificados', () => {
+  test('o único item do PROORC ainda sem projeto exportado está identificado', () => {
+    // As extensões rurais vêm da TOD, não do PROORC (R6)
     const semProjeto = itensDe('proorc').filter(i => !i.formacao.projeto);
-    expect(semProjeto.map(i => i.id).sort()).toEqual([
-      'equip_bcap_300_fixo', 'ext_rural_mono_caa2', 'ext_rural_tri_caa1_0',
-      'ext_rural_tri_caa2', 'ext_rural_tri_caa336', 'ext_rural_tri_caa4_0',
-    ]);
+    expect(semProjeto.map(i => i.id)).toEqual(['equip_bcap_300_fixo']);
     semProjeto.forEach(i => expect(i.formacao.observacao, i.id).toMatch(/ainda não exportado/));
   });
 });

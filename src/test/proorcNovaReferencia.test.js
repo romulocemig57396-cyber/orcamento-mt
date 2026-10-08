@@ -120,7 +120,7 @@ describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 0
 
   test('itens do PROORC sem relatório e itens fixos são copiados, com aviso', () => {
     const naoAtualizados = r.previa.filter(l => l.naoAtualizado).map(l => l.id);
-    // 6 itens proorc sem projeto no relatório + 3 aguardando relatório + 17 fixos
+    // 1 item proorc sem projeto + 3 aguardando relatório + 12 fixos + 5 tod + 5 manuais
     expect(naoAtualizados).toHaveLength(26);
     ['ext_rural_mono_caa2', 'ext_rural_tri_caa336', 'equip_brt_250_rural', 'equip_brt_250_urbano',
       'equip_bcap_600_fixo', 'equip_bcap_300_fixo', 'sub_22kv', 'deriv_rdu_ramal_sub']

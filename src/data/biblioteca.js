@@ -2,7 +2,7 @@
    biblioteca.js — acesso à biblioteca de custos (src/data/biblioteca.json)
 
    A biblioteca é um arquivo de dados versionado no repositório. Cada item traz:
-   - `formacao`: como o custo é formado (ver as 4 origens abaixo);
+   - `formacao`: como o custo é formado (ver as origens abaixo);
    - `custos`: um bloco por referência, em R$ mil por unidade do item;
    - `composicoes`: materiais e US do projeto do PROORC, por referência.
 
@@ -13,8 +13,16 @@
    - `formula`    — calculado a partir de outros itens:
                     `redeExistenteMaisNova` (fator × existente + nova) e
                     `extensaoComAcrescimoMaoObra` (material igual, mão de obra ×).
+   - `tod`        — TOD (Tabela de Orçamento da Distribuição): material e mão de
+                    obra da tabela. A mão de obra da TOD já inclui mão de obra
+                    própria, serviços de terceiros e taxa de administração; não
+                    é recalculada pelo preço da US.
    - `maoDeObra`  — só mão de obra: US de construção × preço da US.
+   - `manual`     — calculado manualmente pelo responsável.
    - `fixo`       — valor digitado, sem composição.
+
+   `tod`, `manual` e `fixo` não vêm do PROORC: numa referência nova pelo PROORC
+   são copiados da anterior, e mudam pela tela "Editar valores" (modo admin).
 
    A referência 2021 é anterior a essas fórmulas: tem valores digitados que não
    as seguem. `formacao` descreve como a referência atual é formada.
