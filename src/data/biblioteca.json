@@ -1,0 +1,2568 @@
+{
+  "versao": 1,
+  "referencias": [
+    {
+      "chave": "2024",
+      "rotulo": "2024 (Atual)",
+      "fonte": "Planilha ORÇAMENTO ESTIMADO MT, aba \"Custos 2025\" (ref. dez/2024)",
+      "atual": true,
+      "observacao": "Preço da US de construção ambíguo nesta referência: a planilha usou 2,823 em três itens de mão de obra e 2,82398 nos cinco de retirada de rede."
+    },
+    {
+      "chave": "2022",
+      "rotulo": "2022",
+      "fonte": "Planilha ORÇAMENTO ESTIMADO MT, aba \"Custos 2025\" (ref. dez/2024), coluna 2022",
+      "atual": false,
+      "observacao": "Igual a 2024, exceto recon_urb_rdp150_dupla (sem unitário) e equip_relig_tri_24kv_urbano (preço anterior ao PROORC de 07/10/2026)."
+    },
+    {
+      "chave": "2021",
+      "rotulo": "2021",
+      "fonte": "Planilha ORÇAMENTO ESTIMADO MT, aba \"Custos 2025\" (ref. dez/2024), coluna 2021",
+      "atual": false,
+      "observacao": "Valores digitados na planilha; não seguem as fórmulas de formação registradas em cada item."
+    }
+  ],
+  "precosUS": {
+    "2021": {
+      "construcao": null,
+      "projeto": null
+    },
+    "2022": {
+      "construcao": null,
+      "projeto": null
+    },
+    "2024": {
+      "construcao": null,
+      "projeto": null
+    }
+  },
+  "catalogoMateriais": {},
+  "mapeamentoProorc": {
+    "1000456789": {
+      "item": "ext_urbano_rdp150_dupla",
+      "unidadesPorProjeto": 25,
+      "situacao": "confirmado",
+      "descricao": "Extensão de 01 km de RDP 150mm² Dupla camada"
+    },
+    "1207191220": {
+      "item": "equip_relig_tri_24kv_rural",
+      "unidadesPorProjeto": 1,
+      "situacao": "confirmado",
+      "descricao": "Religador trifásico em RDR 15 kV + trafo (rural sem BT)"
+    },
+    "1403202424": {
+      "item": "equip_brt_167_urbano",
+      "unidadesPorProjeto": 1,
+      "situacao": "confirmado",
+      "descricao": "BRT urbano (3 reguladores de 167 kVA)"
+    },
+    "2003202424": {
+      "item": "equip_brt_167_rural",
+      "unidadesPorProjeto": 1,
+      "situacao": "confirmado",
+      "descricao": "BRT rural (3 reguladores de 167 kVA)"
+    },
+    "1000456789-APP 3": {
+      "item": "ext_urbano_rdp240",
+      "unidadesPorProjeto": 25,
+      "situacao": "confirmado",
+      "descricao": "Extensão de 01 km cabo 240mm² Camada simples"
+    },
+    "1000456789-APP 4": {
+      "item": "ext_urbano_rdp50_dupla",
+      "unidadesPorProjeto": 25,
+      "situacao": "confirmado",
+      "descricao": "Extensão de 01 km de RDP 50mm² Dupla camada"
+    },
+    "1000456789-APP 5": {
+      "item": "ext_urbano_rdp50",
+      "unidadesPorProjeto": 25,
+      "situacao": "confirmado",
+      "descricao": "Extensão de 01 km de RDP 50mm² Camada simples"
+    },
+    "1000456789-APP 6": {
+      "item": "ext_urbano_rdp150",
+      "unidadesPorProjeto": 25,
+      "situacao": "confirmado",
+      "descricao": "Extensão de 01 km de RDP 150mm² Camada simples"
+    },
+    "1207191220-APP 3": {
+      "item": "equip_relig_tri_24kv_urbano",
+      "unidadesPorProjeto": 1,
+      "situacao": "confirmado",
+      "descricao": "Religador trifásico RDU 15 kV, by-pass chave faca 630 A"
+    },
+    "1207191220-APP 4": {
+      "item": "equip_relig_mono_15kv",
+      "unidadesPorProjeto": 1,
+      "situacao": "confirmado",
+      "descricao": "Religador monofásico Trip Saver"
+    },
+    "1207191220-APP 6": {
+      "item": "equip_relig_tri_36kv",
+      "unidadesPorProjeto": 1,
+      "situacao": "confirmado",
+      "descricao": "Religador trifásico em RDR 34 kV + trafo (rural sem BT)"
+    },
+    "1403202424-APP 3": {
+      "item": "equip_brt_250_urbano",
+      "unidadesPorProjeto": 1,
+      "situacao": "aguardando relatório",
+      "descricao": "BRT urbano 250 kVA"
+    },
+    "2003202424-APP 9": {
+      "item": "equip_brt_250_rural",
+      "unidadesPorProjeto": 1,
+      "situacao": "aguardando relatório",
+      "descricao": "BRT rural 250 kVA"
+    },
+    "2003202424-APP 21": {
+      "item": "equip_brt_76",
+      "unidadesPorProjeto": 1,
+      "situacao": "confirmado",
+      "descricao": "BRT rural 76 kVA"
+    },
+    "9912927400": {
+      "item": "equip_bcap_300_auto",
+      "unidadesPorProjeto": 1,
+      "situacao": "confirmado",
+      "descricao": "Banco de capacitores automático 300 kVAr"
+    },
+    "9912927400-APP 3": {
+      "item": "equip_bcap_600_fixo",
+      "unidadesPorProjeto": 1,
+      "situacao": "aguardando relatório",
+      "descricao": "Banco de capacitores fixo 600 kVAr"
+    },
+    "9912927400-APP 15": {
+      "item": "equip_bcap_600_auto",
+      "unidadesPorProjeto": 1,
+      "situacao": "confirmado",
+      "descricao": "Banco de capacitores 600 kVAr"
+    },
+    "9988776654": {
+      "item": "equip_pt_2_5mva",
+      "unidadesPorProjeto": 1,
+      "situacao": "confirmado",
+      "descricao": "Posto de transformação, banco monofásico elevador (3 × 0,835 MVA)"
+    },
+    "9988776654-APP 8": {
+      "item": "equip_pt_5mva",
+      "unidadesPorProjeto": 1,
+      "situacao": "confirmado",
+      "descricao": "Posto de transformação com banco monofásico 5 MVA (3 × 1,67 MVA)"
+    }
+  },
+  "itens": [
+    {
+      "id": "ext_rural_mono_caa4",
+      "categoria": "Extensão",
+      "subcategoria": "Rural",
+      "tipo": "Mono CAA 4",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Valor digitado na planilha; é base das fórmulas de conversão e recondutoramento."
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 31.71403
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 47.86
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 47.86
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_rural_mono_caa2",
+      "categoria": "Extensão",
+      "subcategoria": "Rural",
+      "tipo": "Mono CAA 2",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": null,
+        "unidadesPorProjeto": 1,
+        "observacao": "Projeto-padrão ainda não exportado do PROORC; mantém o valor da referência anterior."
+      },
+      "custos": {
+        "2021": {
+          "material": 23.3894,
+          "maoObra": 26.96741,
+          "usConstr": 9.549433777859617,
+          "unitario": 49.87365
+        },
+        "2022": {
+          "material": 23.3894,
+          "maoObra": 26.96741,
+          "usConstr": 9.549433777859617,
+          "unitario": 50.356809999999996
+        },
+        "2024": {
+          "material": 23.3894,
+          "maoObra": 26.96741,
+          "usConstr": 9.549433777859617,
+          "unitario": 50.356809999999996
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_rural_tri_caa4",
+      "categoria": "Extensão",
+      "subcategoria": "Rural",
+      "tipo": "Tri CAA 4",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Valor digitado na planilha; é base das fórmulas de conversão e recondutoramento."
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 45.56524
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 68.91
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 68.91
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_rural_tri_caa2",
+      "categoria": "Extensão",
+      "subcategoria": "Rural",
+      "tipo": "Tri CAA 2",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": null,
+        "unidadesPorProjeto": 1,
+        "observacao": "Projeto-padrão ainda não exportado do PROORC; mantém o valor da referência anterior."
+      },
+      "custos": {
+        "2021": {
+          "material": 33.00166,
+          "maoObra": 38.31981,
+          "usConstr": 13.569433919503677,
+          "unitario": 49.87365
+        },
+        "2022": {
+          "material": 33.00166,
+          "maoObra": 38.31981,
+          "usConstr": 13.569433919503677,
+          "unitario": 71.32147
+        },
+        "2024": {
+          "material": 33.00166,
+          "maoObra": 38.31981,
+          "usConstr": 13.569433919503677,
+          "unitario": 71.32147
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_rural_tri_caa1_0",
+      "categoria": "Extensão",
+      "subcategoria": "Rural",
+      "tipo": "Tri CAA 1/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": null,
+        "unidadesPorProjeto": 1,
+        "observacao": "Projeto-padrão ainda não exportado do PROORC; mantém o valor da referência anterior."
+      },
+      "custos": {
+        "2021": {
+          "material": 41.66709,
+          "maoObra": 38.31981,
+          "usConstr": 13.569433919503677,
+          "unitario": 56.62114
+        },
+        "2022": {
+          "material": 41.66709,
+          "maoObra": 38.31981,
+          "usConstr": 13.569433919503677,
+          "unitario": 79.98689999999999
+        },
+        "2024": {
+          "material": 41.66709,
+          "maoObra": 38.31981,
+          "usConstr": 13.569433919503677,
+          "unitario": 79.98689999999999
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_rural_tri_caa4_0",
+      "categoria": "Extensão",
+      "subcategoria": "Rural",
+      "tipo": "Tri CAA 4/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": null,
+        "unidadesPorProjeto": 1,
+        "observacao": "Projeto-padrão ainda não exportado do PROORC; mantém o valor da referência anterior."
+      },
+      "custos": {
+        "2021": {
+          "material": 77.8251,
+          "maoObra": 49.41805,
+          "usConstr": 17.49943342374946,
+          "unitario": 86.96978
+        },
+        "2022": {
+          "material": 77.8251,
+          "maoObra": 49.41805,
+          "usConstr": 17.49943342374946,
+          "unitario": 127.24315000000001
+        },
+        "2024": {
+          "material": 77.8251,
+          "maoObra": 49.41805,
+          "usConstr": 17.49943342374946,
+          "unitario": 127.24315000000001
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_rural_tri_caa336",
+      "categoria": "Extensão",
+      "subcategoria": "Rural",
+      "tipo": "Tri CAA 336,4",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": null,
+        "unidadesPorProjeto": 1,
+        "observacao": "Projeto-padrão ainda não exportado do PROORC; mantém o valor da referência anterior."
+      },
+      "custos": {
+        "2021": {
+          "material": 99.00556,
+          "maoObra": 49.41805,
+          "usConstr": 17.49943342374946,
+          "unitario": 115.63557
+        },
+        "2022": {
+          "material": 99.00556,
+          "maoObra": 49.41805,
+          "usConstr": 17.49943342374946,
+          "unitario": 148.42361
+        },
+        "2024": {
+          "material": 99.00556,
+          "maoObra": 49.41805,
+          "usConstr": 17.49943342374946,
+          "unitario": 148.42361
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_urbano_rdp50",
+      "categoria": "Extensão",
+      "subcategoria": "Urbano",
+      "tipo": "RDP 50",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1000456789-APP 5",
+        "unidadesPorProjeto": 25
+      },
+      "custos": {
+        "2021": {
+          "material": 3.94404,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 7.3
+        },
+        "2022": {
+          "material": 3.94404,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 7.071020000000001
+        },
+        "2024": {
+          "material": 3.94404,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 7.071020000000001
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_urbano_rdp150",
+      "categoria": "Extensão",
+      "subcategoria": "Urbano",
+      "tipo": "RDP 150",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1000456789-APP 6",
+        "unidadesPorProjeto": 25
+      },
+      "custos": {
+        "2021": {
+          "material": 5.92639,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 8.8
+        },
+        "2022": {
+          "material": 5.92639,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 9.05337
+        },
+        "2024": {
+          "material": 5.92639,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 9.05337
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_urbano_rdp240",
+      "categoria": "Extensão",
+      "subcategoria": "Urbano",
+      "tipo": "RDP 240",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1000456789-APP 3",
+        "unidadesPorProjeto": 25
+      },
+      "custos": {
+        "2021": {
+          "material": 7.23805,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 10.36503
+        },
+        "2022": {
+          "material": 7.23805,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 10.36503
+        },
+        "2024": {
+          "material": 7.23805,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 10.36503
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_urbano_rdp50_dupla",
+      "categoria": "Extensão",
+      "subcategoria": "Urbano",
+      "tipo": "RDP 50 Dupla Camada",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1000456789-APP 4",
+        "unidadesPorProjeto": 25
+      },
+      "custos": {
+        "2021": {
+          "material": 4.0461,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 7.173080000000001
+        },
+        "2022": {
+          "material": 4.0461,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 7.173080000000001
+        },
+        "2024": {
+          "material": 4.0461,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 7.173080000000001
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_urbano_rdp150_dupla",
+      "categoria": "Extensão",
+      "subcategoria": "Urbano",
+      "tipo": "RDP 150 Dupla Camada",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1000456789",
+        "unidadesPorProjeto": 25
+      },
+      "custos": {
+        "2021": {
+          "material": 6.90163,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 10.02861
+        },
+        "2022": {
+          "material": 6.90163,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 10.02861
+        },
+        "2024": {
+          "material": 6.90163,
+          "maoObra": 3.12698,
+          "usConstr": 1.107295377446016,
+          "unitario": 10.02861
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_urbano_rdi50",
+      "categoria": "Extensão",
+      "subcategoria": "Urbano",
+      "tipo": "RDI 50",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Sem custo cadastrado."
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "ext_urbano_rdi185",
+      "categoria": "Extensão",
+      "subcategoria": "Urbano",
+      "tipo": "RDI 185",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Sem custo cadastrado."
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "conv_caa4_4",
+      "categoria": "Conversão Mono→Tri",
+      "subcategoria": "Rural",
+      "tipo": "CAA 4 p/ 4",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_mono_caa4",
+        "baseNova": "ext_rural_tri_caa4",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 23.3894,
+          "maoObra": 61.314400000000006,
+          "usConstr": 21.7120517850693,
+          "unitario": 67.77
+        },
+        "2022": {
+          "material": 23.3894,
+          "maoObra": 61.314400000000006,
+          "usConstr": 21.7120517850693,
+          "unitario": 84.7038
+        },
+        "2024": {
+          "material": 23.3894,
+          "maoObra": 61.314400000000006,
+          "usConstr": 21.7120517850693,
+          "unitario": 84.7038
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "conv_caa4_2",
+      "categoria": "Conversão Mono→Tri",
+      "subcategoria": "Rural",
+      "tipo": "CAA 4 p/ 2",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_mono_caa4",
+        "baseNova": "ext_rural_tri_caa2",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 23.3894,
+          "maoObra": 63.725870000000015,
+          "usConstr": 22.56597780437539,
+          "unitario": 72.073
+        },
+        "2022": {
+          "material": 23.3894,
+          "maoObra": 63.725870000000015,
+          "usConstr": 22.56597780437539,
+          "unitario": 87.11527000000001
+        },
+        "2024": {
+          "material": 23.3894,
+          "maoObra": 63.725870000000015,
+          "usConstr": 22.56597780437539,
+          "unitario": 87.11527000000001
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "conv_caa4_1_0",
+      "categoria": "Conversão Mono→Tri",
+      "subcategoria": "Rural",
+      "tipo": "CAA 4 p/ 1/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_mono_caa4",
+        "baseNova": "ext_rural_tri_caa1_0",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 41.66709,
+          "maoObra": 54.11361000000001,
+          "usConstr": 19.162178910615516,
+          "unitario": 78.821
+        },
+        "2022": {
+          "material": 41.66709,
+          "maoObra": 54.11361000000001,
+          "usConstr": 19.162178910615516,
+          "unitario": 95.78070000000001
+        },
+        "2024": {
+          "material": 41.66709,
+          "maoObra": 54.11361000000001,
+          "usConstr": 19.162178910615516,
+          "unitario": 95.78070000000001
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "conv_caa2_2",
+      "categoria": "Conversão Mono→Tri",
+      "subcategoria": "Rural",
+      "tipo": "CAA 2 p/ 2",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_mono_caa2",
+        "baseNova": "ext_rural_tri_caa2",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 33.00166,
+          "maoObra": 54.937557299999995,
+          "usConstr": 19.453947018038367,
+          "unitario": 87.9392173
+        },
+        "2022": {
+          "material": 33.00166,
+          "maoObra": 54.937557299999995,
+          "usConstr": 19.453947018038367,
+          "unitario": 87.9392173
+        },
+        "2024": {
+          "material": 33.00166,
+          "maoObra": 54.937557299999995,
+          "usConstr": 19.453947018038367,
+          "unitario": 87.9392173
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "conv_caa2_1_0",
+      "categoria": "Conversão Mono→Tri",
+      "subcategoria": "Rural",
+      "tipo": "CAA 2 p/ 1/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_mono_caa2",
+        "baseNova": "ext_rural_tri_caa1_0",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 41.66709,
+          "maoObra": 54.93755730000001,
+          "usConstr": 19.453947018038374,
+          "unitario": 96.60464730000001
+        },
+        "2022": {
+          "material": 41.66709,
+          "maoObra": 54.93755730000001,
+          "usConstr": 19.453947018038374,
+          "unitario": 96.60464730000001
+        },
+        "2024": {
+          "material": 41.66709,
+          "maoObra": 54.93755730000001,
+          "usConstr": 19.453947018038374,
+          "unitario": 96.60464730000001
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "conv_caa2_4_0",
+      "categoria": "Conversão Mono→Tri",
+      "subcategoria": "Rural",
+      "tipo": "CAA 2 p/ 4/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_mono_caa2",
+        "baseNova": "ext_rural_tri_caa4_0",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 77.8251,
+          "maoObra": 66.0357973,
+          "usConstr": 23.383946522284152,
+          "unitario": 143.8608973
+        },
+        "2022": {
+          "material": 77.8251,
+          "maoObra": 66.0357973,
+          "usConstr": 23.383946522284152,
+          "unitario": 143.8608973
+        },
+        "2024": {
+          "material": 77.8251,
+          "maoObra": 66.0357973,
+          "usConstr": 23.383946522284152,
+          "unitario": 143.8608973
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "conv_caa2_336",
+      "categoria": "Conversão Mono→Tri",
+      "subcategoria": "Rural",
+      "tipo": "CAA 2 p/ 336",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_mono_caa2",
+        "baseNova": "ext_rural_tri_caa336",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 99.00556,
+          "maoObra": 66.03579729999998,
+          "usConstr": 23.383946522284145,
+          "unitario": 165.0413573
+        },
+        "2022": {
+          "material": 99.00556,
+          "maoObra": 66.03579729999998,
+          "usConstr": 23.383946522284145,
+          "unitario": 165.0413573
+        },
+        "2024": {
+          "material": 99.00556,
+          "maoObra": 66.03579729999998,
+          "usConstr": 23.383946522284145,
+          "unitario": 165.0413573
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_caa4_1_0",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Rural",
+      "tipo": "CAA 4 p/ 1/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_tri_caa4",
+        "baseNova": "ext_rural_tri_caa1_0",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 41.66709,
+          "maoObra": 61.06011000000001,
+          "usConstr": 21.622005113350664,
+          "unitario": 88.517
+        },
+        "2022": {
+          "material": 41.66709,
+          "maoObra": 61.06011000000001,
+          "usConstr": 21.622005113350664,
+          "unitario": 102.72720000000001
+        },
+        "2024": {
+          "material": 41.66709,
+          "maoObra": 61.06011000000001,
+          "usConstr": 21.622005113350664,
+          "unitario": 102.72720000000001
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_caa4_4_0",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Rural",
+      "tipo": "CAA 4 p/ 4/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_tri_caa4",
+        "baseNova": "ext_rural_tri_caa4_0",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 77.8251,
+          "maoObra": 72.15835,
+          "usConstr": 25.55200461759644,
+          "unitario": 118.865
+        },
+        "2022": {
+          "material": 77.8251,
+          "maoObra": 72.15835,
+          "usConstr": 25.55200461759644,
+          "unitario": 149.98345
+        },
+        "2024": {
+          "material": 77.8251,
+          "maoObra": 72.15835,
+          "usConstr": 25.55200461759644,
+          "unitario": 149.98345
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_caa4_336",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Rural",
+      "tipo": "CAA 4 p/ 336",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_tri_caa4",
+        "baseNova": "ext_rural_tri_caa336",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 99.00556,
+          "maoObra": 72.15834999999998,
+          "usConstr": 25.552004617596435,
+          "unitario": 155.27
+        },
+        "2022": {
+          "material": 99.00556,
+          "maoObra": 72.15834999999998,
+          "usConstr": 25.552004617596435,
+          "unitario": 171.16391
+        },
+        "2024": {
+          "material": 99.00556,
+          "maoObra": 72.15834999999998,
+          "usConstr": 25.552004617596435,
+          "unitario": 171.16391
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_caa2_1_0",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Rural",
+      "tipo": "CAA 2 p/ 1/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_tri_caa2",
+        "baseNova": "ext_rural_tri_caa1_0",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 41.66709,
+          "maoObra": 61.8558951,
+          "usConstr": 21.903800699721668,
+          "unitario": 103.5229851
+        },
+        "2022": {
+          "material": 41.66709,
+          "maoObra": 61.8558951,
+          "usConstr": 21.903800699721668,
+          "unitario": 103.5229851
+        },
+        "2024": {
+          "material": 41.66709,
+          "maoObra": 61.8558951,
+          "usConstr": 21.903800699721668,
+          "unitario": 103.5229851
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_caa2_4_0",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Rural",
+      "tipo": "CAA 2 p/ 4/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_tri_caa2",
+        "baseNova": "ext_rural_tri_caa4_0",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 77.8251,
+          "maoObra": 72.95413509999999,
+          "usConstr": 25.833800203967446,
+          "unitario": 121.881
+        },
+        "2022": {
+          "material": 77.8251,
+          "maoObra": 72.95413509999999,
+          "usConstr": 25.833800203967446,
+          "unitario": 150.7792351
+        },
+        "2024": {
+          "material": 77.8251,
+          "maoObra": 72.95413509999999,
+          "usConstr": 25.833800203967446,
+          "unitario": 150.7792351
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_caa2_336",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Rural",
+      "tipo": "CAA 2 p/ 336",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_tri_caa2",
+        "baseNova": "ext_rural_tri_caa336",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 99.00556,
+          "maoObra": 72.9541351,
+          "usConstr": 25.83380020396745,
+          "unitario": 171.9596951
+        },
+        "2022": {
+          "material": 99.00556,
+          "maoObra": 72.9541351,
+          "usConstr": 25.83380020396745,
+          "unitario": 171.9596951
+        },
+        "2024": {
+          "material": 99.00556,
+          "maoObra": 72.9541351,
+          "usConstr": 25.83380020396745,
+          "unitario": 171.9596951
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_caa1_0_4_0",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Rural",
+      "tipo": "CAA 1/0 p/ 4/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_tri_caa1_0",
+        "baseNova": "ext_rural_tri_caa4_0",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 77.8251,
+          "maoObra": 75.81372699999999,
+          "usConstr": 26.84641073945282,
+          "unitario": 126.605
+        },
+        "2022": {
+          "material": 77.8251,
+          "maoObra": 75.81372699999999,
+          "usConstr": 26.84641073945282,
+          "unitario": 153.638827
+        },
+        "2024": {
+          "material": 77.8251,
+          "maoObra": 75.81372699999999,
+          "usConstr": 26.84641073945282,
+          "unitario": 153.638827
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_caa1_0_336",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Rural",
+      "tipo": "CAA 1/0 p/ 336,4",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "redeExistenteMaisNova",
+        "baseExistente": "ext_rural_tri_caa1_0",
+        "baseNova": "ext_rural_tri_caa336",
+        "fatorExistente": 0.33
+      },
+      "custos": {
+        "2021": {
+          "material": 99.00556,
+          "maoObra": 75.813727,
+          "usConstr": 26.84641073945283,
+          "unitario": 155.27
+        },
+        "2022": {
+          "material": 99.00556,
+          "maoObra": 75.813727,
+          "usConstr": 26.84641073945283,
+          "unitario": 174.819287
+        },
+        "2024": {
+          "material": 99.00556,
+          "maoObra": 75.813727,
+          "usConstr": 26.84641073945283,
+          "unitario": 174.819287
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_urb_rdp50",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Urbano",
+      "tipo": "p/ RDP 50",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "extensaoComAcrescimoMaoObra",
+        "baseExtensao": "ext_urbano_rdp50",
+        "fatorMaoObra": 1.05
+      },
+      "custos": {
+        "2021": {
+          "material": 3.94404,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 7.6
+        },
+        "2022": {
+          "material": 3.94404,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 7.227369
+        },
+        "2024": {
+          "material": 3.94404,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 7.227369
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_urb_rdp150",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Urbano",
+      "tipo": "p/ RDP 150",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "extensaoComAcrescimoMaoObra",
+        "baseExtensao": "ext_urbano_rdp150",
+        "fatorMaoObra": 1.05
+      },
+      "custos": {
+        "2021": {
+          "material": 5.92639,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 9.4
+        },
+        "2022": {
+          "material": 5.92639,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 9.209719
+        },
+        "2024": {
+          "material": 5.92639,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 9.209719
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_urb_rdp240",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Urbano",
+      "tipo": "p/ RDP 240",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "extensaoComAcrescimoMaoObra",
+        "baseExtensao": "ext_urbano_rdp240",
+        "fatorMaoObra": 1.05
+      },
+      "custos": {
+        "2021": {
+          "material": 7.23805,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 10.521379
+        },
+        "2022": {
+          "material": 7.23805,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 10.521379
+        },
+        "2024": {
+          "material": 7.23805,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 10.521379
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_urb_rdp50_dupla",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Urbano",
+      "tipo": "p/ RDP 50 Dupla Camada",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "extensaoComAcrescimoMaoObra",
+        "baseExtensao": "ext_urbano_rdp50_dupla",
+        "fatorMaoObra": 1.05
+      },
+      "custos": {
+        "2021": {
+          "material": 4.0461,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 7.329429
+        },
+        "2022": {
+          "material": 4.0461,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 7.329429
+        },
+        "2024": {
+          "material": 4.0461,
+          "maoObra": 3.283329,
+          "usConstr": 1.1626601463183166,
+          "unitario": 7.329429
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_urb_rdp150_dupla",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Urbano",
+      "tipo": "p/ RDP 150 Dupla Camada",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "formula",
+        "regra": "extensaoComAcrescimoMaoObra",
+        "baseExtensao": "ext_urbano_rdp150_dupla",
+        "fatorMaoObra": 1.05
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 10.184959
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "recon_urb_4_0_ca",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Urbano",
+      "tipo": "p/ 4/0 CA",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Sem custo cadastrado."
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        }
+      },
+      "composicoes": {},
+      "verificacao": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
+    },
+    {
+      "id": "recon_urb_rdi50",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Urbano",
+      "tipo": "p/ RDI 50",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Sem custo cadastrado."
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        }
+      },
+      "composicoes": {},
+      "verificacao": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
+    },
+    {
+      "id": "recon_urb_rdi185",
+      "categoria": "Recondutoramento",
+      "subcategoria": "Urbano",
+      "tipo": "p/ RDI 185",
+      "unidade": "poste",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Sem custo cadastrado."
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        }
+      },
+      "composicoes": {},
+      "verificacao": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
+    },
+    {
+      "id": "sub_13_8kv",
+      "categoria": "Subestação",
+      "subcategoria": "",
+      "tipo": "Seção 13,8 kV",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Sem custo cadastrado."
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 0
+        }
+      },
+      "composicoes": {},
+      "verificacao": "A planilha traz material 750, mas o unitário ficou vazio (0 ou 750)."
+    },
+    {
+      "id": "sub_22kv",
+      "categoria": "Subestação",
+      "subcategoria": "",
+      "tipo": "Seção 22,0 kV",
+      "unidade": "un",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Valor digitado na planilha."
+      },
+      "custos": {
+        "2021": {
+          "material": 950,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 950
+        },
+        "2022": {
+          "material": 950,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 950
+        },
+        "2024": {
+          "material": 950,
+          "maoObra": 0,
+          "usConstr": 0,
+          "unitario": 950
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_brt_76",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "BRT trif 76,2 kVA",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "2003202424-APP 21",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 142.30787,
+          "maoObra": 44.66828,
+          "usConstr": 4.98,
+          "unitario": 215
+        },
+        "2022": {
+          "material": 142.30787,
+          "maoObra": 44.66828,
+          "usConstr": 4.98,
+          "unitario": 186.97615000000002
+        },
+        "2024": {
+          "material": 142.30787,
+          "maoObra": 44.66828,
+          "usConstr": 4.98,
+          "unitario": 186.97615000000002
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_brt_167_rural",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "BRT trif 167 kVA - Rural",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "2003202424",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 282.90602,
+          "maoObra": 44.66828,
+          "usConstr": 15.817491625294798,
+          "unitario": 260
+        },
+        "2022": {
+          "material": 282.90602,
+          "maoObra": 44.66828,
+          "usConstr": 15.817491625294798,
+          "unitario": 327.5743
+        },
+        "2024": {
+          "material": 282.90602,
+          "maoObra": 44.66828,
+          "usConstr": 15.817491625294798,
+          "unitario": 327.5743
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_brt_167_urbano",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "BRT trif 167 kVA - Urbano",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1403202424",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 278.44695,
+          "maoObra": 24.03581,
+          "usConstr": 8.511324442807668,
+          "unitario": 260
+        },
+        "2022": {
+          "material": 278.44695,
+          "maoObra": 24.03581,
+          "usConstr": 8.511324442807668,
+          "unitario": 302.48276000000004
+        },
+        "2024": {
+          "material": 278.44695,
+          "maoObra": 24.03581,
+          "usConstr": 8.511324442807668,
+          "unitario": 302.48276000000004
+        }
+      },
+      "composicoes": {},
+      "verificacao": "Material da biblioteca 278,44695 contra 267,73934 no PROORC de 07/10/2026."
+    },
+    {
+      "id": "equip_brt_250_rural",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "BRT trif 250 KVA - Rural",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "2003202424-APP 9",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 310.6556,
+          "maoObra": 44.66828,
+          "usConstr": 15.82,
+          "unitario": 335
+        },
+        "2022": {
+          "material": 310.6556,
+          "maoObra": 44.66828,
+          "usConstr": 15.82,
+          "unitario": 355.32388
+        },
+        "2024": {
+          "material": 310.6556,
+          "maoObra": 44.66828,
+          "usConstr": 15.82,
+          "unitario": 355.32388
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_brt_250_urbano",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "BRT trif 250 KVA - Urbano",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1403202424-APP 3",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 295.48892,
+          "maoObra": 24.19442,
+          "usConstr": 8.570464045341835,
+          "unitario": 335
+        },
+        "2022": {
+          "material": 295.48892,
+          "maoObra": 24.19442,
+          "usConstr": 8.570464045341835,
+          "unitario": 319.68334
+        },
+        "2024": {
+          "material": 295.48892,
+          "maoObra": 24.19442,
+          "usConstr": 8.570464045341835,
+          "unitario": 319.68334
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_relig_mono_15kv",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "Religador monofásico 15KV",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1207191220-APP 4",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 25.51941,
+          "maoObra": 3.388,
+          "usConstr": 1.200141693234148,
+          "unitario": 15.41
+        },
+        "2022": {
+          "material": 25.51941,
+          "maoObra": 3.388,
+          "usConstr": 1.200141693234148,
+          "unitario": 28.90741
+        },
+        "2024": {
+          "material": 25.51941,
+          "maoObra": 3.388,
+          "usConstr": 1.200141693234148,
+          "unitario": 28.90741
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_relig_tri_24kv_rural",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "Religador trifásico 24KV Rural",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1207191220",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 76.75945,
+          "maoObra": 8.61115,
+          "usConstr": 3.0492956748985476,
+          "unitario": 100
+        },
+        "2022": {
+          "material": 76.75945,
+          "maoObra": 8.61115,
+          "usConstr": 3.0492956748985476,
+          "unitario": 85.3706
+        },
+        "2024": {
+          "material": 76.75945,
+          "maoObra": 8.61115,
+          "usConstr": 3.0492956748985476,
+          "unitario": 85.3706
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_relig_tri_24kv_urbano",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "Religador trifásico 24KV Urbano",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1207191220-APP 3",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 62.32418,
+          "maoObra": 6.74931,
+          "usConstr": 2.3899992209576557,
+          "unitario": 100
+        },
+        "2022": {
+          "material": 62.32418,
+          "maoObra": 6.74931,
+          "usConstr": 2.3899992209576557,
+          "unitario": 69.07349
+        },
+        "2024": {
+          "material": 57.08059,
+          "maoObra": 6.74931,
+          "usConstr": 2.3899992209576557,
+          "unitario": 63.8299
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_relig_tri_36kv",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "Religador trifásico 36KV",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "1207191220-APP 6",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 118.0885,
+          "maoObra": 8.52842,
+          "usConstr": 3.0200001416440627,
+          "unitario": 135
+        },
+        "2022": {
+          "material": 118.0885,
+          "maoObra": 8.52842,
+          "usConstr": 3.0200001416440627,
+          "unitario": 126.61692
+        },
+        "2024": {
+          "material": 118.0885,
+          "maoObra": 8.52842,
+          "usConstr": 3.0200001416440627,
+          "unitario": 126.61692
+        }
+      },
+      "composicoes": {},
+      "verificacao": "Preço do PROORC caiu de 126,61692 para 93,95449."
+    },
+    {
+      "id": "equip_bcap_300_fixo",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "Banco de Cap. 300 kVAr fixo",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": null,
+        "unidadesPorProjeto": 1,
+        "observacao": "Projeto-padrão ainda não exportado do PROORC; mantém o valor da referência anterior."
+      },
+      "custos": {
+        "2021": {
+          "material": 22.92389,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 35.3
+        },
+        "2022": {
+          "material": 22.92389,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 32.63838
+        },
+        "2024": {
+          "material": 22.92389,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 32.63838
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_bcap_600_fixo",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "Banco de Cap. 600 kVAr fixo",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "9912927400-APP 3",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 25.60145,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 40.5
+        },
+        "2022": {
+          "material": 25.60145,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 35.31594
+        },
+        "2024": {
+          "material": 25.60145,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 35.31594
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_bcap_300_auto",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "Banco de Cap. 300 kVAr automático",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "9912927400",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 32.66638,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 84.5
+        },
+        "2022": {
+          "material": 32.66638,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 42.380869999999994
+        },
+        "2024": {
+          "material": 32.66638,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 42.380869999999994
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_bcap_600_auto",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "Banco de Cap. 600 kVAr automático",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "projeto": "9912927400-APP 15",
+        "unidadesPorProjeto": 1
+      },
+      "custos": {
+        "2021": {
+          "material": 35.34394,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 61.4
+        },
+        "2022": {
+          "material": 35.34394,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 45.05843
+        },
+        "2024": {
+          "material": 35.34394,
+          "maoObra": 9.71449,
+          "usConstr": 3.439999575067812,
+          "unitario": 45.05843
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_pt_2_5mva",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "PT 2,50MVA",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "regra": "postoTransformacao",
+        "projeto": "9988776654",
+        "unidadesPorProjeto": 1,
+        "religadorAdicional": 88142.9,
+        "percentualMaoObra": 0.2
+      },
+      "custos": {
+        "2021": {
+          "material": 358.44467,
+          "maoObra": 71.688934,
+          "usConstr": 25.39459227771874,
+          "unitario": 715
+        },
+        "2022": {
+          "material": 358.44467,
+          "maoObra": 71.688934,
+          "usConstr": 25.39459227771874,
+          "unitario": 430.133604
+        },
+        "2024": {
+          "material": 358.44467,
+          "maoObra": 71.688934,
+          "usConstr": 25.39459227771874,
+          "unitario": 430.133604
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_pt_5mva",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "PT 5,00MVA",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "proorc",
+        "regra": "postoTransformacao",
+        "projeto": "9988776654-APP 8",
+        "unidadesPorProjeto": 1,
+        "religadorAdicional": 88142.9,
+        "percentualMaoObra": 0.2
+      },
+      "custos": {
+        "2021": {
+          "material": 832.45148,
+          "maoObra": 166.490296,
+          "usConstr": 58.97637123627347,
+          "unitario": 905
+        },
+        "2022": {
+          "material": 832.45148,
+          "maoObra": 166.490296,
+          "usConstr": 58.97637123627347,
+          "unitario": 998.9417759999999
+        },
+        "2024": {
+          "material": 832.45148,
+          "maoObra": 166.490296,
+          "usConstr": 58.97637123627347,
+          "unitario": 998.9417759999999
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_abert_fecha_chave",
+      "categoria": "Equipamentos",
+      "subcategoria": "Instalação",
+      "tipo": "Abert/Fecha. De Chave",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "maoDeObra",
+        "usConstrucao": 0.08
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 0.22584,
+          "usConstr": 0.08,
+          "unitario": 0.22584
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 0.22584,
+          "usConstr": 0.08,
+          "unitario": 0.22584
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 0.22584,
+          "usConstr": 0.08,
+          "unitario": 0.22584
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_rem_trafo_1f",
+      "categoria": "Equipamentos",
+      "subcategoria": "Remoção",
+      "tipo": "Remoção de 01 trafo 1ᴓ",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "maoDeObra",
+        "usConstrucao": 0.3
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 0.8469,
+          "usConstr": 0.3,
+          "unitario": 0.8469
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 0.8469,
+          "usConstr": 0.3,
+          "unitario": 0.8469
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 0.8469,
+          "usConstr": 0.3,
+          "unitario": 0.8469
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_rem_trafo_3f",
+      "categoria": "Equipamentos",
+      "subcategoria": "Remoção",
+      "tipo": "Remoção de 01 trafo 3ᴓ",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "maoDeObra",
+        "usConstrucao": 0.6
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 1.6938,
+          "usConstr": 0.6,
+          "unitario": 1.6938
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 1.6938,
+          "usConstr": 0.6,
+          "unitario": 1.6938
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 1.6938,
+          "usConstr": 0.6,
+          "unitario": 1.6938
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_reloc_brt_1_0",
+      "categoria": "Equipamentos",
+      "subcategoria": "Relocação",
+      "tipo": "Banco RT trifásico até 1/0",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Valor digitado na planilha."
+      },
+      "custos": {
+        "2021": {
+          "material": 10.2,
+          "maoObra": 0,
+          "usConstr": 6.98,
+          "unitario": 30
+        },
+        "2022": {
+          "material": 10.2,
+          "maoObra": 0,
+          "usConstr": 6.98,
+          "unitario": 35
+        },
+        "2024": {
+          "material": 10.2,
+          "maoObra": 0,
+          "usConstr": 6.98,
+          "unitario": 35
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_reloc_brt_4_0_336",
+      "categoria": "Equipamentos",
+      "subcategoria": "Relocação",
+      "tipo": "Banco RT trifásico 4/0-336,4",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Valor digitado na planilha."
+      },
+      "custos": {
+        "2021": {
+          "material": 13.2,
+          "maoObra": 0,
+          "usConstr": 12.96,
+          "unitario": 55
+        },
+        "2022": {
+          "material": 13.2,
+          "maoObra": 0,
+          "usConstr": 12.96,
+          "unitario": 55
+        },
+        "2024": {
+          "material": 13.2,
+          "maoObra": 0,
+          "usConstr": 12.96,
+          "unitario": 55
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_reloc_brt_4_0_sem_anc",
+      "categoria": "Equipamentos",
+      "subcategoria": "Relocação",
+      "tipo": "Banco RT trif 4/0 sem anc",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Valor digitado na planilha."
+      },
+      "custos": {
+        "2021": {
+          "material": 13.2,
+          "maoObra": 0,
+          "usConstr": 12.96,
+          "unitario": 45
+        },
+        "2022": {
+          "material": 13.2,
+          "maoObra": 0,
+          "usConstr": 12.96,
+          "unitario": 50
+        },
+        "2024": {
+          "material": 13.2,
+          "maoObra": 0,
+          "usConstr": 12.96,
+          "unitario": 50
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_reloc_relig_tri",
+      "categoria": "Equipamentos",
+      "subcategoria": "Relocação",
+      "tipo": "Religador trifásico",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Valor digitado na planilha."
+      },
+      "custos": {
+        "2021": {
+          "material": 6.8,
+          "maoObra": 0,
+          "usConstr": 5.13,
+          "unitario": 16.5
+        },
+        "2022": {
+          "material": 6.8,
+          "maoObra": 0,
+          "usConstr": 5.13,
+          "unitario": 25
+        },
+        "2024": {
+          "material": 6.8,
+          "maoObra": 0,
+          "usConstr": 5.13,
+          "unitario": 25
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "equip_reloc_relig_mono",
+      "categoria": "Equipamentos",
+      "subcategoria": "Relocação",
+      "tipo": "Religador monofásico",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Valor digitado na planilha."
+      },
+      "custos": {
+        "2021": {
+          "material": 6.8,
+          "maoObra": 0,
+          "usConstr": 2.52,
+          "unitario": 11
+        },
+        "2022": {
+          "material": 6.8,
+          "maoObra": 0,
+          "usConstr": 2.52,
+          "unitario": 12
+        },
+        "2024": {
+          "material": 6.8,
+          "maoObra": 0,
+          "usConstr": 2.52,
+          "unitario": 12
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "rede_ret_rdr_1f_4_1_0",
+      "categoria": "Rede",
+      "subcategoria": "Retirada",
+      "tipo": "1 Km de RDR 1ᴓ cabo 4 a 1/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "maoDeObra",
+        "usConstrucao": 5.466
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 15.435874680000001,
+          "usConstr": 5.466,
+          "unitario": 15.435874680000001
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 15.435874680000001,
+          "usConstr": 5.466,
+          "unitario": 15.435874680000001
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 15.435874680000001,
+          "usConstr": 5.466,
+          "unitario": 15.435874680000001
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "rede_ret_rdr_3f_4_1_0",
+      "categoria": "Rede",
+      "subcategoria": "Retirada",
+      "tipo": "1 Km de RDR 3ᴓ cabo 4 a 1/0",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "maoDeObra",
+        "usConstrucao": 7.878
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 22.24731444,
+          "usConstr": 7.878,
+          "unitario": 22.24731444
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 22.24731444,
+          "usConstr": 7.878,
+          "unitario": 22.24731444
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 22.24731444,
+          "usConstr": 7.878,
+          "unitario": 22.24731444
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "rede_ret_rdr_3f_4_0_336",
+      "categoria": "Rede",
+      "subcategoria": "Retirada",
+      "tipo": "1 Km de RDR 3ᴓ cabo 4/0 a 336,4",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "maoDeObra",
+        "usConstrucao": 10.236
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 28.906259280000004,
+          "usConstr": 10.236,
+          "unitario": 28.906259280000004
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 28.906259280000004,
+          "usConstr": 10.236,
+          "unitario": 28.906259280000004
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 28.906259280000004,
+          "usConstr": 10.236,
+          "unitario": 28.906259280000004
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "rede_ret_rdp_1f_50",
+      "categoria": "Rede",
+      "subcategoria": "Retirada",
+      "tipo": "1 Km de RDP 1ᴓ cabo 50 mm2",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "maoDeObra",
+        "usConstrucao": 5.466
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 15.435874680000001,
+          "usConstr": 5.466,
+          "unitario": 15.435874680000001
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 15.435874680000001,
+          "usConstr": 5.466,
+          "unitario": 15.435874680000001
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 15.435874680000001,
+          "usConstr": 5.466,
+          "unitario": 15.435874680000001
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "rede_ret_rdp_3f_50_150",
+      "categoria": "Rede",
+      "subcategoria": "Retirada",
+      "tipo": "1 Km de RDP 3ᴓ 50 a 150mm²",
+      "unidade": "km",
+      "status": "oficial",
+      "formacao": {
+        "origem": "maoDeObra",
+        "usConstrucao": 10.236
+      },
+      "custos": {
+        "2021": {
+          "material": 0,
+          "maoObra": 28.906259280000004,
+          "usConstr": 10.236,
+          "unitario": 12
+        },
+        "2022": {
+          "material": 0,
+          "maoObra": 28.906259280000004,
+          "usConstr": 10.236,
+          "unitario": 12
+        },
+        "2024": {
+          "material": 0,
+          "maoObra": 28.906259280000004,
+          "usConstr": 10.236,
+          "unitario": 12
+        }
+      },
+      "composicoes": {},
+      "verificacao": "Unitário 12 digitado por cima da fórmula; o recálculo pelas 10,236 US dá 28,906."
+    },
+    {
+      "id": "deriv_rdu_ramal_sub",
+      "categoria": "Derivação p/ cliente MT",
+      "subcategoria": "RDU",
+      "tipo": "Troca poste + ramal sub",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Valor digitado na planilha."
+      },
+      "custos": {
+        "2021": {
+          "material": 1.7,
+          "maoObra": 0,
+          "usConstr": 1.7,
+          "unitario": 8.5
+        },
+        "2022": {
+          "material": 1.7,
+          "maoObra": 0,
+          "usConstr": 1.7,
+          "unitario": 10
+        },
+        "2024": {
+          "material": 1.7,
+          "maoObra": 0,
+          "usConstr": 1.7,
+          "unitario": 10
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "deriv_rdu_ramal_aereo",
+      "categoria": "Derivação p/ cliente MT",
+      "subcategoria": "RDU",
+      "tipo": "Troca poste + ramal aéreo",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Valor digitado na planilha."
+      },
+      "custos": {
+        "2021": {
+          "material": 3.4,
+          "maoObra": 0,
+          "usConstr": 2.05,
+          "unitario": 18.5
+        },
+        "2022": {
+          "material": 3.4,
+          "maoObra": 0,
+          "usConstr": 2.05,
+          "unitario": 20
+        },
+        "2024": {
+          "material": 3.4,
+          "maoObra": 0,
+          "usConstr": 2.05,
+          "unitario": 20
+        }
+      },
+      "composicoes": {}
+    },
+    {
+      "id": "deriv_rdr_ramal_aereo",
+      "categoria": "Derivação p/ cliente MT",
+      "subcategoria": "RDR",
+      "tipo": "Troca poste + ramal aéreo",
+      "unidade": "ponto",
+      "status": "oficial",
+      "formacao": {
+        "origem": "fixo",
+        "motivo": "Valor digitado na planilha."
+      },
+      "custos": {
+        "2021": {
+          "material": 3.4,
+          "maoObra": 0,
+          "usConstr": 2,
+          "unitario": 20
+        },
+        "2022": {
+          "material": 3.4,
+          "maoObra": 0,
+          "usConstr": 2,
+          "unitario": 20
+        },
+        "2024": {
+          "material": 3.4,
+          "maoObra": 0,
+          "usConstr": 2,
+          "unitario": 20
+        }
+      },
+      "composicoes": {}
+    }
+  ]
+}
