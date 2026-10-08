@@ -123,7 +123,7 @@ export default function ItensObra({ itens, setOrcamento }) {
             </select>
           </div>
           <div>
-            <label style={S.label}>Valor (R$ mil)</label>
+            <label style={S.label}>Valor (R$)</label>
             <input type="number" step="0.01" value={novo.valor} onChange={e => setNovo({ ...novo, valor: e.target.value })}
               placeholder="0,00" style={S.input} onFocus={onFocus} onBlur={onBlur} />
           </div>
