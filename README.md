@@ -32,4 +32,21 @@ cd orcamento-mt-app
 # Instale as dependências
 npm install
 
-# Inicie
+# Inicie o servidor de desenvolvimento
+npm run dev
+
+# Rode os testes
+npm run test:run
+```
+
+## 🌐 Publicação (GitHub Pages)
+
+O app fica em https://romulocemig57396-cyber.github.io/orcamento-mt/
+
+A publicação é automática: a cada push na `main`, o GitHub Actions
+(`.github/workflows/deploy.yml`) roda os testes e o build e envia a pasta
+`dist` para a branch `gh-pages`. Se os testes falharem, nada é publicado.
+
+Para publicar manualmente: aba **Actions** → "Publicar no GitHub Pages" →
+**Run workflow**, ou `npm run deploy` no computador.
+
