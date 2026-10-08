@@ -142,10 +142,7 @@ describe('calcularPrazoEstimado', () => {
 
 describe('calcularValidade', () => {
   test("dataBase '2026-01-01' → dataValidade = '2026-05-01' (120 dias)", () => {
-    const validade = calcularValidade(new Date('2026-01-01'));
-    expect(validade.getUTCFullYear()).toBe(2026);
-    expect(validade.getUTCMonth()).toBe(4); // maio (0-indexed)
-    expect(validade.getUTCDate()).toBe(1);
+    expect(calcularValidade('2026-01-01')).toBe('2026-05-01');
   });
 });
 

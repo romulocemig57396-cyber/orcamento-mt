@@ -3,6 +3,7 @@
    ───────────────────────────────────────────────────────────────────────────── */
 
 import { normalizarTipoAtendimento } from './tipoAtendimento';
+import { formatarDataBR } from './datas';
 
 // Tipo de atendimento com o artigo correto ("de uma ligação nova", "de um aumento de carga")
 const TIPO_ATENDIMENTO = {
@@ -362,8 +363,7 @@ export const gerarMemorialDescritivo = (dados) => {
 export const gerarTextoResumoFinanceiro = (dados) => {
   const fmt = (v) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0);
-  const fmtData = (d) =>
-    new Intl.DateTimeFormat('pt-BR').format(new Date(d));
+  const fmtData = formatarDataBR;
 
   return `RESUMO FINANCEIRO
 

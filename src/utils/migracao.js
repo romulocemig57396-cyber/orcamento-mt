@@ -1,5 +1,6 @@
 import { tipoParaId } from './regrasImportacao';
 import { normalizarTipoAtendimento } from './tipoAtendimento';
+import { normalizarDataISO } from './datas';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    migracao.js — converte orçamentos salvos em formatos antigos no localStorage
@@ -33,6 +34,9 @@ export const migrarOrcamento = (salvo) => {
     if (o.obrasVinculadas?.temObrasVinculadas && !o.temObrasVinculadas) o.temObrasVinculadas = true;
     delete o.obrasVinculadas;
   }
+  // A9: datas gravadas como ISO completo (Date) → AAAA-MM-DD
+  if ('dataBase' in o) o.dataBase = normalizarDataISO(o.dataBase);
+  if ('dataValidade' in o) o.dataValidade = normalizarDataISO(o.dataValidade);
   if (o.tipoAtendimento) o.tipoAtendimento = normalizarTipoAtendimento(o.tipoAtendimento);
   return o;
 };

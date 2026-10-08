@@ -2,6 +2,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { formatarMoeda, formatarData, calcularPrazoEstimado } from './calculos';
+import { hojeISO } from './datas';
 import { diferencaDoItem, baseRateioDoItem } from './diferencaCabo';
 import { formatarQuantidade } from './postes';
 
@@ -148,7 +149,7 @@ export const exportarExcel = (orcamento) => {
     XLSX.utils.book_append_sheet(workbook, ws2, 'Materiais');
   }
 
-  const nomeArquivo = `Orcamento_${(orcamento.cliente || 'sem-nome').replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+  const nomeArquivo = `Orcamento_${(orcamento.cliente || 'sem-nome').replace(/\s+/g, '_')}_${hojeISO()}.xlsx`;
   XLSX.writeFile(workbook, nomeArquivo);
 };
 
@@ -358,7 +359,7 @@ export const exportarPDF = (orcamento) => {
     doc.setTextColor(0);
   }
 
-  const nomeArquivo = `Orcamento_${(orcamento.cliente || 'sem-nome').replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+  const nomeArquivo = `Orcamento_${(orcamento.cliente || 'sem-nome').replace(/\s+/g, '_')}_${hojeISO()}.pdf`;
   doc.save(nomeArquivo);
 };
 
@@ -533,6 +534,6 @@ export const exportarRateio = (orcamento) => {
     doc.setTextColor(0);
   }
 
-  const nomeArquivo = `Rateio_${(orcamento.cliente || 'sem-nome').replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+  const nomeArquivo = `Rateio_${(orcamento.cliente || 'sem-nome').replace(/\s+/g, '_')}_${hojeISO()}.pdf`;
   doc.save(nomeArquivo);
 };

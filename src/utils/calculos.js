@@ -1,5 +1,6 @@
 import { diferencaDoItem, baseRateioDoItem } from './diferencaCabo';
 import { getItemById } from '../data/tabelaCustos';
+import { hojeISO, normalizarDataISO, somarDias, formatarDataBR } from './datas';
 
 // RN-001 — Total da Condição Técnica
 export const calcularCT = (itensCT, diferencaCabo = 0) => {
@@ -130,11 +131,9 @@ export const calcularPesoCabo = (kgPorMetro, metragem, percentualAdicional = 1.0
   };
 };
 
-// RN-015 — Validade
-export const calcularValidade = (dataBase = new Date()) => {
-  const validade = new Date(dataBase);
-  validade.setDate(validade.getDate() + 120);
-  return validade;
+// RN-015 — Validade: Data Base + 120 dias (datas como AAAA-MM-DD)
+export const calcularValidade = (dataBase = hojeISO()) => {
+  return somarDias(normalizarDataISO(dataBase), 120);
 };
 
 // Item de retirada de rede (Rede › Retirada) — não é rede nova a construir
@@ -192,6 +191,5 @@ export const formatarMoeda = (valor) => {
 };
 
 // Função auxiliar para formatação de data
-export const formatarData = (data) => {
-  return new Intl.DateTimeFormat('pt-BR').format(new Date(data));
-};
+// Aceita AAAA-MM-DD (sem deslocamento de fuso) ou Date
+export const formatarData = (data) => formatarDataBR(data);

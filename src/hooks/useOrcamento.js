@@ -7,9 +7,11 @@ import {
   calcularTotaisItens
 } from '../utils/calculos';
 import { migrarOrcamento } from '../utils/migracao';
+import { hojeISO, diasEntre } from '../utils/datas';
 
 const STORAGE_KEY = 'orcamento_mt_app';
 
+// Datas como texto AAAA-MM-DD (ver utils/datas.js)
 const initialState = {
   cliente: '',
   ns: '',
@@ -43,8 +45,8 @@ const initialState = {
   servicos: 0,
   administracao: 0,
   valorTotal: 0,
-  dataBase: new Date(),
-  dataValidade: new Date(),
+  dataBase: '',
+  dataValidade: '',
   dataEstudo: '',
   importacao: {
     textoOriginal: '',
@@ -60,24 +62,31 @@ const initialState = {
   prazoEstimado: null,
 };
 
+// Estado inicial com a Data Base de hoje (calculada na hora, não no carregamento do módulo)
+const novoEstado = () => {
+  const hoje = hojeISO();
+  return { ...initialState, dataBase: hoje, dataValidade: calcularValidade(hoje) };
+};
+
 export const useOrcamento = () => {
   const [orcamento, setOrcamento] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
         const parsed = migrarOrcamento(JSON.parse(saved));
+        const dataBase = parsed.dataBase || hojeISO();
         return {
           ...parsed,
-          dataBase: new Date(parsed.dataBase),
-          dataValidade: new Date(parsed.dataValidade),
+          dataBase,
+          dataValidade: calcularValidade(dataBase),
           importacao: parsed.importacao || initialState.importacao,
         };
       } catch (e) {
         console.error('Erro ao carregar dados salvos:', e);
-        return initialState;
+        return novoEstado();
       }
     }
-    return initialState;
+    return novoEstado();
   });
 
   useEffect(() => {
@@ -85,10 +94,7 @@ export const useOrcamento = () => {
   }, [orcamento]);
 
   useEffect(() => {
-    const hoje = new Date();
-    const conclusao = new Date(orcamento.dataObrasVinculadas);
-    const diff = Math.ceil((conclusao - hoje) / (1000 * 60 * 60 * 24));
-    const diasObrasVinculadas = isNaN(diff) ? null : diff;
+    const diasObrasVinculadas = diasEntre(hojeISO(), orcamento.dataObrasVinculadas);
 
     if (orcamento.diasObrasVinculadas !== diasObrasVinculadas) {
       setOrcamento(prev => ({ ...prev, diasObrasVinculadas }));
@@ -130,6 +136,7 @@ export const useOrcamento = () => {
       orcamento.material !== material ||
       orcamento.servicos !== servicos ||
       orcamento.valorTotal !== valorTotal ||
+      orcamento.dataValidade !== dataValidade ||
       orcamento.prazoEstimado?.prazoFinal !== prazoEstimado.prazoFinal ||
       orcamento.prazoEstimado?.prazoRede !== prazoEstimado.prazoRede ||
       orcamento.prazoEstimado?.prazoVinculadas !== prazoEstimado.prazoVinculadas ||
@@ -179,7 +186,7 @@ export const useOrcamento = () => {
   };
 
   const resetOrcamento = () => {
-    setOrcamento(initialState);
+    setOrcamento(novoEstado());
     localStorage.removeItem(STORAGE_KEY);
   };
 
