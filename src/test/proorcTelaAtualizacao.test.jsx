@@ -141,4 +141,18 @@ describe.skipIf(!temTodos)('Etapa 3 — tela de atualização com os relatórios
     expect(within(depois).getAllByText('126,61692')).toHaveLength(2);
     expect(within(depois).queryByText('93,95449')).not.toBeInTheDocument();
   });
+
+  test('depois de gerar, "Continuar editando valores" edita a referência em preparação', async () => {
+    const { container } = render(<AtualizarProorc />);
+    await carregarTodos(container);
+    fireEvent.click(screen.getByText('Analisar relatórios'));
+    await waitFor(() => expect(screen.getByText('Prévia da nova referência')).toBeInTheDocument());
+    fireEvent.click(screen.getByText('Revisei a tabela e confirmo as ligações'));
+    fireEvent.click(screen.getByText('Gerar nova referência'));
+    fireEvent.click(screen.getByText('Continuar editando valores'));
+
+    expect(screen.getByText(/referência em preparação 2026-10/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Tri CAA 1/0 — material'), { target: { value: '45' } });
+    expect(within(screen.getByTestId('previa-edicao')).getByText('83,31981')).toBeInTheDocument();
+  });
 });

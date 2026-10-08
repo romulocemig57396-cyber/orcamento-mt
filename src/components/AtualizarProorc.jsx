@@ -7,6 +7,7 @@ import { consolidarProorc } from '../proorc/consolidar';
 import { calcularNovaReferencia } from '../proorc/calcularReferencia';
 import { aplicarNovaReferencia, baixarBiblioteca, serializarBiblioteca } from '../proorc/gerarBibliotecaJson';
 import { ORIGENS } from '../proorc/formacao';
+import EditarValores from './EditarValores';
 
 const S = {
   card: { background: '#fff', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', marginBottom: '20px' },
@@ -67,7 +68,10 @@ export default function AtualizarProorc() {
   const [rotulo, setRotulo] = useState('');
   const [viraAtual, setViraAtual] = useState(true);
   const [filtro, setFiltro] = useState('todos');
-  const [gerada, setGerada] = useState(null);
+  const [gerada, setGeradaEstado] = useState(null);
+  const [editando, setEditando] = useState(false);
+  // Qualquer mudança descarta a referência gerada e a edição sobre ela
+  const setGerada = (valor) => { setGeradaEstado(valor); if (!valor) setEditando(false); };
 
   const chaveAnterior = chaveReferenciaAtual();
   const rotuloAnterior = getReferencia(chaveAnterior)?.rotulo || chaveAnterior;
@@ -460,15 +464,29 @@ export default function AtualizarProorc() {
                     <li key={t} style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '12px', color: '#333', lineHeight: 1.6 }}>{t}</li>
                   ))}
                 </ul>
-                <button style={S.btnVerde} onClick={() => baixarBiblioteca(gerada)}>
-                  Baixar biblioteca.json
-                </button>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <button style={S.btnVerde} onClick={() => baixarBiblioteca(gerada)}>
+                    Baixar biblioteca.json
+                  </button>
+                  {!editando && (
+                    <button style={S.btnCinza} onClick={() => setEditando(true)}>
+                      Continuar editando valores
+                    </button>
+                  )}
+                </div>
                 <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', color: '#666', margin: '10px 0 0 0', lineHeight: 1.6 }}>
                   Substitua <strong>src/data/biblioteca.json</strong> no repositório pelo arquivo baixado, confira o diff, faça o commit e publique. As referências antigas continuam intactas no arquivo.
+                  {' '}Para ajustar também a TOD, os itens manuais ou os parâmetros antes de gravar, use "Continuar editando valores": o arquivo final sai com uma única referência nova.
                 </p>
               </div>
             )}
           </div>
+
+          {gerada && editando && (
+            <EditarValores
+              base={{ biblioteca: gerada, chave: chave.trim(), rotulo, fonte: `PROORC, relatórios de ${consolidado.dataReferencia}` }}
+            />
+          )}
         </>
       )}
     </div>

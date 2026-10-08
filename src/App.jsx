@@ -11,11 +11,13 @@ import Importacao from './components/Importacao';
 import AtualizarProorc from './components/AtualizarProorc';
 import CriarItem from './components/CriarItem';
 import PropostasAdmin from './components/PropostasAdmin';
+import EditarValores from './components/EditarValores';
 import { ehModoAdmin } from './utils/modoAdmin';
 import { chaveReferenciaAtual } from './data/biblioteca';
 
 const ABAS_ADMIN = [
   { id: 'proorc', nome: 'Atualizar pelo PROORC' },
+  { id: 'editarValores', nome: 'Editar valores' },
   { id: 'propostas', nome: 'Propostas de Itens' },
 ];
 
@@ -266,6 +268,9 @@ function App() {
             )}
             {abaAtiva === 'proorc' && modoAdmin && (
               <AtualizarProorc />
+            )}
+            {abaAtiva === 'editarValores' && modoAdmin && (
+              <EditarValores />
             )}
             {abaAtiva === 'propostas' && modoAdmin && (
               <PropostasAdmin anoReferencia={anoReferencia} />
