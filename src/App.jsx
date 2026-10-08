@@ -9,6 +9,12 @@ import ResumoFinanceiro from './components/ResumoFinanceiro';
 import Exportacao from './components/Exportacao';
 import BibliotecaCustos from './components/BibliotecaCustos';
 import Importacao from './components/Importacao';
+import AtualizarProorc from './components/AtualizarProorc';
+import { ehModoAdmin } from './utils/modoAdmin';
+
+const ABAS_ADMIN = [
+  { id: 'proorc', nome: 'Atualizar pelo PROORC' },
+];
 
 const abas = [
   { id: 'atendimento', nome: 'Atendimento' },
@@ -23,6 +29,7 @@ const abas = [
 ];
 
 function App() {
+  const modoAdmin = ehModoAdmin();
   const {
     orcamento, updateField, updateImportacao, resetOrcamento, setOrcamento,
     salvamentoSuspenso, carregarVersaoOutraAba, manterEstaVersao,
@@ -30,7 +37,8 @@ function App() {
   const [abaAtiva, setAbaAtiva] = useState('atendimento');
   const [anoReferencia, setAnoReferencia] = useState(2024);
 
-  const abaAtual = abas.find(a => a.id === abaAtiva);
+  const abasVisiveis = modoAdmin ? [...abas, ...ABAS_ADMIN] : abas;
+  const abaAtual = abasVisiveis.find(a => a.id === abaAtiva);
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#F5F5F5' }}>
@@ -75,7 +83,7 @@ function App() {
             padding: '0 8px', marginBottom: '8px', marginTop: '4px',
           }}>Navegação</p>
 
-          {abas.map(aba => (
+          {abasVisiveis.map(aba => (
             <button
               key={aba.id}
               onClick={() => setAbaAtiva(aba.id)}
@@ -177,6 +185,21 @@ function App() {
           </div>
         </header>
 
+        {/* Faixa do modo administrador (ligado por ?admin=1 na URL) */}
+        {modoAdmin && (
+          <div style={{
+            background: '#FFFBE6', borderBottom: '1px solid #FFE57A', padding: '8px 32px',
+            display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0,
+          }}>
+            <span style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '12px', fontWeight: 700, color: '#8B6D00' }}>
+              Modo administrador
+            </span>
+            <span style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '12px', color: '#8B6D00', flex: 1 }}>
+              As telas de manutenção da biblioteca estão visíveis.
+            </span>
+          </div>
+        )}
+
         {/* Aviso: orçamento alterado em outra aba */}
         {salvamentoSuspenso && (
           <div role="alert" style={{
@@ -238,6 +261,9 @@ function App() {
             )}
             {abaAtiva === 'exportacao' && (
               <Exportacao orcamento={orcamento} resetOrcamento={resetOrcamento} />
+            )}
+            {abaAtiva === 'proorc' && modoAdmin && (
+              <AtualizarProorc />
             )}
 
           </div>

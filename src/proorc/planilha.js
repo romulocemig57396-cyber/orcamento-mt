@@ -14,9 +14,12 @@
 
 import * as XLSX from 'xlsx';
 
-// Primeira aba do arquivo → lista de linhas, cada uma com seus valores não vazios
-export const lerLinhas = (buffer) => {
-  const wb = XLSX.read(buffer, { type: 'buffer' });
+/* Primeira aba do arquivo → lista de linhas, cada uma com seus valores não
+   vazios. Aceita o ArrayBuffer que o navegador entrega em `file.arrayBuffer()`
+   e o Buffer do Node, usado nos testes.                                      */
+export const lerLinhas = (dados) => {
+  const bytes = new Uint8Array(dados instanceof ArrayBuffer ? dados : dados);
+  const wb = XLSX.read(bytes, { type: 'array' });
   const aba = wb.Sheets[wb.SheetNames[0]];
   if (!aba) return [];
   return XLSX.utils.sheet_to_json(aba, { header: 1, raw: false, defval: '' })
