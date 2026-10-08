@@ -59,6 +59,62 @@ export function extrairQuantidade(texto) {
   return { quantidade: '', unidade: '' };
 }
 
+// ── Proporcionalidade ─────────────────────────────────────────────────────────
+export const AVISO_PROPORCIONALIDADE = 'Confira o % da proporcionalidade';
+
+const DONO_CLIENTE_RE = /cliente|interessado|consumidor/gi;
+const DONO_CEMIG_RE = /cemig/gi;
+
+// Palavra de dono mais próxima de um percentual: procura no trecho antes (até o
+// % anterior) e no trecho depois (até o próximo %), e fica com a mais próxima.
+function donoDoPercentual(antes, depois) {
+  let melhor = null;
+  const considerar = (dono, distancia) => {
+    if (melhor === null || distancia < melhor.distancia) melhor = { dono, distancia };
+  };
+  for (const [dono, re] of [['cliente', DONO_CLIENTE_RE], ['cemig', DONO_CEMIG_RE]]) {
+    for (const m of antes.matchAll(re)) considerar(dono, antes.length - (m.index + m[0].length));
+    const m = depois.match(new RegExp(re.source, 'i'));
+    if (m) considerar(dono, m.index);
+  }
+  return melhor?.dono || null;
+}
+
+// Lê o % da Cemig a partir do trecho "Proporcionalidade ...".
+// Retorna null quando não há proporcionalidade com percentual no texto.
+export function lerProporcionalidade(texto) {
+  const inicio = texto.search(/Proporcionalidade/i);
+  if (inicio === -1) return null;
+  let trecho = texto.slice(inicio + 'Proporcionalidade'.length);
+  const fim = trecho.search(/\.(\s|$)/);
+  if (fim !== -1) trecho = trecho.slice(0, fim);
+
+  const percentuais = [...trecho.matchAll(/(\d+(?:[.,]\d+)?)\s*%/g)];
+  if (percentuais.length === 0) return null;
+
+  let cliente = null;
+  let cemig = null;
+  percentuais.forEach((m, i) => {
+    const iniAntes = i === 0 ? 0 : percentuais[i - 1].index + percentuais[i - 1][0].length;
+    const fimDepois = i + 1 < percentuais.length ? percentuais[i + 1].index : trecho.length;
+    const antes = trecho.slice(iniAntes, m.index);
+    const depois = trecho.slice(m.index + m[0].length, fimDepois);
+    const valor = lerNumeroBR(m[1]);
+    const dono = donoDoPercentual(antes, depois);
+    if (dono === 'cliente' && cliente === null) cliente = valor;
+    if (dono === 'cemig' && cemig === null) cemig = valor;
+  });
+
+  if (cliente !== null && cemig !== null) {
+    return { percentualCemig: cemig, aviso: Math.abs(cliente + cemig - 100) > 0.001 };
+  }
+  if (cemig !== null) return { percentualCemig: cemig, aviso: false };
+  if (cliente !== null) return { percentualCemig: 100 - cliente, aviso: false };
+
+  // Sem dono identificado: mantém o comportamento antigo (% do cliente), com aviso
+  return { percentualCemig: 100 - lerNumeroBR(percentuais[0][1]), aviso: true };
+}
+
 // ── Análise do texto ─────────────────────────────────────────────────────────
 export function analisarTexto(texto) {
   const cab = {
@@ -169,13 +225,15 @@ export function analisarTexto(texto) {
       // Categoria — apenas as regras definidas (RN-Importação)
       let categoria;
       let percentualCemig = 0;
+      let avisoProporcionalidade = false;
       if (raw.secao === 'cemig') {
         categoria = 'ctc';
       } else {
-        const propM = t.match(/Proporcionalidade[^\d]*(\d+)\s*%/i);
-        if (propM) {
+        const prop = lerProporcionalidade(t);
+        if (prop) {
           categoria = 'pp';
-          percentualCemig = 100 - parseInt(propM[1]);
+          percentualCemig = prop.percentualCemig;
+          avisoProporcionalidade = prop.aviso;
         } else {
           categoria = 'parcela_reg';
         }
@@ -206,6 +264,7 @@ export function analisarTexto(texto) {
           quantidadeKmOriginal,
           categoria,
           percentualCemig,
+          avisoProporcionalidade,
           expandido: false,
           retiradaPendente: !!spec.retiradaPendente,
         });
@@ -353,6 +412,8 @@ export default function Importacao({ setOrcamento, importacao, updateImportacao 
             ? { ...it, tipoSelecionado: valor, quantidade: kmParaPostes(it.quantidadeKmOriginal), unidade: 'poste' }
             : { ...it, tipoSelecionado: valor, quantidade: it.quantidadeKmOriginal, unidade: 'km' };
         }
+        // % editado pelo usuário: o aviso de conferência deixa de valer
+        if (campo === 'percentualCemig') return { ...it, percentualCemig: valor, avisoProporcionalidade: false };
         return { ...it, [campo]: valor };
       }),
     });
@@ -582,8 +643,14 @@ export default function Importacao({ setOrcamento, importacao, updateImportacao 
                           onChange={e => upd(idx, 'percentualCemig', e.target.value)}
                           placeholder="—"
                           min="0" max="100"
-                          style={{ ...S.input, padding: '5px 8px', fontSize: '12px', width: '60px' }}
+                          style={{ ...S.input, padding: '5px 8px', fontSize: '12px', width: '60px',
+                            ...(item.avisoProporcionalidade ? { borderColor: '#E6BC00', background: '#FFFBE6' } : {}) }}
                         />
+                        {item.avisoProporcionalidade && (
+                          <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '10px', fontWeight: 700, color: '#8B6D00', margin: '4px 0 0 0' }}>
+                            ⚠️ {AVISO_PROPORCIONALIDADE}
+                          </p>
+                        )}
                       </td>
 
                       {/* Categoria */}
