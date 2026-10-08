@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { getItemById, getValorPorAno } from '../data/tabelaCustos';
-import { chaveReferenciaAtual, getReferencia, ehPendente } from '../data/biblioteca';
+import { chaveReferenciaAtual, getReferencia, ehPendente, disponivelNaReferencia, TEXTO_NAO_DISPONIVEL } from '../data/biblioteca';
 import { AvisoPendente } from './SeloPendente';
 import { normalizarTipoAtendimento, rotuloTipoAtendimento, OBS_GERACAO_DISTRIBUIDA } from '../utils/tipoAtendimento';
 import { RETIRADA_IDS, OPCOES_BIBLIOTECA, matchRegras } from '../utils/regrasImportacao';
@@ -600,6 +600,11 @@ export default function Importacao({ setOrcamento, importacao, updateImportacao,
                             <option key={o.id} value={o.id}>{o.label}</option>
                           ))}
                         </select>
+                        {item.tipoSelecionado && !disponivelNaReferencia(getItemById(item.tipoSelecionado), anoReferencia) && (
+                          <p role="alert" style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', fontWeight: 700, color: '#777', background: '#F0F0F0', border: '1px solid #DDD', borderRadius: '8px', padding: '6px 8px', margin: '6px 0 0 0' }}>
+                            {TEXTO_NAO_DISPONIVEL}: escolha outro item ou outra referência de custos.
+                          </p>
+                        )}
                         {item.tipoSelecionado && ehPendente(getItemById(item.tipoSelecionado), anoReferencia) && (
                           <AvisoPendente style={{ marginTop: '6px', padding: '6px 8px' }} />
                         )}
@@ -669,18 +674,22 @@ export default function Importacao({ setOrcamento, importacao, updateImportacao,
                       {/* Ações */}
                       <td style={{ ...S.td, textAlign: 'center' }}>
                         <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                          {(() => {
+                            const bloqueado = (item.retiradaPendente && !item.tipoSelecionado)
+                              || (!!item.tipoSelecionado && !disponivelNaReferencia(getItemById(item.tipoSelecionado), anoReferencia));
+                            return (
                           <button onClick={() => adicionar(idx)}
-                            disabled={item.retiradaPendente && !item.tipoSelecionado}
+                            disabled={bloqueado}
                             style={{
                               ...S.btnVerde, padding: '6px 14px', fontSize: '12px',
-                              ...(item.retiradaPendente && !item.tipoSelecionado
-                                ? { background: '#CCC', cursor: 'not-allowed' }
-                                : {}),
+                              ...(bloqueado ? { background: '#CCC', cursor: 'not-allowed' } : {}),
                             }}
-                            onMouseEnter={e => { if (!(item.retiradaPendente && !item.tipoSelecionado)) e.currentTarget.style.background = '#007A3D'; }}
-                            onMouseLeave={e => { if (!(item.retiradaPendente && !item.tipoSelecionado)) e.currentTarget.style.background = '#00A859'; }}>
+                            onMouseEnter={e => { if (!bloqueado) e.currentTarget.style.background = '#007A3D'; }}
+                            onMouseLeave={e => { if (!bloqueado) e.currentTarget.style.background = '#00A859'; }}>
                             Adicionar
                           </button>
+                            );
+                          })()}
                           <button onClick={() => ignorar(idx)}
                             style={{ ...S.btnCinza, padding: '6px 10px', fontSize: '12px' }}>
                             Ignorar

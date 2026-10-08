@@ -275,8 +275,8 @@ export const calcularEdicao = ({
    Cria a referência nova com os valores da edição. `biblioteca` é a instalada
    (sem a referência em preparação). A formação dos itens passa a registrar os
    parâmetros e a fonte da TOD usados.                                        */
-export const aplicarEdicao = ({ biblioteca, resultado, chave, rotulo, fonte, atual = true, parametros, fonteTod }) => {
-  const nova = aplicarNovaReferencia({ biblioteca, resultado, chave, rotulo, fonte, atual });
+export const aplicarEdicao = ({ biblioteca, resultado, chave, rotulo, fonte, atual = true, parametros, fonteTod, itensNovos = [] }) => {
+  const nova = aplicarNovaReferencia({ biblioteca, resultado, chave, rotulo, fonte, atual, itensNovos });
   const p = { ...parametrosAtuais(biblioteca), ...(resultado.parametros || {}) };
   Object.entries(parametros || {}).forEach(([nome, valor]) => { if (informado(valor)) p[nome] = v(valor); });
   const tod = fonteTod || resultado.fonteTod;

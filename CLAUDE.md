@@ -42,10 +42,12 @@ Sistema web da Cemig para elaborar orçamentos de obras de Média Tensão (MT) e
 | `src/proorc/gerarBibliotecaJson.js` | Grava a nova referência no arquivo e oferece o download |
 | `src/proorc/explicarFormacao.js` | Descreve em números como o custo foi formado (tela de composição) |
 | `src/proorc/editarReferencia.js` | Edição administrativa (TOD, manuais, fixos e parâmetros) e recálculo em cascata |
+| `src/proorc/itensNovos.js` | Item novo a partir de um projeto do PROORC: sugestão, id, validação e criação |
 | `src/proorc/propostasAdmin.js` | Recálculo e aprovação das propostas de item |
 | `src/components/Importacao.jsx` | Parser do texto do parecer técnico (`analisarTexto`) + tela de importação |
 | `src/components/EditarValores.jsx` | Tela "Editar valores" do modo administrador |
 | `src/components/SeloPendente.jsx` | Selo e aviso de item pendente (sem custo cadastrado) |
+| `src/components/ItemNovoDialog.jsx` | Diálogo "Criar item novo" da tela "Atualizar pelo PROORC" |
 | `src/components/*.jsx` | Uma aba por componente |
 
 ## Biblioteca de custos
@@ -63,6 +65,8 @@ Sistema web da Cemig para elaborar orçamentos de obras de Média Tensão (MT) e
 
 - Uma referência nova pelo PROORC copia da anterior os itens `tod`, `manual` e `fixo`. A tela "Editar valores" monta uma referência em preparação a partir de uma base (uma instalada, ou a recém-montada pelo PROORC, pelo botão "Continuar editando valores"); só os itens que dependem do que foi alterado são recalculados, e nenhuma referência existente é alterada. As duas telas terminam em "Baixar biblioteca.json".
 - **Item pendente:** um item é pendente numa referência quando o unitário dele ali é 0 (regra derivada do valor, sem campo próprio). Aparece em âmbar na Biblioteca, com o selo "Pendente — sem custo cadastrado", filtro e contagem; pode ser adicionado ao orçamento, mas com aviso de que entra com R$ 0,00, e a linha do item no orçamento leva o mesmo selo. A lista de cabos da diferença de cabo não oferece itens sem custo.
+- **Item novo a partir de um projeto do PROORC:** na tela "Atualizar pelo PROORC", cada projeto do relatório sem ligação tem a ação "Criar item novo". O diálogo sugere nome, categoria e unidade pela descrição do projeto (o administrador edita) e gera um id no padrão da biblioteca (`equip_`, `ext_`, …), sem colidir. O item nasce `oficial`, com `formacao: { origem: 'proorc', projeto, unidadesPorProjeto }`, e a ligação vai para `mapeamentoProorc`, para que as próximas importações o atualizem como os demais. Custos e composição são calculados do projeto (materiais ÷ unidades e serviços ÷ unidades). Projeto sem serviços contratados: o diálogo avisa e pede a mão de obra, por percentual sobre o material (`regra: 'maoObraPercentual'`) ou por US informadas × preço da US do relatório (`regra: 'maoObraPorUS'`). A prévia lista esses itens à parte ("Itens novos criados a partir do PROORC"); a criação pode ser desfeita antes de gerar; o arquivo baixado leva o item, a ligação e a composição. A tela "Editar valores" não os edita (origem `proorc`). Se o projeto estava ligado a outro item, a ligação passa para o item novo, e o item antigo deixa de ser atualizado pelo PROORC.
+- **Item não disponível numa referência:** um item só existe nas referências em que tem bloco de custos (ex.: um item novo não existe nas referências anteriores à sua criação). Ali ele aparece em cinza com o selo "Não disponível nesta referência", sem valores, e não pode ser adicionado (Biblioteca e Importação). É diferente de pendente, que é custo 0 numa referência em que o item existe.
 - Itens com o campo `verificacao` estão em verificação pelo responsável (hoje `equip_brt_167_urbano` e `equip_relig_tri_36kv`); só mudam por decisão dele.
 - A referência 2021 é anterior a essas fórmulas: tem valores digitados que não as seguem.
 - **Modo administrador** (`?admin=1` na URL): abas "Atualizar pelo PROORC", "Editar valores" e "Propostas de Itens". Não é segurança — o app é estático e público; só tira as telas de manutenção do caminho dos analistas.
