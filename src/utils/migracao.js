@@ -1,23 +1,33 @@
 import { tipoParaId } from './regrasImportacao';
+import { normalizarTipoAtendimento } from './tipoAtendimento';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    migracao.js — converte orçamentos salvos em formatos antigos no localStorage
    ───────────────────────────────────────────────────────────────────────────── */
 
 // A1: itens detectados guardavam o `tipo` da biblioteca; agora guardam o `id`.
+// A3: tipo de atendimento gravado por extenso ("Ligação Nova") → código (LN).
 const migrarImportacao = (importacao) => {
-  if (!importacao || !Array.isArray(importacao.itensDetectados)) return importacao;
-  return {
-    ...importacao,
-    itensDetectados: importacao.itensDetectados.map(it => ({
+  if (!importacao) return importacao;
+  const novo = { ...importacao };
+  if (Array.isArray(novo.itensDetectados)) {
+    novo.itensDetectados = novo.itensDetectados.map(it => ({
       ...it,
       tipoSelecionado: tipoParaId(it.tipoSelecionado, it.textoOriginal),
-    })),
-  };
+    }));
+  }
+  if (novo.cabecalhoDetectado?.tipoAtendimento) {
+    novo.cabecalhoDetectado = {
+      ...novo.cabecalhoDetectado,
+      tipoAtendimento: normalizarTipoAtendimento(novo.cabecalhoDetectado.tipoAtendimento),
+    };
+  }
+  return novo;
 };
 
 export const migrarOrcamento = (salvo) => {
   const o = { ...salvo };
   if (o.importacao) o.importacao = migrarImportacao(o.importacao);
+  if (o.tipoAtendimento) o.tipoAtendimento = normalizarTipoAtendimento(o.tipoAtendimento);
   return o;
 };

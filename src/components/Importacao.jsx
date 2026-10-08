@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { getItemById, getValorPorAno } from '../data/tabelaCustos';
+import { normalizarTipoAtendimento, rotuloTipoAtendimento, OBS_GERACAO_DISTRIBUIDA } from '../utils/tipoAtendimento';
 import { RETIRADA_IDS, OPCOES_BIBLIOTECA, matchRegras } from '../utils/regrasImportacao';
 import { kmParaPostes, postesParaKm } from '../utils/postes';
 
@@ -88,23 +89,23 @@ export function analisarTexto(texto) {
     const depois = lerNumeroBR(paraM[2]);
     cab.demandaFutura = depois;
     if (antes === 0) {
-      cab.tipoAtendimento = 'Ligação Nova';
+      cab.tipoAtendimento = 'LN';
       cab.cargaAtual = 0;
     } else {
-      cab.tipoAtendimento = 'Ampliação de Carga';
+      cab.tipoAtendimento = 'AC';
       cab.cargaAtual = antes;
     }
   } else {
     const kwM = m(new RegExp(`(${NUM})\\s*kW`, 'i'));
     if (kwM) {
       cab.demandaFutura = lerNumeroBR(kwM[1]);
-      cab.tipoAtendimento = 'Ligação Nova';
+      cab.tipoAtendimento = 'LN';
     }
   }
 
-  if (/gerador|solar|gera[çc][ãa]o\s+distribu[íi]da/i.test(texto)) {
-    cab.tipoAtendimento = 'Geração Distribuída';
-  }
+  // Geração distribuída não é tipo de atendimento: mantém LN/AC conforme a
+  // demanda e acrescenta uma frase nas Observações ao preencher o Atendimento.
+  cab.geracaoDistribuida = /gerador|solar|gera[çc][ãa]o\s+distribu[íi]da/i.test(texto);
 
   // Extrai bloco de obras
   let bloco = texto;
@@ -214,6 +215,23 @@ export function analisarTexto(texto) {
   return { cab, itens, textosAltaTensao };
 }
 
+// ── Cabeçalho detectado → dados do Atendimento ("Preencher Atendimento") ──────
+const CAMPOS_CABECALHO = ['ns', 'cliente', 'municipio', 'tensaoKv', 'cargaAtual', 'demandaFutura', 'tipoAtendimento', 'dataEstudo'];
+
+export function aplicarCabecalho(prev, cab) {
+  const novo = { ...prev };
+  CAMPOS_CABECALHO.forEach(c => { if (cab[c] !== '' && cab[c] != null) novo[c] = cab[c]; });
+  if (novo.tipoAtendimento) novo.tipoAtendimento = normalizarTipoAtendimento(novo.tipoAtendimento);
+
+  if (cab.geracaoDistribuida) {
+    const obs = (prev.observacoes || '').trim();
+    if (!obs.includes(OBS_GERACAO_DISTRIBUIDA)) {
+      novo.observacoes = obs ? `${obs}\n${OBS_GERACAO_DISTRIBUIDA}` : OBS_GERACAO_DISTRIBUIDA;
+    }
+  }
+  return novo;
+}
+
 // ── Item detectado → item de obra ─────────────────────────────────────────────
 export function criarItemObraImportado(item, id) {
   const tabItem = item.tipoSelecionado ? getItemById(item.tipoSelecionado) : null;
@@ -320,8 +338,7 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
 
   const preencherAtendimento = () => {
     if (!cabecalho) return;
-    ['ns','cliente','municipio','tensaoKv','cargaAtual','demandaFutura','tipoAtendimento','dataEstudo']
-      .forEach(c => { if (cabecalho[c] !== '' && cabecalho[c] != null) updateField(c, cabecalho[c]); });
+    setOrcamento(prev => aplicarCabecalho(prev, cabecalho));
     alert('Dados preenchidos na aba Atendimento!');
   };
 
@@ -408,7 +425,8 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
               ['Tensão', cabecalho.tensaoKv ? `${cabecalho.tensaoKv} kV` : ''],
               ['Demanda Atual', cabecalho.cargaAtual || cabecalho.cargaAtual === 0 ? `${cabecalho.cargaAtual} kW` : ''],
               ['Demanda Futura', cabecalho.demandaFutura ? `${cabecalho.demandaFutura} kW` : ''],
-              ['Tipo de Atendimento', cabecalho.tipoAtendimento],
+              ['Tipo de Atendimento', rotuloTipoAtendimento(cabecalho.tipoAtendimento)],
+              ...(cabecalho.geracaoDistribuida ? [['Geração Distribuída', 'Sim — será anotada nas Observações']] : []),
               ['Data do Estudo', cabecalho.dataEstudo],
             ].map(([label, valor]) => (
               <div key={label} style={{ padding: '12px 14px', background: '#F9FFF9', borderRadius: '8px', border: '1px solid #D4ECD9' }}>

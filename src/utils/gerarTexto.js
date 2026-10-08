@@ -2,10 +2,13 @@
    gerarTexto.js — geração do memorial descritivo técnico
    ───────────────────────────────────────────────────────────────────────────── */
 
+import { normalizarTipoAtendimento } from './tipoAtendimento';
+
+// Tipo de atendimento com o artigo correto ("de uma ligação nova", "de um aumento de carga")
 const TIPO_ATENDIMENTO = {
-  LN: 'ligação nova',
-  AC: 'aumento de carga',
-  RF: 'reforma',
+  LN: 'uma ligação nova',
+  AC: 'um aumento de carga',
+  RF: 'uma reforma',
 };
 
 /* ── Descrições singulares (km/poste ou quantidade = 1) ── */
@@ -322,14 +325,15 @@ const agruparItens = (itens) => {
    ─────────────────────────────────────────────────────────────────────────── */
 export const gerarMemorialDescritivo = (dados) => {
   const cliente    = dados.cliente      || '[cliente]';
-  const tipo       = TIPO_ATENDIMENTO[dados.tipoAtendimento] || dados.tipoAtendimento || '[tipo de atendimento]';
+  const codigoTipo = normalizarTipoAtendimento(dados.tipoAtendimento);
+  const tipo       = TIPO_ATENDIMENTO[codigoTipo] || `uma ${dados.tipoAtendimento || '[tipo de atendimento]'}`;
   const demanda    = fmtNum(dados.demandaFutura) || '[demanda]';
   const cargaAtual = fmtNum(dados.cargaAtual) || '[carga atual]';
   const tensao     = dados.tensaoKv     || '[tensão]';
   const local      = dados.localUnidade || '[local]';
   const municipio  = dados.municipio    || '[município]';
 
-  const demandaTexto = dados.tipoAtendimento === 'LN'
+  const demandaTexto = codigoTipo === 'LN'
     ? `com demanda de ${demanda} kW`
     : `com demanda atual de ${cargaAtual} kW e demanda futura de ${demanda} kW`;
 
@@ -340,7 +344,7 @@ export const gerarMemorialDescritivo = (dados) => {
   }
 
   let texto =
-    `Para atendimento à solicitação de ${cliente}, de uma ${tipo}, ` +
+    `Para atendimento à solicitação de ${cliente}, de ${tipo}, ` +
     `${demandaTexto}, conectada em ${tensao} kV, ` +
     `na ${local}, no município de ${municipio}, ` +
     `será necessária a ${listaItens} e demais modificações necessárias na rede.`;

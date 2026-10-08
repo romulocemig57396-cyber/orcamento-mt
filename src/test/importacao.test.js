@@ -72,7 +72,7 @@ describe('analisarTexto — cabeçalho', () => {
 
   test('TEXTO_2 — detecta ampliação de carga', () => {
     const { cab } = analisarTexto(TEXTO_2);
-    expect(cab.tipoAtendimento).toBe('Ampliação de Carga');
+    expect(cab.tipoAtendimento).toBe('AC');
     expect(cab.cargaAtual).toBe(200);
     expect(cab.demandaFutura).toBe(1500);
   });
