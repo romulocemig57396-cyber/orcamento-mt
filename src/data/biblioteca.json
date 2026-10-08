@@ -1356,7 +1356,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Sem custo cadastrado."
+        "motivo": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
       },
       "custos": {
         "2021": {
@@ -1378,8 +1378,7 @@
           "unitario": 0
         }
       },
-      "composicoes": {},
-      "verificacao": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
+      "composicoes": {}
     },
     {
       "id": "recon_urb_rdi50",
@@ -1390,7 +1389,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Sem custo cadastrado."
+        "motivo": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
       },
       "custos": {
         "2021": {
@@ -1412,8 +1411,7 @@
           "unitario": 0
         }
       },
-      "composicoes": {},
-      "verificacao": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
+      "composicoes": {}
     },
     {
       "id": "recon_urb_rdi185",
@@ -1424,7 +1422,7 @@
       "status": "oficial",
       "formacao": {
         "origem": "fixo",
-        "motivo": "Sem custo cadastrado."
+        "motivo": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
       },
       "custos": {
         "2021": {
@@ -1446,8 +1444,7 @@
           "unitario": 0
         }
       },
-      "composicoes": {},
-      "verificacao": "Zerado em 2024, mas com valor em 2022/2021 na planilha de origem."
+      "composicoes": {}
     },
     {
       "id": "sub_13_8kv",

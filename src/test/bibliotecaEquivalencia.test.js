@@ -128,10 +128,8 @@ describe('Etapa 1 — estrutura do JSON', () => {
 
   test('os itens em verificação estão marcados', () => {
     const marcados = BIBLIOTECA.itens.filter(i => i.verificacao).map(i => i.id);
-    expect(marcados.sort()).toEqual([
-      'equip_brt_167_urbano', 'equip_relig_tri_36kv', 'recon_urb_4_0_ca',
-      'recon_urb_rdi185', 'recon_urb_rdi50',
-    ]);
+    // Os itens zerados deixaram de ser "em verificação": agora são pendentes (R3)
+    expect(marcados.sort()).toEqual(['equip_brt_167_urbano', 'equip_relig_tri_36kv']);
   });
 
   test('o preço da US de 2024 fica em branco, porque a planilha usou dois valores', () => {

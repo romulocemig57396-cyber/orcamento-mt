@@ -60,7 +60,7 @@ describe.skipIf(!temTodos)('Etapa 3 — tela de atualização com os relatórios
 
     expect(screen.getByText('Todos (70)')).toBeInTheDocument();
     expect(screen.getByText('Não atualizados (26)')).toBeInTheDocument();
-    expect(screen.getByText('Em verificação (5)')).toBeInTheDocument();
+    expect(screen.getByText('Em verificação (2)')).toBeInTheDocument();
 
     // RDP 150 Dupla Camada: 10,02861 por poste
     const linha = screen.getByText('RDP 150 Dupla Camada').closest('tr');

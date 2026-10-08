@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { getItemById, getValorPorAno } from '../data/tabelaCustos';
-import { chaveReferenciaAtual, getReferencia } from '../data/biblioteca';
+import { chaveReferenciaAtual, getReferencia, ehPendente } from '../data/biblioteca';
+import { AvisoPendente } from './SeloPendente';
 import { normalizarTipoAtendimento, rotuloTipoAtendimento, OBS_GERACAO_DISTRIBUIDA } from '../utils/tipoAtendimento';
 import { RETIRADA_IDS, OPCOES_BIBLIOTECA, matchRegras } from '../utils/regrasImportacao';
 import { kmParaPostes, postesParaKm } from '../utils/postes';
@@ -599,6 +600,9 @@ export default function Importacao({ setOrcamento, importacao, updateImportacao,
                             <option key={o.id} value={o.id}>{o.label}</option>
                           ))}
                         </select>
+                        {item.tipoSelecionado && ehPendente(getItemById(item.tipoSelecionado), anoReferencia) && (
+                          <AvisoPendente style={{ marginTop: '6px', padding: '6px 8px' }} />
+                        )}
                         {!item.tipoSelecionado && !item.retiradaPendente && (
                           <input
                             type="text"

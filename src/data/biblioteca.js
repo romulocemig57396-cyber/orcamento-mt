@@ -118,6 +118,24 @@ export const getSubcategorias = (categoria) =>
   [...new Set(TABELA_CUSTOS.filter(item => item.categoria === categoria).map(item => item.subcategoria))]
     .filter(s => s);
 
+/* ── Itens pendentes ──────────────────────────────────────────────────────────
+   Um item é pendente numa referência quando o unitário dele ali é 0: está na
+   biblioteca, mas sem custo cadastrado. A regra é derivada do valor, sem campo
+   próprio. Pode ser usado no orçamento, mas entra com R$ 0,00.               */
+export const TEXTO_PENDENTE = 'Pendente — sem custo cadastrado';
+export const AVISO_PENDENTE = 'Este item está sem custo cadastrado e entrará com R$ 0,00';
+
+export const ehPendente = (item, ref) => !!item && !(parseFloat(getValorPorAno(item, ref, 'unitario')) > 0);
+
+export const itensPendentes = (ref) => TABELA_CUSTOS.filter(item => ehPendente(item, ref));
+
+// Item já lançado no orçamento: vale a referência gravada nele. Item manual nunca é pendente.
+export const itemDoOrcamentoPendente = (itemObra) => {
+  if (!itemObra?.itemOrigem) return false;
+  const item = getItemById(itemObra.itemOrigem);
+  return !!item && ehPendente(item, itemObra.anoReferencia);
+};
+
 /* ── Preços da US e composições ───────────────────────────────────────────── */
 export const getPrecosUS = (ref) => biblioteca.precosUS[normalizarChaveReferencia(ref)] || { construcao: null, projeto: null };
 

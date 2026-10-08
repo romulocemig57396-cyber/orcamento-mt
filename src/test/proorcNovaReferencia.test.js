@@ -167,7 +167,7 @@ describe.skipIf(!temTodos)('Etapa 3 — nova referência com os relatórios de 0
   });
 
   test('o resumo conta atualizados, copiados e em verificação', () => {
-    expect(r.resumo).toMatchObject({ total: 70, atualizados: 44, naoAtualizados: 26, emVerificacao: 5, mantidos: 0 });
+    expect(r.resumo).toMatchObject({ total: 70, atualizados: 44, naoAtualizados: 26, emVerificacao: 2, mantidos: 0 });
   });
 
   test('nenhum projeto do relatório fica sem uso', () => {

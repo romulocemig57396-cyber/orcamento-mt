@@ -10,7 +10,9 @@ import {
   custosDaReferencia,
   getReferencia,
   formatarValor,
+  ehPendente,
 } from '../data/biblioteca';
+import SeloPendente, { AvisoPendente, COR_PENDENTE } from './SeloPendente';
 import { kmParaPostes, postesParaKm } from '../utils/postes';
 
 /* ── Estilos base ── */
@@ -60,6 +62,7 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
   const [percentualCemig, setPercentualCemig]   = useState('');
   const [distanciaKm, setDistanciaKm]           = useState('');
   const [hoveredRow, setHoveredRow]             = useState(null);
+  const [soPendentes, setSoPendentes]           = useState(false);
 
   // Propostas dos analistas aparecem junto dos itens oficiais, com selo próprio
   const propostas = useMemo(() => lerPropostas(), []);
@@ -75,8 +78,14 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
       : todosItens;
     if (categoriaFiltro)    itens = itens.filter(i => i.categoria    === categoriaFiltro);
     if (subcategoriaFiltro) itens = itens.filter(i => i.subcategoria === subcategoriaFiltro);
+    if (soPendentes)        itens = itens.filter(i => ehPendente(i, anoReferencia));
     return itens;
-  }, [textoBusca, categoriaFiltro, subcategoriaFiltro, todosItens]);
+  }, [textoBusca, categoriaFiltro, subcategoriaFiltro, soPendentes, anoReferencia, todosItens]);
+
+  const totalPendentes = useMemo(
+    () => todosItens.filter(i => ehPendente(i, anoReferencia)).length,
+    [todosItens, anoReferencia],
+  );
 
   const categorias    = getCategorias();
   const subcategorias = categoriaFiltro ? getSubcategorias(categoriaFiltro) : [];
@@ -128,6 +137,7 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
     setTextoBusca('');
     setCategoriaFiltro('');
     setSubcategoriaFiltro('');
+    setSoPendentes(false);
   };
 
   return (
@@ -217,11 +227,20 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
           <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: '13px', color: '#888', margin: 0 }}>
             <strong style={{ color: '#007A3D' }}>{itensFiltrados.length}</strong>{' '}
             {itensFiltrados.length === 1 ? 'item encontrado' : 'itens encontrados'}
+            {totalPendentes > 0 && (
+              <span style={{ marginLeft: '10px', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, background: COR_PENDENTE.fundo, color: COR_PENDENTE.selo, border: `1px solid ${COR_PENDENTE.borda}` }}>
+                {totalPendentes} {totalPendentes === 1 ? 'pendente' : 'pendentes'}
+              </span>
+            )}
           </p>
+          <label htmlFor="so-pendentes" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: "'Open Sans', sans-serif", fontSize: '13px', color: '#555', cursor: 'pointer', marginLeft: 'auto' }}>
+            <input id="so-pendentes" type="checkbox" checked={soPendentes} onChange={e => setSoPendentes(e.target.checked)} />
+            Mostrar só pendentes
+          </label>
           <button
             onClick={limparFiltros}
             style={{
@@ -279,12 +298,15 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                   const usConstr = getValorPorAno(item, anoReferencia, 'usConstr');
                   const unitario = getValorPorAno(item, anoReferencia, 'unitario');
                   const isHovered = hoveredRow === item.id;
-                  const rowBg = isHovered ? '#E7F4EE' : idx % 2 === 0 ? '#fff' : '#F9F9F9';
+                  const pendente = ehPendente(item, anoReferencia);
+                  const rowBg = pendente
+                    ? (isHovered ? COR_PENDENTE.fundoHover : COR_PENDENTE.fundo)
+                    : isHovered ? '#E7F4EE' : idx % 2 === 0 ? '#fff' : '#F9F9F9';
 
                   return (
                     <tr
                       key={item.id}
-                      style={{ background: rowBg, transition: 'background 0.1s' }}
+                      style={{ background: rowBg, transition: 'background 0.1s', ...(pendente ? { color: COR_PENDENTE.texto } : {}) }}
                       onMouseEnter={() => setHoveredRow(item.id)}
                       onMouseLeave={() => setHoveredRow(null)}
                     >
@@ -296,6 +318,7 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                       </td>
                       <td style={{ padding: '10px 14px', fontSize: '13px', fontWeight: 500, color: '#222', borderBottom: '1px solid #F0F0F0' }}>
                         {item.tipo}
+                        {pendente && <SeloPendente />}
                         {item.status === 'proposta' && (
                           <span title={`Proposta de ${item.autor}, ainda não aprovada pelo responsável.`}
                             style={{ marginLeft: '8px', padding: '1px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#F3E5F5', color: '#6A1B9A', border: '1px solid #CE93D8', whiteSpace: 'nowrap' }}>
@@ -413,6 +436,8 @@ export default function BibliotecaCustos({ setOrcamento, anoReferencia, setAnoRe
                 <span style={{ fontSize: '12px', fontWeight: 400, color: '#888', marginLeft: '4px' }}>/ {itemSelecionado.unidade}</span>
               </p>
             </div>
+
+            {ehPendente(itemSelecionado, anoReferencia) && <AvisoPendente style={{ marginBottom: '16px' }} />}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
 

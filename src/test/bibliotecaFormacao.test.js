@@ -131,7 +131,7 @@ describe('Etapa 1 — itens copiados e sem custo', () => {
       'ext_urbano_rdi185', 'ext_urbano_rdi50', 'recon_urb_4_0_ca',
       'recon_urb_rdi185', 'recon_urb_rdi50',
     ]);
-    semCusto.forEach(i => expect(i.formacao.motivo, i.id).toMatch(/Sem custo cadastrado/));
+    semCusto.forEach(i => expect(i.formacao.motivo, i.id).toMatch(/Sem custo cadastrado|Zerado em 2024/));
   });
 
   test('os 6 itens do PROORC ainda sem projeto exportado estão identificados', () => {
