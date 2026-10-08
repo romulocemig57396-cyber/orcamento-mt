@@ -1,4 +1,5 @@
 import { diferencaDoItem, baseRateioDoItem } from './diferencaCabo';
+import { getItemById } from '../data/tabelaCustos';
 
 // RN-001 — Total da Condição Técnica
 export const calcularCT = (itensCT, diferencaCabo = 0) => {
@@ -108,11 +109,23 @@ export const calcularValidade = (dataBase = new Date()) => {
   return validade;
 };
 
+// Item de retirada de rede (Rede › Retirada) — não é rede nova a construir
+const ehRetirada = (item) => {
+  if (!item.itemOrigem) return false;
+  if (String(item.itemOrigem).startsWith('rede_ret_')) return true;
+  const tab = getItemById(item.itemOrigem);
+  return tab?.categoria === 'Rede' && tab?.subcategoria === 'Retirada';
+};
+
 // RN-016 — Prazo estimado de conclusão da obra
+// Usado pela tela e pelas exportações, para que nunca divirjam.
+// A retirada da rede antiga numa modificação não soma km: o trecho já é
+// contado pelo item da rede nova.
 export const calcularPrazoEstimado = (orcamento) => {
   const itensObra = orcamento.itensObra || [];
 
   const kmTotal = itensObra.reduce((acc, item) => {
+    if (ehRetirada(item)) return acc;
     if (item.unidade === 'km') return acc + (parseFloat(item.quantidade) || 0);
     if (item.unidade === 'poste') return acc + ((parseFloat(item.quantidade) || 0) * 40 / 1000);
     return acc;

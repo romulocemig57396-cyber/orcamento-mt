@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { formatarMoeda, formatarData } from './calculos';
+import { formatarMoeda, formatarData, calcularPrazoEstimado } from './calculos';
 import { diferencaDoItem, baseRateioDoItem } from './diferencaCabo';
 import { formatarQuantidade } from './postes';
 
@@ -10,24 +10,6 @@ const Q = (item) => formatarQuantidade(item.quantidade, item.unidade).replace('�
 
 // Itens com diferença de cabo (cabo superior → cabo necessário)
 const itensComDiferenca = (orcamento) => (orcamento.itensObra || []).filter(i => diferencaDoItem(i) > 0);
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   PRAZO ESTIMADO — auxiliar local
-   ───────────────────────────────────────────────────────────────────────────── */
-function calcularPrazoExport(orcamento) {
-  const kmTotal = (orcamento.itensObra || []).reduce((acc, item) => {
-    if (item.unidade === 'km') return acc + (parseFloat(item.quantidade) || 0);
-    if (item.unidade === 'poste') return acc + ((parseFloat(item.quantidade) || 0) * 40 / 1000);
-    return acc;
-  }, 0);
-  const prazoRede = kmTotal <= 1 ? 120 : 365;
-  const prazoVinculadas = orcamento.temObrasVinculadas && orcamento.diasObrasVinculadas > 0
-    ? orcamento.diasObrasVinculadas : null;
-  const prazoFinal = prazoVinculadas ? Math.max(prazoRede, prazoVinculadas) : prazoRede;
-  const dataFinal = new Date();
-  dataFinal.setDate(dataFinal.getDate() + prazoFinal);
-  return { prazoRede, prazoVinculadas, prazoFinal, dataFinal, kmTotal };
-}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    EXCEL
@@ -41,7 +23,7 @@ export const exportarExcel = (orcamento) => {
   const itensCTI = orcamento.itensObra.filter(i => i.categoria === 'cti');
   const itensReg = orcamento.itensObra.filter(i => i.categoria === 'parcela_reg');
 
-  const prazo = calcularPrazoExport(orcamento);
+  const prazo = calcularPrazoEstimado(orcamento);
 
   // ── Aba Orçamento ──────────────────────────────────────────────────────────
   const dados = [
@@ -232,7 +214,7 @@ export const exportarPDF = (orcamento) => {
   // ── Prazo Estimado ─────────────────────────────────────────────────────────
   if (y > 240) { doc.addPage(); y = 20; }
 
-  const prazo = calcularPrazoExport(orcamento);
+  const prazo = calcularPrazoEstimado(orcamento);
 
   doc.setFontSize(12);
   doc.setFont(undefined, 'bold');
