@@ -1,4 +1,6 @@
 import React from 'react';
+import { FATOR_K, calcularErdSimulado, criarErdAplicado } from '../utils/calculos';
+import AvisoErd from './AvisoErd';
 
 const S = {
   card: {
@@ -207,15 +209,23 @@ export default function DadosAtendimento({ dados, updateField }) {
 
       {/* ── Stat cards: MUSD + ERD Simulado ── */}
       {(() => {
-        const K_2026 = 779.9937688857699;
-        const K_2025 = 747.8218066178199;
+        const K_2026 = FATOR_K[2026];
+        const K_2025 = FATOR_K[2025];
         const musd   = dados.musd || 0;
-        const erd2026 = musd * K_2026;
-        const erd2025 = musd * K_2025;
+        const erd2026 = calcularErdSimulado(musd, K_2026);
+        const erd2025 = calcularErdSimulado(musd, K_2025);
+        const podeAplicar = musd > 0;
+        const aplicar = (m) => {
+          const aplicado = criarErdAplicado(m, 2026);
+          set('erd', aplicado.valor);
+          set('erdAplicado', aplicado);
+        };
 
         const fmtBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 2 });
 
         return (
+          <>
+          <AvisoErd dados={dados} onReaplicar={() => aplicar(musd)} />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
 
             {/* MUSD */}
@@ -244,10 +254,12 @@ export default function DadosAtendimento({ dados, updateField }) {
                 MUSD × K = {K_2026.toFixed(4)}
               </p>
               <button
-                onClick={() => set('erd', parseFloat(erd2026.toFixed(2)))}
-                style={{ background: '#007A3D', color: '#fff', border: 'none', padding: '5px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Open Sans',sans-serif", transition: 'background 0.15s' }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#005C2E'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#007A3D'; }}
+                onClick={() => aplicar(musd)}
+                disabled={!podeAplicar}
+                title={podeAplicar ? '' : 'MUSD menor ou igual a zero: não há ERD a aplicar'}
+                style={{ background: podeAplicar ? '#007A3D' : '#CCC', color: '#fff', border: 'none', padding: '5px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, cursor: podeAplicar ? 'pointer' : 'not-allowed', fontFamily: "'Open Sans',sans-serif", transition: 'background 0.15s' }}
+                onMouseEnter={e => { if (podeAplicar) e.currentTarget.style.background = '#005C2E'; }}
+                onMouseLeave={e => { if (podeAplicar) e.currentTarget.style.background = '#007A3D'; }}
               >
                 Aplicar no Rateio
               </button>
@@ -267,6 +279,7 @@ export default function DadosAtendimento({ dados, updateField }) {
             </div>
 
           </div>
+          </>
         );
       })()}
 

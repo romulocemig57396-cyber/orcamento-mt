@@ -2,10 +2,14 @@
    gerarTexto.js — geração do memorial descritivo técnico
    ───────────────────────────────────────────────────────────────────────────── */
 
+import { normalizarTipoAtendimento } from './tipoAtendimento';
+import { formatarDataBR } from './datas';
+
+// Tipo de atendimento com o artigo correto ("de uma ligação nova", "de um aumento de carga")
 const TIPO_ATENDIMENTO = {
-  LN: 'ligação nova',
-  AC: 'aumento de carga',
-  RF: 'reforma',
+  LN: 'uma ligação nova',
+  AC: 'um aumento de carga',
+  RF: 'uma reforma',
 };
 
 /* ── Descrições singulares (km/poste ou quantidade = 1) ── */
@@ -186,6 +190,27 @@ const VERBO_POR_TIPO = {
   'Troca poste + ramal sub':'construção de', 'Troca poste + ramal aéreo':'construção de',
 };
 
+/* ── Itens cujo tipo se repete entre categorias da biblioteca ──
+   Consultados pelo id (`itemOrigem`) antes dos mapas por tipo: nos mapas por
+   tipo a chave repetida guarda só uma das versões.                            */
+const TEXTO_POR_ID = {
+  // Conversão Mono→Tri
+  conv_caa4_1_0: { verbo: 'conversão de', descricao: 'rede monofásica para trifásica CAA 1/0' },
+  conv_caa2_1_0: { verbo: 'conversão de', descricao: 'rede monofásica para trifásica CAA 1/0' },
+  conv_caa2_4_0: { verbo: 'conversão de', descricao: 'rede monofásica para trifásica CAA 4/0' },
+  conv_caa2_336: { verbo: 'conversão de', descricao: 'rede monofásica para trifásica CAA 336,4' },
+
+  // Recondutoramento Rural
+  recon_caa4_1_0: { verbo: 'modificação de', descricao: 'rede rural trifásica CAA 4 para CAA 1/0' },
+  recon_caa2_1_0: { verbo: 'modificação de', descricao: 'rede rural trifásica CAA 2 para CAA 1/0' },
+  recon_caa2_4_0: { verbo: 'modificação de', descricao: 'rede rural trifásica CAA 2 para CAA 4/0' },
+  recon_caa2_336: { verbo: 'modificação de', descricao: 'rede rural trifásica CAA 2 para CAA 336,4' },
+
+  // Derivação
+  deriv_rdu_ramal_aereo: { verbo: 'construção de', descricao: 'derivação aérea em média tensão' },
+  deriv_rdr_ramal_aereo: { verbo: 'construção de', descricao: 'derivação aérea em média tensão' },
+};
+
 /* ── Verbo por palavras-chave (fallback para itens manuais) ── */
 const inferirVerboPorPalavras = (texto) => {
   const d = texto.toLowerCase();
@@ -222,12 +247,23 @@ const fmtQtd = (n) => {
 const getChaveBusca = (item) =>
   (item.descricao || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
 
+/* ── Verbo e descrição do item: id da biblioteca, depois tipo, depois palavras-chave ── */
+const getVerbo = (item) => {
+  const chave = getChaveBusca(item);
+  return TEXTO_POR_ID[item.itemOrigem]?.verbo || VERBO_POR_TIPO[chave] || inferirVerboPorPalavras(chave);
+};
+
+const getDescricao = (item, plural = false) => {
+  const chave = getChaveBusca(item);
+  const porId = TEXTO_POR_ID[item.itemOrigem]?.descricao;
+  if (porId) return porId;
+  if (plural && DESCRICAO_PLURAL[chave]) return DESCRICAO_PLURAL[chave];
+  return DESCRICAO_SINGULAR[chave] || chave.toLowerCase();
+};
+
 /* ── Monta o trecho de texto para um único item de obra ── */
 const montarParteItem = (item) => {
-  const chave = getChaveBusca(item);
-
-  // Verbo: mapa de tipos da biblioteca, senão inferência por palavras-chave
-  const verbo = VERBO_POR_TIPO[chave] || inferirVerboPorPalavras(chave);
+  const verbo = getVerbo(item);
 
   const qtd     = parseFloat(item.quantidade);
   const temQtd  = item.quantidade != null && item.quantidade !== '' && !isNaN(qtd);
@@ -235,14 +271,14 @@ const montarParteItem = (item) => {
 
   /* A) Unidade km — quantidade direta */
   if (unidade === 'km') {
-    const desc = DESCRICAO_SINGULAR[chave] || chave.toLowerCase();
+    const desc = getDescricao(item);
     if (!temQtd) return `${verbo} ${desc}`;
     return `${verbo} ${fmtKm(qtd)} km de ${desc}`;
   }
 
   /* B) Unidade poste — converter para km */
   if (unidade === 'poste') {
-    const desc = DESCRICAO_SINGULAR[chave] || chave.toLowerCase();
+    const desc = getDescricao(item);
     if (!temQtd) return `${verbo} ${desc}`;
     const km = (qtd * 40) / 1000;
     return `${verbo} ${fmtKm(km)} km de ${desc}`;
@@ -250,9 +286,7 @@ const montarParteItem = (item) => {
 
   /* C) Ponto, un, ou outro — quantidade numérica */
   const plural = temQtd && qtd > 1;
-  const desc = plural
-    ? (DESCRICAO_PLURAL[chave] || DESCRICAO_SINGULAR[chave] || chave.toLowerCase())
-    : (DESCRICAO_SINGULAR[chave] || chave.toLowerCase());
+  const desc = getDescricao(item, plural);
 
   // Omite o número quando quantidade = 1
   if (!temQtd || qtd === 1) return `${verbo} ${desc}`;
@@ -265,9 +299,8 @@ const agruparItens = (itens) => {
   const grupos = new Map(); // chave → { qtdTotal, itemBase }
 
   itens.forEach(item => {
-    const chave   = getChaveBusca(item);
-    const verbo   = VERBO_POR_TIPO[chave] || inferirVerboPorPalavras(chave);
-    const desc    = DESCRICAO_SINGULAR[chave] || chave.toLowerCase();
+    const verbo   = getVerbo(item);
+    const desc    = getDescricao(item);
     const unidade = (item.unidade || '').toLowerCase();
 
     // Chave de agrupamento: verbo + descrição singular + unidade
@@ -293,14 +326,15 @@ const agruparItens = (itens) => {
    ─────────────────────────────────────────────────────────────────────────── */
 export const gerarMemorialDescritivo = (dados) => {
   const cliente    = dados.cliente      || '[cliente]';
-  const tipo       = TIPO_ATENDIMENTO[dados.tipoAtendimento] || dados.tipoAtendimento || '[tipo de atendimento]';
+  const codigoTipo = normalizarTipoAtendimento(dados.tipoAtendimento);
+  const tipo       = TIPO_ATENDIMENTO[codigoTipo] || `uma ${dados.tipoAtendimento || '[tipo de atendimento]'}`;
   const demanda    = fmtNum(dados.demandaFutura) || '[demanda]';
   const cargaAtual = fmtNum(dados.cargaAtual) || '[carga atual]';
   const tensao     = dados.tensaoKv     || '[tensão]';
   const local      = dados.localUnidade || '[local]';
   const municipio  = dados.municipio    || '[município]';
 
-  const demandaTexto = dados.tipoAtendimento === 'LN'
+  const demandaTexto = codigoTipo === 'LN'
     ? `com demanda de ${demanda} kW`
     : `com demanda atual de ${cargaAtual} kW e demanda futura de ${demanda} kW`;
 
@@ -311,7 +345,7 @@ export const gerarMemorialDescritivo = (dados) => {
   }
 
   let texto =
-    `Para atendimento à solicitação de ${cliente}, de uma ${tipo}, ` +
+    `Para atendimento à solicitação de ${cliente}, de ${tipo}, ` +
     `${demandaTexto}, conectada em ${tensao} kV, ` +
     `na ${local}, no município de ${municipio}, ` +
     `será necessária a ${listaItens} e demais modificações necessárias na rede.`;
@@ -329,8 +363,7 @@ export const gerarMemorialDescritivo = (dados) => {
 export const gerarTextoResumoFinanceiro = (dados) => {
   const fmt = (v) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0);
-  const fmtData = (d) =>
-    new Intl.DateTimeFormat('pt-BR').format(new Date(d));
+  const fmtData = formatarDataBR;
 
   return `RESUMO FINANCEIRO
 

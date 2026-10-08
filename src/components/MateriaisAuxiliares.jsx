@@ -48,7 +48,7 @@ function TabelaCabos({ itens, acrescimo, remover }) {
                 <td style={tdStyle('right')}>{m.pesoTotal.toFixed(2)}</td>
                 <td style={tdStyle('right', true)}>{m.pesoComAcrescimo.toFixed(2)}</td>
                 <td style={{ ...tdStyle('center'), borderBottom: '1px solid #F0F0F0' }}>
-                  <button onClick={() => remover(m.id)}
+                  <button onClick={() => remover(m)}
                     style={{ background: 'none', border: 'none', color: '#CCC', fontSize: '13px', cursor: 'pointer', padding: '4px 8px', borderRadius: '4px', fontFamily: "'Open Sans',sans-serif" }}
                     onMouseEnter={e => { e.currentTarget.style.color = '#c0392b'; e.currentTarget.style.background = '#FFF0EE'; }}
                     onMouseLeave={e => { e.currentTarget.style.color = '#CCC';    e.currentTarget.style.background = 'none'; }}>
@@ -80,7 +80,10 @@ export default function MateriaisAuxiliares({ materiais, setOrcamento }) {
     setNovo({ grupo: 'CA', tipo: '', kgPorMetro: '', metragem: '' });
   };
 
-  const remover = id => setOrcamento(prev => ({ ...prev, materiaisAuxiliares: prev.materiaisAuxiliares.filter(m => m.id !== id) }));
+  const remover = m => {
+    if (!window.confirm(`Remover o item '${m.tipo}'?`)) return;
+    setOrcamento(prev => ({ ...prev, materiaisAuxiliares: prev.materiaisAuxiliares.filter(x => x.id !== m.id) }));
+  };
 
   const cabosCA  = materiais.filter(m => m.grupo === 'CA');
   const cabosCAA = materiais.filter(m => m.grupo === 'CAA');

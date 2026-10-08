@@ -900,10 +900,13 @@ export const TABELA_CUSTOS = [
     subcategoria: 'Instalação',
     tipo: 'Religador trifásico 24KV Urbano',
     unidade: 'ponto',
-    material2024: 62.32418,
+    // 2024: PROORC de 07/10/2026 — NS 1207191220-APP 3, "RELIGADOR TRIFÁSICO RDU
+    // 15KV. By pass Chave Faca 630 A": materiais R$ 57.080,59 + serviços
+    // R$ 6.749,31 (2,39 US de construção RDA) = R$ 63.829,90.
+    material2024: 57.08059,
     maoObra2024: 6.74931,
     usConstr2024: 2.3899992209576557,
-    unitario2024: 69.07349,
+    unitario2024: 63.8299,
     material2022: 62.32418,
     maoObra2022: 6.74931,
     usConstr2022: 2.3899992209576557,

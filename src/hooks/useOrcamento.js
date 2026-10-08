@@ -6,9 +6,12 @@ import {
   calcularRateioERD,
   calcularTotaisItens
 } from '../utils/calculos';
+import { migrarOrcamento } from '../utils/migracao';
+import { hojeISO, diasEntre } from '../utils/datas';
 
 const STORAGE_KEY = 'orcamento_mt_app';
 
+// Datas como texto AAAA-MM-DD (ver utils/datas.js)
 const initialState = {
   cliente: '',
   ns: '',
@@ -22,6 +25,7 @@ const initialState = {
   itensObra: [],
   diferencaCabo: 0,
   erd: 0,
+  erdAplicado: null,
   materiaisAuxiliares: [],
   descricaoTecnica: '',
   musd: 0,
@@ -41,8 +45,8 @@ const initialState = {
   servicos: 0,
   administracao: 0,
   valorTotal: 0,
-  dataBase: new Date(),
-  dataValidade: new Date(),
+  dataBase: '',
+  dataValidade: '',
   dataEstudo: '',
   importacao: {
     textoOriginal: '',
@@ -52,48 +56,69 @@ const initialState = {
     textoAltaTensao: '',
     analisado: false,
   },
-  obrasVinculadas: {
-    temObrasVinculadas: false,
-    descricao: '',
-    dataConclusao: '',
-    diasRestantes: null,
-  },
   temObrasVinculadas: false,
   dataObrasVinculadas: '',
   diasObrasVinculadas: null,
   prazoEstimado: null,
 };
 
-export const useOrcamento = () => {
-  const [orcamento, setOrcamento] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return {
-          ...parsed,
-          dataBase: new Date(parsed.dataBase),
-          dataValidade: new Date(parsed.dataValidade),
-          importacao: parsed.importacao || initialState.importacao,
-          obrasVinculadas: parsed.obrasVinculadas || initialState.obrasVinculadas,
-        };
-      } catch (e) {
-        console.error('Erro ao carregar dados salvos:', e);
-        return initialState;
-      }
+// Estado inicial com a Data Base de hoje (calculada na hora, não no carregamento do módulo)
+const novoEstado = () => {
+  const hoje = hojeISO();
+  return { ...initialState, dataBase: hoje, dataValidade: calcularValidade(hoje) };
+};
+
+// Lê o orçamento salvo no localStorage, aplicando as migrações de formato
+const carregarSalvo = () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const parsed = migrarOrcamento(JSON.parse(saved));
+      const dataBase = parsed.dataBase || hojeISO();
+      return {
+        ...parsed,
+        dataBase,
+        dataValidade: calcularValidade(dataBase),
+        importacao: parsed.importacao || initialState.importacao,
+      };
+    } catch (e) {
+      console.error('Erro ao carregar dados salvos:', e);
+      return novoEstado();
     }
-    return initialState;
-  });
+  }
+  return novoEstado();
+};
+
+export const useOrcamento = () => {
+  const [orcamento, setOrcamento] = useState(carregarSalvo);
+
+  // Outra aba alterou o orçamento: suspende o salvamento automático desta aba
+  // até o usuário escolher qual versão fica, para uma não apagar a outra.
+  const [salvamentoSuspenso, setSalvamentoSuspenso] = useState(false);
 
   useEffect(() => {
+    const aoAlterarStorage = (e) => {
+      if (e.key === STORAGE_KEY || e.key === null) setSalvamentoSuspenso(true);
+    };
+    window.addEventListener('storage', aoAlterarStorage);
+    return () => window.removeEventListener('storage', aoAlterarStorage);
+  }, []);
+
+  useEffect(() => {
+    if (salvamentoSuspenso) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(orcamento));
-  }, [orcamento]);
+  }, [orcamento, salvamentoSuspenso]);
+
+  const carregarVersaoOutraAba = () => {
+    setOrcamento(carregarSalvo());
+    setSalvamentoSuspenso(false);
+  };
+
+  // Retomar o salvamento grava esta versão por cima da outra (efeito acima)
+  const manterEstaVersao = () => setSalvamentoSuspenso(false);
 
   useEffect(() => {
-    const hoje = new Date();
-    const conclusao = new Date(orcamento.dataObrasVinculadas);
-    const diff = Math.ceil((conclusao - hoje) / (1000 * 60 * 60 * 24));
-    const diasObrasVinculadas = isNaN(diff) ? null : diff;
+    const diasObrasVinculadas = diasEntre(hojeISO(), orcamento.dataObrasVinculadas);
 
     if (orcamento.diasObrasVinculadas !== diasObrasVinculadas) {
       setOrcamento(prev => ({ ...prev, diasObrasVinculadas }));
@@ -135,6 +160,7 @@ export const useOrcamento = () => {
       orcamento.material !== material ||
       orcamento.servicos !== servicos ||
       orcamento.valorTotal !== valorTotal ||
+      orcamento.dataValidade !== dataValidade ||
       orcamento.prazoEstimado?.prazoFinal !== prazoEstimado.prazoFinal ||
       orcamento.prazoEstimado?.prazoRede !== prazoEstimado.prazoRede ||
       orcamento.prazoEstimado?.prazoVinculadas !== prazoEstimado.prazoVinculadas ||
@@ -183,12 +209,8 @@ export const useOrcamento = () => {
     setOrcamento(prev => ({ ...prev, importacao: { ...prev.importacao, ...updates } }));
   };
 
-  const updateObrasVinculadas = (updates) => {
-    setOrcamento(prev => ({ ...prev, obrasVinculadas: { ...prev.obrasVinculadas, ...updates } }));
-  };
-
   const resetOrcamento = () => {
-    setOrcamento(initialState);
+    setOrcamento(novoEstado());
     localStorage.removeItem(STORAGE_KEY);
   };
 
@@ -196,8 +218,10 @@ export const useOrcamento = () => {
     orcamento,
     updateField,
     updateImportacao,
-    updateObrasVinculadas,
     resetOrcamento,
-    setOrcamento
+    setOrcamento,
+    salvamentoSuspenso,
+    carregarVersaoOutraAba,
+    manterEstaVersao,
   };
 };

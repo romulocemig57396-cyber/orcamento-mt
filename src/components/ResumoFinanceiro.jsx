@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatarMoeda, formatarData } from '../utils/calculos';
+import { formatarMoeda, formatarData, calcularValidade } from '../utils/calculos';
 
 const S = {
   card:  { background: '#fff', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', marginBottom: '20px' },
@@ -111,8 +111,8 @@ export default function ResumoFinanceiro({ dados }) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
           <div>
             <label style={S.label}>Data Base</label>
-            <input type="date" value={dados.dataBase.toISOString().split('T')[0]}
-              onChange={e => dados.setOrcamento(prev => ({ ...prev, dataBase: new Date(e.target.value) }))}
+            <input type="date" value={dados.dataBase || ''}
+              onChange={e => { const v = e.target.value; if (v) dados.setOrcamento(prev => ({ ...prev, dataBase: v, dataValidade: calcularValidade(v) })); }}
               style={S.input} onFocus={onFocus} onBlur={onBlur} />
           </div>
           <div>

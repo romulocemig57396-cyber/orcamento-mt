@@ -1,5 +1,6 @@
 import React from 'react';
-import { formatarMoeda } from '../utils/calculos';
+import { formatarMoeda, criarErdAplicado } from '../utils/calculos';
+import AvisoErd from './AvisoErd';
 import { diferencaDoItem, baseRateioDoItem } from '../utils/diferencaCabo';
 import { formatarQuantidade } from '../utils/postes';
 
@@ -91,6 +92,10 @@ export default function RateioTecnico({ dados, setOrcamento }) {
               onChange={e => setOrcamento(prev => ({ ...prev, erd: parseFloat(e.target.value) || 0 }))}
               style={S.input} placeholder="0,00" onFocus={onFocus} onBlur={onBlur} />
             <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '11px', color: '#AAA', margin: '4px 0 0 0' }}>Abate da Parcela Regulatória Total</p>
+            <AvisoErd dados={dados} onReaplicar={() => setOrcamento(prev => {
+              const aplicado = criarErdAplicado(prev.musd, prev.erdAplicado?.ano || 2026);
+              return { ...prev, erd: aplicado.valor, erdAplicado: aplicado };
+            })} />
           </div>
         </div>
 

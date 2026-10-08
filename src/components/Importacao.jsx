@@ -1,60 +1,10 @@
-import React, { useRef, useEffect } from 'react';
-import { TABELA_CUSTOS, getValorPorAno } from '../data/tabelaCustos';
+import React, { useRef } from 'react';
+import { getItemById, getValorPorAno } from '../data/tabelaCustos';
+import { normalizarTipoAtendimento, rotuloTipoAtendimento, OBS_GERACAO_DISTRIBUIDA } from '../utils/tipoAtendimento';
+import { RETIRADA_IDS, OPCOES_BIBLIOTECA, matchRegras } from '../utils/regrasImportacao';
 import { kmParaPostes, postesParaKm } from '../utils/postes';
 
-// ── Itens de retirada pendente — usuário escolhe entre estes 5 tipos ────────
-const RETIRADA_TIPOS = [
-  '1 Km de RDR 1ᴓ cabo 4 a 1/0',
-  '1 Km de RDR 3ᴓ cabo 4 a 1/0',
-  '1 Km de RDR 3ᴓ cabo 4/0 a 336,4',
-  '1 Km de RDP 1ᴓ cabo 50 mm2',
-  '1 Km de RDP 3ᴓ 50 a 150mm²',
-];
-
-// ── Regras de mapeamento Obras → Biblioteca ──────────────────────────────────
-// Cada regra retorna a lista de itens a gerar para a linha (1 ou 2 itens).
-const REGRAS = [
-  // --- Modificação RDU → RDP (gera DOIS itens: construção + retirada pendente)
-  [/modificação.*rdu.*rdp.*150/i, () => [{ tipo: 'RDP 150 Dupla Camada' }, { tipo: '', retiradaPendente: true }]],
-  [/modificação.*rdu.*rdp.*50/i,  () => [{ tipo: 'RDP 50 Dupla Camada' },  { tipo: '', retiradaPendente: true }]],
-  [/modificação.*rdu.*rdp.*240/i, () => [{ tipo: 'RDP 240' },              { tipo: '', retiradaPendente: true }]],
-
-  // --- Construção RDP (item único)
-  [/construção.*rdp.*150/i, () => [{ tipo: 'RDP 150 Dupla Camada' }]],
-  [/construção.*rdp.*50/i,  () => [{ tipo: 'RDP 50 Dupla Camada' }]],
-  [/construção.*rdp.*240/i, () => [{ tipo: 'RDP 240' }]],
-
-  // --- Recondutoramento Rural (gera DOIS itens: recondutoramento + retirada pendente)
-  [/(modificação|recondutoramento).*rdr.*336/i, () => [{ tipo: 'CAA 2 p/ 336' }, { tipo: '', retiradaPendente: true }]],
-  [/modificação.*rdr.*4\/0/i,                    () => [{ tipo: 'CAA 2 p/ 4/0' }, { tipo: '', retiradaPendente: true }]],
-  [/modificação.*rdr.*(1\/0|1\.0caa)/i,          () => [{ tipo: 'CAA 4 p/ 1/0' }, { tipo: '', retiradaPendente: true }]],
-  [/modificação.*rdr.*caa.*2/i,                  () => [{ tipo: 'CAA 2 p/ 2' },   { tipo: '', retiradaPendente: true }]],
-
-  // --- Construção RDR Rural (item único)
-  [/construção.*rdr.*336/i,    () => [{ tipo: 'Tri CAA 336,4' }]],
-  [/construção.*rdr.*4\/0/i,   () => [{ tipo: 'Tri CAA 4/0' }]],
-  [/construção.*rdr.*1\/0/i,   () => [{ tipo: 'Tri CAA 1/0' }]],
-  [/construção.*rdr.*caa.*2/i, () => [{ tipo: 'Tri CAA 2' }]],
-  [/construção.*rdr.*caa.*4/i, () => [{ tipo: 'Tri CAA 4' }]],
-
-  // --- Equipamentos
-  [/abertura.*chave|fechamento.*chave|instalação.*chave.*n\.f\./i,             () => [{ tipo: 'Abert/Fecha. De Chave' }]],
-  [/relocação.*religador.*monofásico|relocar.*religador.*mono/i,               () => [{ tipo: 'Religador monofásico' }]],
-  [/relocação.*religador|relocar.*religador/i,                                  () => [{ tipo: 'Religador trifásico' }]],
-  [/substituir.*religador.*chave|substituir.*religador.*faca/i,                () => [{ tipo: 'Religador trifásico' }]],
-  [/instalação.*religador.*34|religador.*34,5/i,                                () => [{ tipo: 'Religador trifásico 36KV' }]],
-  [/instalação.*religador.*trifásico.*24|religador.*trifásico.*24/i,           () => [{ tipo: 'Religador trifásico 24KV Rural' }]],
-  [/instalação.*religador.*monofásico|religador.*monofásico.*15/i,             () => [{ tipo: 'Religador monofásico 15KV' }]],
-  [/instalação.*brt.*167/i, () => [{ tipo: 'BRT trif 167 kVA - Rural' }]],
-  [/instalação.*brt.*250/i, () => [{ tipo: 'BRT trif 250 KVA - Rural' }]],
-  [/instalação.*brt.*76/i,  () => [{ tipo: 'BRT trif 76,2 kVA' }]],
-
-  // --- Sem correspondência na biblioteca — campo livre para o usuário
-  [/retirar.*sec|instalar.*sec|substituir.*sec/i,    () => [{ tipo: '' }]],
-  [/desativação.*equip|desligar.*banco.*cap/i,        () => [{ tipo: '' }]],
-];
-
-const TIPOS_BIBLIOTECA = [...new Set(TABELA_CUSTOS.map(t => t.tipo))];
+export { OPCOES_BIBLIOTECA };
 
 const CAT_META = {
   ctc:         { label: 'CTC', bg: '#FFFBE6', color: '#8B6D00', bd: '#FFE57A' },
@@ -76,13 +26,6 @@ const MARCADORES_FIM_BLOCO = [
 ];
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-function matchRegras(texto) {
-  for (const [re, gerar] of REGRAS) {
-    if (re.test(texto)) return gerar();
-  }
-  return null;
-}
-
 function encontrarFimBloco(bloco) {
   let fimIndex = -1;
   for (const re of MARCADORES_FIM_BLOCO) {
@@ -92,18 +35,84 @@ function encontrarFimBloco(bloco) {
   return fimIndex;
 }
 
+// Número no formato brasileiro: "1.200", "1.200,5", "112,5", "1500".
+// Ponto seguido de exatamente 3 dígitos é milhar; ponto com outra quantidade de
+// dígitos ("11.33") é tratado como decimal, para manter textos já existentes.
+const NUM = String.raw`\d{1,3}(?:\.\d{3})+(?:,\d+)?(?!\d)|\d+(?:[.,]\d+)?`;
+
+export function lerNumeroBR(texto) {
+  const t = String(texto ?? '').trim();
+  if (!/^\d[\d.,]*$/.test(t)) return NaN;
+  if (t.includes(',')) return parseFloat(t.replace(/\./g, '').replace(',', '.'));
+  if (/^\d{1,3}(\.\d{3})+$/.test(t)) return parseFloat(t.replace(/\./g, ''));
+  return parseFloat(t);
+}
+
 export function extrairQuantidade(texto) {
-  const kmM = texto.match(/(\d+[.,]\d+|\d+)\s*km/i);
-  if (kmM) return { quantidade: parseFloat(kmM[1].replace(',', '.')), unidade: 'km' };
-  const bancoM = texto.match(/(\d+)\s*banco/i);
-  if (bancoM) return { quantidade: parseInt(bancoM[1]), unidade: 'ponto' };
-  const pecaM = texto.match(/(\d+)\s*pe[çc]as?/i);
-  if (pecaM) return { quantidade: parseInt(pecaM[1]), unidade: 'ponto' };
-  const conjM = texto.match(/(\d+)\s*conj/i);
-  if (conjM) return { quantidade: parseInt(conjM[1]), unidade: 'ponto' };
-  const pontoM = texto.match(/(\d+)\s*ponto/i);
-  if (pontoM) return { quantidade: parseInt(pontoM[1]), unidade: 'ponto' };
+  const qtd = (sufixo) => texto.match(new RegExp(`(${NUM})\\s*${sufixo}`, 'i'));
+  const kmM = qtd('km');
+  if (kmM) return { quantidade: lerNumeroBR(kmM[1]), unidade: 'km' };
+  for (const sufixo of ['banco', 'pe[çc]as?', 'conj', 'ponto']) {
+    const m = qtd(sufixo);
+    if (m) return { quantidade: lerNumeroBR(m[1]), unidade: 'ponto' };
+  }
   return { quantidade: '', unidade: '' };
+}
+
+// ── Proporcionalidade ─────────────────────────────────────────────────────────
+export const AVISO_PROPORCIONALIDADE = 'Confira o % da proporcionalidade';
+
+const DONO_CLIENTE_RE = /cliente|interessado|consumidor/gi;
+const DONO_CEMIG_RE = /cemig/gi;
+
+// Palavra de dono mais próxima de um percentual: procura no trecho antes (até o
+// % anterior) e no trecho depois (até o próximo %), e fica com a mais próxima.
+function donoDoPercentual(antes, depois) {
+  let melhor = null;
+  const considerar = (dono, distancia) => {
+    if (melhor === null || distancia < melhor.distancia) melhor = { dono, distancia };
+  };
+  for (const [dono, re] of [['cliente', DONO_CLIENTE_RE], ['cemig', DONO_CEMIG_RE]]) {
+    for (const m of antes.matchAll(re)) considerar(dono, antes.length - (m.index + m[0].length));
+    const m = depois.match(new RegExp(re.source, 'i'));
+    if (m) considerar(dono, m.index);
+  }
+  return melhor?.dono || null;
+}
+
+// Lê o % da Cemig a partir do trecho "Proporcionalidade ...".
+// Retorna null quando não há proporcionalidade com percentual no texto.
+export function lerProporcionalidade(texto) {
+  const inicio = texto.search(/Proporcionalidade/i);
+  if (inicio === -1) return null;
+  let trecho = texto.slice(inicio + 'Proporcionalidade'.length);
+  const fim = trecho.search(/\.(\s|$)/);
+  if (fim !== -1) trecho = trecho.slice(0, fim);
+
+  const percentuais = [...trecho.matchAll(/(\d+(?:[.,]\d+)?)\s*%/g)];
+  if (percentuais.length === 0) return null;
+
+  let cliente = null;
+  let cemig = null;
+  percentuais.forEach((m, i) => {
+    const iniAntes = i === 0 ? 0 : percentuais[i - 1].index + percentuais[i - 1][0].length;
+    const fimDepois = i + 1 < percentuais.length ? percentuais[i + 1].index : trecho.length;
+    const antes = trecho.slice(iniAntes, m.index);
+    const depois = trecho.slice(m.index + m[0].length, fimDepois);
+    const valor = lerNumeroBR(m[1]);
+    const dono = donoDoPercentual(antes, depois);
+    if (dono === 'cliente' && cliente === null) cliente = valor;
+    if (dono === 'cemig' && cemig === null) cemig = valor;
+  });
+
+  if (cliente !== null && cemig !== null) {
+    return { percentualCemig: cemig, aviso: Math.abs(cliente + cemig - 100) > 0.001 };
+  }
+  if (cemig !== null) return { percentualCemig: cemig, aviso: false };
+  if (cliente !== null) return { percentualCemig: 100 - cliente, aviso: false };
+
+  // Sem dono identificado: mantém o comportamento antigo (% do cliente), com aviso
+  return { percentualCemig: 100 - lerNumeroBR(percentuais[0][1]), aviso: true };
 }
 
 // ── Análise do texto ─────────────────────────────────────────────────────────
@@ -130,29 +139,29 @@ export function analisarTexto(texto) {
   const dataEstudoM = m(/Data\s+do\s+estudo:\s*(\d{2}\/\d{2}\/\d{4})/i);
   if (dataEstudoM) cab.dataEstudo = dataEstudoM[1];
 
-  const paraM = m(/(\d+)\s*kW.*para\s+(\d+)\s*kW/i);
+  const paraM = m(new RegExp(`(${NUM})\\s*kW.*para\\s+(${NUM})\\s*kW`, 'i'));
   if (paraM) {
-    const antes = parseFloat(paraM[1]);
-    const depois = parseFloat(paraM[2]);
+    const antes = lerNumeroBR(paraM[1]);
+    const depois = lerNumeroBR(paraM[2]);
     cab.demandaFutura = depois;
     if (antes === 0) {
-      cab.tipoAtendimento = 'Ligação Nova';
+      cab.tipoAtendimento = 'LN';
       cab.cargaAtual = 0;
     } else {
-      cab.tipoAtendimento = 'Ampliação de Carga';
+      cab.tipoAtendimento = 'AC';
       cab.cargaAtual = antes;
     }
   } else {
-    const kwM = m(/(\d+)\s*kW/i);
+    const kwM = m(new RegExp(`(${NUM})\\s*kW`, 'i'));
     if (kwM) {
-      cab.demandaFutura = parseFloat(kwM[1]);
-      cab.tipoAtendimento = 'Ligação Nova';
+      cab.demandaFutura = lerNumeroBR(kwM[1]);
+      cab.tipoAtendimento = 'LN';
     }
   }
 
-  if (/gerador|solar|gera[çc][ãa]o\s+distribu[íi]da/i.test(texto)) {
-    cab.tipoAtendimento = 'Geração Distribuída';
-  }
+  // Geração distribuída não é tipo de atendimento: mantém LN/AC conforme a
+  // demanda e acrescenta uma frase nas Observações ao preencher o Atendimento.
+  cab.geracaoDistribuida = /gerador|solar|gera[çc][ãa]o\s+distribu[íi]da/i.test(texto);
 
   // Extrai bloco de obras
   let bloco = texto;
@@ -216,13 +225,15 @@ export function analisarTexto(texto) {
       // Categoria — apenas as regras definidas (RN-Importação)
       let categoria;
       let percentualCemig = 0;
+      let avisoProporcionalidade = false;
       if (raw.secao === 'cemig') {
         categoria = 'ctc';
       } else {
-        const propM = t.match(/Proporcionalidade[^\d]*(\d+)\s*%/i);
-        if (propM) {
+        const prop = lerProporcionalidade(t);
+        if (prop) {
           categoria = 'pp';
-          percentualCemig = 100 - parseInt(propM[1]);
+          percentualCemig = prop.percentualCemig;
+          avisoProporcionalidade = prop.aviso;
         } else {
           categoria = 'parcela_reg';
         }
@@ -238,28 +249,74 @@ export function analisarTexto(texto) {
       // dois sinais e não devem poluir a lista de itens detectados.
       if (!specsMatch && unidade === '') return;
 
-      const specs = specsMatch || [{ tipo: '' }];
+      const specs = specsMatch || [{ id: '' }];
 
       specs.forEach(spec => {
-        const tabItem = spec.tipo ? TABELA_CUSTOS.find(ti => ti.tipo === spec.tipo) : null;
+        const tabItem = spec.id ? getItemById(spec.id) : null;
         const converterParaPoste = quantidadeKmOriginal != null && tabItem?.unidade === 'poste';
 
         itens.push({
           textoOriginal: t,
-          tipoSelecionado: spec.tipo || '',
+          tipoSelecionado: spec.id || '',
           descricaoManual: t.slice(0, 200),
           quantidade: converterParaPoste ? kmParaPostes(quantidadeKmOriginal) : quantidade,
           unidade: converterParaPoste ? 'poste' : unidade,
           quantidadeKmOriginal,
           categoria,
           percentualCemig,
+          avisoProporcionalidade,
           expandido: false,
           retiradaPendente: !!spec.retiradaPendente,
         });
       });
     });
 
+  // Obras vinculadas / alta tensão — gravadas no orçamento só ao "Preencher Atendimento"
+  cab.temObrasVinculadas = textosAltaTensao.length > 0;
+  const conclusaoM = texto.match(/Conclus[ãa]o estimada:\s*(\d{2})\/(\d{2})\/(\d{4})/i);
+  cab.dataObrasVinculadas = conclusaoM ? `${conclusaoM[3]}-${conclusaoM[2]}-${conclusaoM[1]}` : '';
+
   return { cab, itens, textosAltaTensao };
+}
+
+// ── Cabeçalho detectado → dados do Atendimento ("Preencher Atendimento") ──────
+const CAMPOS_CABECALHO = ['ns', 'cliente', 'municipio', 'tensaoKv', 'cargaAtual', 'demandaFutura', 'tipoAtendimento', 'dataEstudo'];
+
+export function aplicarCabecalho(prev, cab) {
+  const novo = { ...prev };
+  CAMPOS_CABECALHO.forEach(c => { if (cab[c] !== '' && cab[c] != null) novo[c] = cab[c]; });
+  if (novo.tipoAtendimento) novo.tipoAtendimento = normalizarTipoAtendimento(novo.tipoAtendimento);
+
+  // Obras vinculadas: marca e preenche a data; nunca desmarca o que foi marcado no Rateio
+  if (cab.temObrasVinculadas) novo.temObrasVinculadas = true;
+  if (cab.dataObrasVinculadas) novo.dataObrasVinculadas = cab.dataObrasVinculadas;
+
+  if (cab.geracaoDistribuida) {
+    const obs = (prev.observacoes || '').trim();
+    if (!obs.includes(OBS_GERACAO_DISTRIBUIDA)) {
+      novo.observacoes = obs ? `${obs}\n${OBS_GERACAO_DISTRIBUIDA}` : OBS_GERACAO_DISTRIBUIDA;
+    }
+  }
+  return novo;
+}
+
+// ── Item detectado → item de obra ─────────────────────────────────────────────
+export function criarItemObraImportado(item, id) {
+  const tabItem = item.tipoSelecionado ? getItemById(item.tipoSelecionado) : null;
+  const qtd = parseFloat(item.quantidade) || 0;
+  const unitario = tabItem ? (getValorPorAno(tabItem, 2024, 'unitario') || 0) : 0;
+  const valor = tabItem && qtd > 0 ? qtd * unitario * 1000 : 0;
+
+  return {
+    id,
+    descricao: tabItem ? tabItem.tipo : (item.descricaoManual || item.textoOriginal.slice(0, 200)),
+    categoria: item.categoria,
+    valor,
+    percentualCemig: item.categoria === 'pp' ? parseFloat(item.percentualCemig) || 0 : 0,
+    quantidade: qtd || null,
+    unidade: tabItem ? tabItem.unidade : (item.unidade || ''),
+    ...(tabItem ? { origem: 'biblioteca', itemOrigem: tabItem.id, valorUnitario: unitario * 1000, anoReferencia: 2024 } : {}),
+  };
 }
 
 // ── Estilos ──────────────────────────────────────────────────────────────────
@@ -293,7 +350,7 @@ function BadgeRetiradaPendente() {
 }
 
 // ── Componente principal ─────────────────────────────────────────────────────
-export default function Importacao({ updateField, setOrcamento, importacao, updateImportacao, obrasVinculadas, updateObrasVinculadas }) {
+export default function Importacao({ setOrcamento, importacao, updateImportacao }) {
   const fileRef = useRef(null);
 
   const {
@@ -304,16 +361,6 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
     textoAltaTensao,
     analisado,
   } = importacao;
-
-  useEffect(() => {
-    const temObrasVinculadas = textosAltaTensao.length > 0;
-    if (
-      obrasVinculadas.temObrasVinculadas !== temObrasVinculadas ||
-      obrasVinculadas.descricao !== textoAltaTensao
-    ) {
-      updateObrasVinculadas({ temObrasVinculadas, descricao: textoAltaTensao });
-    }
-  }, [textosAltaTensao, textoAltaTensao]);
 
   const handleArquivo = (e) => {
     const file = e.target.files[0];
@@ -349,8 +396,7 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
 
   const preencherAtendimento = () => {
     if (!cabecalho) return;
-    ['ns','cliente','municipio','tensaoKv','cargaAtual','demandaFutura','tipoAtendimento','dataEstudo']
-      .forEach(c => { if (cabecalho[c] !== '' && cabecalho[c] != null) updateField(c, cabecalho[c]); });
+    setOrcamento(prev => aplicarCabecalho(prev, cabecalho));
     alert('Dados preenchidos na aba Atendimento!');
   };
 
@@ -361,35 +407,20 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
         if (campo === 'tipoSelecionado' && it.quantidadeKmOriginal != null) {
           // Reaplica a conversão km → postes a partir do km bruto extraído do texto,
           // evitando erro de arredondamento acumulado ao trocar o item da biblioteca.
-          const tabItem = TABELA_CUSTOS.find(t => t.tipo === valor);
+          const tabItem = getItemById(valor);
           return tabItem?.unidade === 'poste'
             ? { ...it, tipoSelecionado: valor, quantidade: kmParaPostes(it.quantidadeKmOriginal), unidade: 'poste' }
             : { ...it, tipoSelecionado: valor, quantidade: it.quantidadeKmOriginal, unidade: 'km' };
         }
+        // % editado pelo usuário: o aviso de conferência deixa de valer
+        if (campo === 'percentualCemig') return { ...it, percentualCemig: valor, avisoProporcionalidade: false };
         return { ...it, [campo]: valor };
       }),
     });
 
   const adicionar = (idx) => {
-    const item = itens[idx];
-    const tabItem = TABELA_CUSTOS.find(t => t.tipo === item.tipoSelecionado);
-    const qtd = parseFloat(item.quantidade) || 0;
-    const unitario = tabItem ? (getValorPorAno(tabItem, 2024, 'unitario') || 0) : 0;
-    const valor = tabItem && qtd > 0 ? qtd * unitario * 1000 : 0;
-
-    setOrcamento(prev => ({
-      ...prev,
-      itensObra: [...prev.itensObra, {
-        id: Date.now(),
-        descricao: tabItem ? tabItem.tipo : (item.descricaoManual || item.textoOriginal.slice(0, 200)),
-        categoria: item.categoria,
-        valor,
-        percentualCemig: item.categoria === 'pp' ? parseFloat(item.percentualCemig) || 0 : 0,
-        quantidade: qtd || null,
-        unidade: tabItem ? tabItem.unidade : (item.unidade || ''),
-        ...(tabItem ? { origem: 'biblioteca', itemOrigem: tabItem.id, valorUnitario: unitario * 1000, anoReferencia: 2024 } : {}),
-      }],
-    }));
+    const novo = criarItemObraImportado(itens[idx], Date.now());
+    setOrcamento(prev => ({ ...prev, itensObra: [...prev.itensObra, novo] }));
     updateImportacao({ itensDetectados: itens.filter((_, i) => i !== idx) });
   };
 
@@ -454,8 +485,12 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
               ['Tensão', cabecalho.tensaoKv ? `${cabecalho.tensaoKv} kV` : ''],
               ['Demanda Atual', cabecalho.cargaAtual || cabecalho.cargaAtual === 0 ? `${cabecalho.cargaAtual} kW` : ''],
               ['Demanda Futura', cabecalho.demandaFutura ? `${cabecalho.demandaFutura} kW` : ''],
-              ['Tipo de Atendimento', cabecalho.tipoAtendimento],
+              ['Tipo de Atendimento', rotuloTipoAtendimento(cabecalho.tipoAtendimento)],
+              ...(cabecalho.geracaoDistribuida ? [['Geração Distribuída', 'Sim — será anotada nas Observações']] : []),
               ['Data do Estudo', cabecalho.dataEstudo],
+              ...(cabecalho.temObrasVinculadas ? [['Obras Vinculadas', cabecalho.dataObrasVinculadas
+                ? `Sim — conclusão ${cabecalho.dataObrasVinculadas.split('-').reverse().join('/')}`
+                : 'Sim — sem data de conclusão']] : []),
             ].map(([label, valor]) => (
               <div key={label} style={{ padding: '12px 14px', background: '#F9FFF9', borderRadius: '8px', border: '1px solid #D4ECD9' }}>
                 <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888', margin: '0 0 4px 0' }}>{label}</p>
@@ -565,8 +600,11 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
                           onChange={e => upd(idx, 'tipoSelecionado', e.target.value)}
                           style={{ ...S.input, padding: '5px 8px', fontSize: '11px' }}>
                           <option value="">— {item.retiradaPendente ? 'selecione a retirada' : 'sem correspondência'} —</option>
-                          {(item.retiradaPendente ? RETIRADA_TIPOS : TIPOS_BIBLIOTECA).map(t => (
-                            <option key={t} value={t}>{t}</option>
+                          {(item.retiradaPendente
+                            ? RETIRADA_IDS.map(id => ({ id, label: getItemById(id).tipo }))
+                            : OPCOES_BIBLIOTECA
+                          ).map(o => (
+                            <option key={o.id} value={o.id}>{o.label}</option>
                           ))}
                         </select>
                         {!item.tipoSelecionado && !item.retiradaPendente && (
@@ -605,8 +643,14 @@ export default function Importacao({ updateField, setOrcamento, importacao, upda
                           onChange={e => upd(idx, 'percentualCemig', e.target.value)}
                           placeholder="—"
                           min="0" max="100"
-                          style={{ ...S.input, padding: '5px 8px', fontSize: '12px', width: '60px' }}
+                          style={{ ...S.input, padding: '5px 8px', fontSize: '12px', width: '60px',
+                            ...(item.avisoProporcionalidade ? { borderColor: '#E6BC00', background: '#FFFBE6' } : {}) }}
                         />
+                        {item.avisoProporcionalidade && (
+                          <p style={{ fontFamily: "'Open Sans',sans-serif", fontSize: '10px', fontWeight: 700, color: '#8B6D00', margin: '4px 0 0 0' }}>
+                            ⚠️ {AVISO_PROPORCIONALIDADE}
+                          </p>
+                        )}
                       </td>
 
                       {/* Categoria */}
