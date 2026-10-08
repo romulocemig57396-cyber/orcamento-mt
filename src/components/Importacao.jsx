@@ -3,8 +3,9 @@ import { getItemById, getValorPorAno } from '../data/tabelaCustos';
 import { normalizarTipoAtendimento, rotuloTipoAtendimento, OBS_GERACAO_DISTRIBUIDA } from '../utils/tipoAtendimento';
 import { RETIRADA_IDS, OPCOES_BIBLIOTECA, matchRegras } from '../utils/regrasImportacao';
 import { kmParaPostes, postesParaKm } from '../utils/postes';
+import { NUM, lerNumeroBR } from '../utils/numeros';
 
-export { OPCOES_BIBLIOTECA };
+export { OPCOES_BIBLIOTECA, lerNumeroBR };
 
 const CAT_META = {
   ctc:         { label: 'CTC', bg: '#FFFBE6', color: '#8B6D00', bd: '#FFE57A' },
@@ -33,19 +34,6 @@ function encontrarFimBloco(bloco) {
     if (m && (fimIndex === -1 || m.index < fimIndex)) fimIndex = m.index;
   }
   return fimIndex;
-}
-
-// Número no formato brasileiro: "1.200", "1.200,5", "112,5", "1500".
-// Ponto seguido de exatamente 3 dígitos é milhar; ponto com outra quantidade de
-// dígitos ("11.33") é tratado como decimal, para manter textos já existentes.
-const NUM = String.raw`\d{1,3}(?:\.\d{3})+(?:,\d+)?(?!\d)|\d+(?:[.,]\d+)?`;
-
-export function lerNumeroBR(texto) {
-  const t = String(texto ?? '').trim();
-  if (!/^\d[\d.,]*$/.test(t)) return NaN;
-  if (t.includes(',')) return parseFloat(t.replace(/\./g, '').replace(',', '.'));
-  if (/^\d{1,3}(\.\d{3})+$/.test(t)) return parseFloat(t.replace(/\./g, ''));
-  return parseFloat(t);
 }
 
 export function extrairQuantidade(texto) {
