@@ -26,6 +26,7 @@ export const ITENS_TOD = dados.itens;
 // Só os materiais: é o que entra no catálogo
 export const MATERIAIS_TOD = dados.itens.filter(i => i.tipo === 'material');
 
-const POR_CODIGO = new Map(MATERIAIS_TOD.map(i => [i.codigo, i]));
+// { codigo: material } — para conferir preços de composições com fonte TOD
+export const MATERIAIS_TOD_POR_CODIGO = Object.fromEntries(MATERIAIS_TOD.map(i => [i.codigo, i]));
 
-export const getMaterialTod = (codigo) => POR_CODIGO.get(String(codigo ?? '').trim()) || null;
+export const getMaterialTod = (codigo) => MATERIAIS_TOD_POR_CODIGO[String(codigo ?? '').trim()] || null;

@@ -11,6 +11,7 @@
    ───────────────────────────────────────────────────────────────────────────── */
 
 import { hojeISO } from './datas';
+import { fonteDoMaterial } from './catalogoMateriais';
 
 export const CHAVE_PROPOSTAS = 'orcamento_mt_propostas';
 const MIL = 1000;
@@ -168,6 +169,7 @@ export const montarProposta = ({
           classe: m.classe || 'consumo', ucUar: m.ucUar || '-',
           quantidade: v(m.quantidade), precoUnitario: v(m.precoUnitario),
           total: v(m.quantidade) * v(m.precoUnitario),
+          fonte: fonteDoMaterial(m), dataFonte: m.dataFonte || null,
         })),
         servicos,
         totalMateriais: calculo.totalMateriais,
@@ -175,7 +177,7 @@ export const montarProposta = ({
         total: calculo.totalProjetoGeral,
       },
     },
-    entrada: { materiais, usConstrucao: v(usConstrucao), usProjeto: v(usProjeto), tipoUS, precosUS },
+    entrada: { materiais: materiais.map(m => ({ ...m, fonte: fonteDoMaterial(m), dataFonte: m.dataFonte || null })), usConstrucao: v(usConstrucao), usProjeto: v(usProjeto), tipoUS, precosUS },
   };
 };
 

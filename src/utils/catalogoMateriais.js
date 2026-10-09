@@ -39,13 +39,22 @@ export const rotuloFonte = (fonte, data) => {
   return ano && mes && dia ? `PROORC ${dia}/${mes}/${ano}` : 'PROORC';
 };
 
-/* Data dos relatórios do PROORC de uma referência, lida do texto da fonte ou
-   do rótulo ("PROORC, relatórios de 08/10/2026") → '2026-10-08'.            */
-export const dataDaReferenciaProorc = (referencia) => {
-  const texto = `${referencia?.fonte || ''} ${referencia?.rotulo || ''}`;
-  const achado = texto.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+// 'dd/mm/aaaa' → 'AAAA-MM-DD' (as composições do PROORC gravam a data assim)
+export const dataBRParaISO = (texto) => {
+  const achado = String(texto || '').match(/(\d{2})\/(\d{2})\/(\d{4})/);
   return achado ? `${achado[3]}-${achado[2]}-${achado[1]}` : null;
 };
+
+// Quantos materiais de cada fonte há numa lista de composição
+export const contarPorFonte = (materiais = []) => materiais.reduce(
+  (acc, m) => ({ ...acc, [fonteDoMaterial(m)]: acc[fonteDoMaterial(m)] + 1 }),
+  { proorc: 0, tod: 0 },
+);
+
+/* Data dos relatórios do PROORC de uma referência, lida do texto da fonte ou
+   do rótulo ("PROORC, relatórios de 08/10/2026") → '2026-10-08'.            */
+export const dataDaReferenciaProorc = (referencia) =>
+  dataBRParaISO(`${referencia?.fonte || ''} ${referencia?.rotulo || ''}`);
 
 /* ── Catálogo combinado ──────────────────────────────────────────────────────
    catalogoProorc: { codigo: { codigo, descricao, unidade, classe, ucUar, precoUnitario } }

@@ -11,7 +11,7 @@ import { CLASSE_ROTULO } from '../proorc/explicarFormacao';
 import { MATERIAIS_TOD, TOD } from '../data/catalogoTod';
 import {
   montarCatalogoCombinado, dataDaReferenciaProorc, linhaDaComposicao, rotuloFonte,
-  buscarMateriais, unidadesDoCatalogo, LIMITE_RESULTADOS,
+  buscarMateriais, unidadesDoCatalogo, LIMITE_RESULTADOS, fonteDoMaterial, FONTES_MATERIAL,
 } from '../utils/catalogoMateriais';
 import ComposicaoModal from './ComposicaoModal';
 import SeloFonte from './SeloFonte';
@@ -62,6 +62,7 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
     materiaisTod: MATERIAIS_TOD,
     dataTod: TOD.dataBase,
   }), [anoReferencia, dataProorc]);
+  const porCodigo = useMemo(() => new Map(catalogoLista.map(m => [m.codigo, m])), [catalogoLista]);
   const qtdProorc = catalogoLista.filter(m => m.fontes.proorc).length;
   const qtdTod = catalogoLista.filter(m => m.fontes.tod).length;
 
@@ -103,6 +104,12 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
 
   const alterarQuantidade = (codigo, quantidade) =>
     setMateriais(prev => prev.map(m => (m.codigo === codigo ? { ...m, quantidade } : m)));
+
+  // Linha com preço divergente: quem monta o item escolhe a fonte
+  const trocarFonte = (codigo, fonte) => setMateriais(prev => prev.map(m => {
+    const doCatalogo = porCodigo.get(codigo);
+    return m.codigo === codigo && doCatalogo ? linhaDaComposicao(doCatalogo, fonte, m.quantidade) : m;
+  }));
 
   const removerMaterial = (codigo) => setMateriais(prev => prev.filter(m => m.codigo !== codigo));
 
@@ -272,9 +279,32 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
               {materiais.map((m, i) => (
                 <tr key={m.codigo} style={{ background: i % 2 === 0 ? '#fff' : '#FAFAFA' }}>
                   <td style={{ ...S.td, ...S.mono }}>{m.codigo}</td>
-                  <td style={S.td}>{m.descricao}</td>
+                  <td style={S.td}>
+                    {m.descricao}
+                    {porCodigo.get(m.codigo)?.diverge && (
+                      <p style={{ fontSize: '11px', color: '#B35C00', fontWeight: 700, margin: '2px 0 0 0' }}>
+                        ⚠ preço diverge entre PROORC e TOD
+                      </p>
+                    )}
+                  </td>
                   <td style={S.td}>{m.unidade}</td>
-                  <td style={S.td}><SeloFonte fonte={m.fonte} data={m.dataFonte} /></td>
+                  <td style={S.td}>
+                    {porCodigo.get(m.codigo)?.diverge ? (
+                      <select
+                        aria-label={`Fonte do preço de ${m.codigo}`}
+                        value={fonteDoMaterial(m)}
+                        onChange={e => trocarFonte(m.codigo, e.target.value)}
+                        style={{ ...S.input, padding: '4px 6px', fontSize: '11px', width: 'auto' }}
+                      >
+                        {FONTES_MATERIAL.map(f => {
+                          const preco = porCodigo.get(m.codigo).fontes[f];
+                          return <option key={f} value={f}>{rotuloFonte(f, preco.data)} · {reais(preco.precoUnitario)}</option>;
+                        })}
+                      </select>
+                    ) : (
+                      <SeloFonte fonte={fonteDoMaterial(m)} data={m.dataFonte} />
+                    )}
+                  </td>
                   <td style={S.td}>
                     <input
                       type="number" min="0" step="0.001" value={m.quantidade}
