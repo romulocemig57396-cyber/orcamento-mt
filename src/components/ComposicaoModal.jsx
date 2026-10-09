@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { explicarFormacao, CLASSE_ROTULO } from '../proorc/explicarFormacao';
 import { ORIGENS } from '../proorc/formacao';
+import { fonteDoMaterial, dataBRParaISO } from '../utils/catalogoMateriais';
+import SeloFonte from './SeloFonte';
 
 const F = "'Open Sans',sans-serif";
 const S = {
@@ -147,8 +149,8 @@ export default function ComposicaoModal({ item, referencia, onFechar, onAbrirIte
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '10px' }}>
-                  {['patrimonial', 'cabo', 'consumo'].map(classe => (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '8px', marginBottom: '10px' }}>
+                  {['patrimonial', 'cabo', 'consumo', ...(dados.subtotais?.naoInformada ? ['naoInformada'] : [])].map(classe => (
                     <div key={classe} style={{ background: '#F9F9F9', borderRadius: '8px', padding: '8px 12px' }}>
                       <p style={{ fontFamily: F, fontSize: '10px', color: '#999', margin: '0 0 2px 0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {CLASSE_ROTULO[classe]}
@@ -168,6 +170,7 @@ export default function ComposicaoModal({ item, referencia, onFechar, onAbrirIte
                         <th style={S.th}>Descrição</th>
                         <th style={S.th}>Un.</th>
                         <th style={S.th}>Classe</th>
+                        <th style={S.th}>Fonte</th>
                         <th style={{ ...S.th, textAlign: 'right' }}>Qtd.</th>
                         <th style={{ ...S.th, textAlign: 'right' }}>Preço</th>
                         <th style={{ ...S.th, textAlign: 'right' }}>Total</th>
@@ -175,13 +178,19 @@ export default function ComposicaoModal({ item, referencia, onFechar, onAbrirIte
                     </thead>
                     <tbody>
                       {materiais.length === 0 ? (
-                        <tr><td colSpan={7} style={{ ...S.td, textAlign: 'center', color: '#999', padding: '20px' }}>Nenhum material encontrado.</td></tr>
+                        <tr><td colSpan={8} style={{ ...S.td, textAlign: 'center', color: '#999', padding: '20px' }}>Nenhum material encontrado.</td></tr>
                       ) : materiais.map((m, i) => (
                         <tr key={`${m.codigo}-${i}`} style={{ background: i % 2 === 0 ? '#fff' : '#FAFAFA' }}>
                           <td style={{ ...S.td, ...S.mono }}>{m.codigo}</td>
                           <td style={S.td}>{m.descricao}</td>
                           <td style={S.td}>{m.unidade}</td>
                           <td style={{ ...S.td, fontSize: '11px', color: '#888' }}>{CLASSE_ROTULO[m.classe]}</td>
+                          <td style={S.td}>
+                            <SeloFonte
+                              fonte={fonteDoMaterial(m)}
+                              data={m.dataFonte || (fonteDoMaterial(m) === 'proorc' ? dataBRParaISO(dados.dataReferencia) : null)}
+                            />
+                          </td>
                           <td style={{ ...S.td, textAlign: 'right', ...S.mono }}>{numero(m.quantidade)}</td>
                           <td style={{ ...S.td, textAlign: 'right', ...S.mono }}>{reais(m.precoUnitario)}</td>
                           <td style={{ ...S.td, textAlign: 'right', fontWeight: 600, ...S.mono }}>{reais(m.total)}</td>

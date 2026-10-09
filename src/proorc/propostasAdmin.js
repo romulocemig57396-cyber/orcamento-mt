@@ -8,6 +8,7 @@
    ───────────────────────────────────────────────────────────────────────────── */
 
 import { calcularProposta } from '../utils/propostas';
+import { fonteDoMaterial } from '../utils/catalogoMateriais';
 
 const v = (x) => parseFloat(x) || 0;
 const mudou = (a, b) => Math.abs(v(a) - v(b)) > 0.005;
@@ -29,32 +30,46 @@ export const entradaDaProposta = (proposta) => {
   };
 };
 
-export const recalcularPropostaNaReferencia = (proposta, { catalogoMateriais = {}, precosUS = {}, referencia }) => {
+/* Cada material é conferido na fonte de onde veio o preço: os do PROORC no
+   catálogo da referência; os da TOD na lista da TOD (`catalogoTod`, por
+   código). Linhas antigas, sem fonte, são do PROORC.                        */
+export const recalcularPropostaNaReferencia = (proposta, {
+  catalogoMateriais = {}, precosUS = {}, referencia, dataProorc = null, catalogoTod = {}, dataTod = null,
+}) => {
   const entrada = entradaDaProposta(proposta);
   const unidades = v(proposta.formacao?.unidadesPorProjeto) || 1;
   const temCatalogo = Object.keys(catalogoMateriais).length > 0;
+  const temTod = Object.keys(catalogoTod).length > 0;
   const temPrecoUS = v(precosUS.construcao) > 0 || v(precosUS.projeto) > 0;
 
   const mudancas = [];
 
   const materiais = (entrada.materiais || []).map(m => {
-    const doCatalogo = catalogoMateriais[m.codigo];
-    const precoAtual = doCatalogo ? v(doCatalogo.precoUnitario) : null;
+    const fonte = fonteDoMaterial(m);
+    const daTod = fonte === 'tod';
+    const temFonte = daTod ? temTod : temCatalogo;
+    const naFonte = daTod ? catalogoTod[m.codigo] : catalogoMateriais[m.codigo];
+    const precoAtual = naFonte ? v(daTod ? naFonte.preco : naFonte.precoUnitario) : null;
     const alterou = precoAtual !== null && mudou(precoAtual, m.precoUnitario);
     if (alterou) {
-      mudancas.push(`${m.codigo} (${m.descricao}): ${reais(m.precoUnitario)} → ${reais(precoAtual)}`);
+      mudancas.push(`${m.codigo} (${m.descricao})${daTod ? ' [TOD]' : ''}: ${reais(m.precoUnitario)} → ${reais(precoAtual)}`);
     }
-    if (temCatalogo && !doCatalogo) {
-      mudancas.push(`${m.codigo} (${m.descricao}) não está no catálogo desta referência.`);
+    if (temFonte && !naFonte) {
+      mudancas.push(daTod
+        ? `${m.codigo} (${m.descricao}) não está na lista de materiais da TOD.`
+        : `${m.codigo} (${m.descricao}) não está no catálogo desta referência.`);
     }
     return {
       ...m,
+      fonte,
+      dataFonte: naFonte ? ((daTod ? dataTod : dataProorc) || m.dataFonte || null) : (m.dataFonte || null),
       precoOriginal: v(m.precoUnitario),
       precoUnitario: precoAtual !== null ? precoAtual : v(m.precoUnitario),
-      ausenteNoCatalogo: temCatalogo && !doCatalogo,
+      ausenteNoCatalogo: temFonte && !naFonte,
       mudou: alterou,
     };
   });
+  const temTodNaProposta = materiais.some(m => m.fonte === 'tod') && temTod;
 
   ['construcao', 'projeto'].forEach(grupo => {
     const antes = v(entrada.precosUS?.[grupo]);
@@ -77,8 +92,8 @@ export const recalcularPropostaNaReferencia = (proposta, { catalogoMateriais = {
 
   return {
     referencia,
-    possivel: temCatalogo || temPrecoUS,
-    motivoIndisponivel: temCatalogo || temPrecoUS
+    possivel: temCatalogo || temPrecoUS || temTodNaProposta,
+    motivoIndisponivel: temCatalogo || temPrecoUS || temTodNaProposta
       ? null
       : 'Esta referência não tem catálogo de materiais nem preço da US, então não há com o que recalcular. Os valores exibidos são os da criação.',
     materiais,
@@ -146,6 +161,7 @@ export const aprovarProposta = ({ biblioteca, proposta, referencia, recalculo, a
           classe: m.classe || 'consumo', ucUar: m.ucUar || '-',
           quantidade: v(m.quantidade), precoUnitario: v(m.precoUnitario),
           total: v(m.quantidade) * v(m.precoUnitario),
+          fonte: fonteDoMaterial(m), dataFonte: m.dataFonte || null,
         })),
         servicos: [
           ...(r.servicos.usConstrucao > 0 ? [{

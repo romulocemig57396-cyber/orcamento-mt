@@ -4,6 +4,8 @@ import { lerArquivoPropostas, juntarPropostas, lerPropostas } from '../utils/pro
 import { recalcularPropostaNaReferencia, aprovarProposta } from '../proorc/propostasAdmin';
 import { baixarBiblioteca, serializarBiblioteca } from '../proorc/gerarBibliotecaJson';
 import { hojeISO } from '../utils/datas';
+import { MATERIAIS_TOD_POR_CODIGO, TOD } from '../data/catalogoTod';
+import { dataDaReferenciaProorc, contarPorFonte, rotuloFonte } from '../utils/catalogoMateriais';
 import ComposicaoModal from './ComposicaoModal';
 
 const F = "'Open Sans',sans-serif";
@@ -38,10 +40,14 @@ export default function PropostasAdmin({ anoReferencia = chaveReferenciaAtual() 
   const recalculos = useMemo(() => {
     const mapa = {};
     propostas.forEach(p => {
-      mapa[p.id] = recalcularPropostaNaReferencia(p, { catalogoMateriais, precosUS, referencia: anoReferencia });
+      mapa[p.id] = recalcularPropostaNaReferencia(p, {
+        catalogoMateriais, precosUS, referencia: anoReferencia,
+        dataProorc: dataDaReferenciaProorc(referencia),
+        catalogoTod: MATERIAIS_TOD_POR_CODIGO, dataTod: TOD.dataBase,
+      });
     });
     return mapa;
-  }, [propostas, catalogoMateriais, precosUS, anoReferencia]);
+  }, [propostas, catalogoMateriais, precosUS, anoReferencia, referencia]);
 
   const importar = async (files) => {
     if (!files?.length) return;
@@ -145,6 +151,17 @@ export default function PropostasAdmin({ anoReferencia = chaveReferenciaAtual() 
                   Proposta de <strong>{p.autor || 'autor não informado'}</strong> em {dataBR(p.criadoEm)},
                   com preços de {getReferencia(p.referenciaPrecos)?.rotulo || p.referenciaPrecos || '—'}
                 </p>
+                {r.materiais.length > 0 && (() => {
+                  const n = contarPorFonte(r.materiais);
+                  return (
+                    <p style={{ fontFamily: F, fontSize: '12px', color: '#555', margin: '4px 0 0 0' }}>
+                      Fonte dos materiais: {[
+                        n.proorc ? `${n.proorc} do PROORC` : null,
+                        n.tod ? `${n.tod} da ${rotuloFonte('tod', TOD.dataBase)}` : null,
+                      ].filter(Boolean).join(' · ')}
+                    </p>
+                  );
+                })()}
               </div>
               {decisao && (
                 <span style={{

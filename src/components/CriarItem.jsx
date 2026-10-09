@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   TABELA_CUSTOS, getCategorias, getSubcategorias, getCatalogoMateriais,
   getPrecosUS, getReferencia, chaveReferenciaAtual,
@@ -8,7 +8,13 @@ import {
   validarProposta, baixarPropostas, juntarPropostas,
 } from '../utils/propostas';
 import { CLASSE_ROTULO } from '../proorc/explicarFormacao';
+import { MATERIAIS_TOD, TOD } from '../data/catalogoTod';
+import {
+  montarCatalogoCombinado, dataDaReferenciaProorc, linhaDaComposicao, rotuloFonte,
+  buscarMateriais, unidadesDoCatalogo, LIMITE_RESULTADOS, fonteDoMaterial, FONTES_MATERIAL,
+} from '../utils/catalogoMateriais';
 import ComposicaoModal from './ComposicaoModal';
+import SeloFonte from './SeloFonte';
 
 const F = "'Open Sans',sans-serif";
 const S = {
@@ -26,6 +32,9 @@ const S = {
 const reais = (n) => `R$ ${(parseFloat(n) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const mil = (n) => (parseFloat(n) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 5 });
 
+// Atraso entre a digitação e a busca no catálogo (ms)
+export const ATRASO_BUSCA = 250;
+
 const VAZIO = {
   tipo: '', categoria: '', categoriaNova: '', subcategoria: '', subcategoriaNova: '',
   unidade: 'poste', unidadesPorProjeto: 25, usConstrucao: '', usProjeto: '', tipoUS: 'USRDA', autor: '',
@@ -36,6 +45,9 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
   const [form, setForm] = useState(VAZIO);
   const [materiais, setMateriais] = useState([]);
   const [busca, setBusca] = useState('');
+  const [buscaAplicada, setBuscaAplicada] = useState('');
+  const [filtroUnidade, setFiltroUnidade] = useState('');
+  const [filtroFonte, setFiltroFonte] = useState('');
   const [propostas, setPropostas] = useState(lerPropostas);
   const [editandoId, setEditandoId] = useState(null);
   const [mensagem, setMensagem] = useState(null);
@@ -43,21 +55,33 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
 
   const referencia = getReferencia(anoReferencia);
   const precosUS = getPrecosUS(anoReferencia);
-  const catalogo = getCatalogoMateriais(anoReferencia);
-  const catalogoLista = useMemo(() => Object.values(catalogo), [catalogo]);
+  const dataProorc = dataDaReferenciaProorc(referencia);
+  const catalogoLista = useMemo(() => montarCatalogoCombinado({
+    catalogoProorc: getCatalogoMateriais(anoReferencia),
+    dataProorc,
+    materiaisTod: MATERIAIS_TOD,
+    dataTod: TOD.dataBase,
+  }), [anoReferencia, dataProorc]);
+  const porCodigo = useMemo(() => new Map(catalogoLista.map(m => [m.codigo, m])), [catalogoLista]);
+  const qtdProorc = catalogoLista.filter(m => m.fontes.proorc).length;
+  const qtdTod = catalogoLista.filter(m => m.fontes.tod).length;
 
   const categoria = form.categoria === '__nova__' ? form.categoriaNova : form.categoria;
   const subcategoria = form.subcategoria === '__nova__' ? form.subcategoriaNova : form.subcategoria;
 
   const set = (campo, valor) => { setForm(prev => ({ ...prev, [campo]: valor })); setMensagem(null); };
 
-  const encontrados = useMemo(() => {
-    const t = busca.trim().toLowerCase();
-    if (!t) return [];
-    return catalogoLista
-      .filter(m => m.codigo.includes(t) || m.descricao.toLowerCase().includes(t))
-      .slice(0, 25);
-  }, [busca, catalogoLista]);
+  useEffect(() => {
+    const t = setTimeout(() => setBuscaAplicada(busca), ATRASO_BUSCA);
+    return () => clearTimeout(t);
+  }, [busca]);
+
+  const unidadesCatalogo = useMemo(() => unidadesDoCatalogo(catalogoLista), [catalogoLista]);
+  const resultadoBusca = useMemo(
+    () => buscarMateriais(catalogoLista, { texto: buscaAplicada, unidade: filtroUnidade, fonte: filtroFonte }),
+    [catalogoLista, buscaAplicada, filtroUnidade, filtroFonte],
+  );
+  const encontrados = resultadoBusca.resultados;
 
   const calculo = useMemo(() => calcularProposta({
     materiais, usConstrucao: form.usConstrucao, usProjeto: form.usProjeto,
@@ -72,17 +96,24 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
   const adicionarMaterial = (m) => {
     setMateriais(prev => prev.some(x => x.codigo === m.codigo)
       ? prev
-      : [...prev, { ...m, quantidade: 1 }]);
+      : [...prev, linhaDaComposicao(m)]);
     setBusca('');
+    setBuscaAplicada('');
     setMensagem(null);
   };
 
   const alterarQuantidade = (codigo, quantidade) =>
     setMateriais(prev => prev.map(m => (m.codigo === codigo ? { ...m, quantidade } : m)));
 
+  // Linha com preço divergente: quem monta o item escolhe a fonte
+  const trocarFonte = (codigo, fonte) => setMateriais(prev => prev.map(m => {
+    const doCatalogo = porCodigo.get(codigo);
+    return m.codigo === codigo && doCatalogo ? linhaDaComposicao(doCatalogo, fonte, m.quantidade) : m;
+  }));
+
   const removerMaterial = (codigo) => setMateriais(prev => prev.filter(m => m.codigo !== codigo));
 
-  const limpar = () => { setForm(VAZIO); setMateriais([]); setEditandoId(null); setBusca(''); };
+  const limpar = () => { setForm(VAZIO); setMateriais([]); setEditandoId(null); setBusca(''); setBuscaAplicada(''); };
 
   const guardar = (lista) => {
     setPropostas(lista);
@@ -154,8 +185,6 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
     }
   };
 
-  const semCatalogo = catalogoLista.length === 0;
-
   return (
     <div style={{ maxWidth: '960px' }}>
 
@@ -163,43 +192,73 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
       <div style={S.card}>
         <h2 style={S.title}>Materiais do item</h2>
         <p style={{ fontFamily: F, fontSize: '12px', color: '#888', margin: '0 0 14px 0' }}>
-          Catálogo da referência {referencia?.rotulo || anoReferencia} · {catalogoLista.length} materiais
+          Catálogo de materiais: {qtdProorc > 0
+            ? `${rotuloFonte('proorc', dataProorc)} (referência ${referencia?.rotulo || anoReferencia}, ${qtdProorc} materiais)`
+            : `a referência ${referencia?.rotulo || anoReferencia} não tem catálogo do PROORC`}
+          {' + '}{rotuloFonte('tod', TOD.dataBase)} ({qtdTod} materiais) · {catalogoLista.length} códigos
         </p>
 
-        {semCatalogo ? (
-          <div style={{ background: '#FFFBE6', border: '1px solid #FFE57A', borderRadius: '8px', padding: '12px 16px', marginBottom: '14px' }}>
-            <p style={{ fontFamily: F, fontSize: '12px', color: '#8B6D00', margin: 0, lineHeight: 1.6 }}>
-              Esta referência não tem catálogo de materiais. O catálogo é preenchido quando o responsável importa os
-              relatórios do PROORC e gera uma referência nova. Até lá, dá para montar um item só com US de mão de obra.
-            </p>
-          </div>
-        ) : (
-          <>
-            <input
-              value={busca}
-              onChange={e => setBusca(e.target.value)}
-              placeholder="Buscar material por código ou descrição"
-              style={{ ...S.input, marginBottom: '10px' }}
-            />
-            {encontrados.length > 0 && (
-              <div style={{ border: '1px solid #EEE', borderRadius: '8px', maxHeight: '220px', overflowY: 'auto', marginBottom: '14px' }}>
-                {encontrados.map(m => (
-                  <div key={m.codigo}
-                    style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', borderBottom: '1px solid #F5F5F5' }}>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ fontFamily: F, fontSize: '12px', color: '#222', margin: 0 }}>
-                        <span style={S.mono}>{m.codigo}</span> — {m.descricao}
-                      </p>
-                      <p style={{ fontFamily: F, fontSize: '11px', color: '#999', margin: '2px 0 0 0' }}>
-                        {m.unidade} · {CLASSE_ROTULO[m.classe]} · {reais(m.precoUnitario)}
-                      </p>
-                    </div>
-                    <button style={S.btnCinza} onClick={() => adicionarMaterial(m)}>Incluir</button>
-                  </div>
-                ))}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '10px', flexWrap: 'wrap' }}>
+          <input
+            value={busca}
+            onChange={e => setBusca(e.target.value)}
+            placeholder="Buscar material por código ou descrição"
+            style={{ ...S.input, flex: '1 1 260px', width: 'auto' }}
+          />
+          <select aria-label="Filtrar por unidade" value={filtroUnidade} onChange={e => setFiltroUnidade(e.target.value)}
+            style={{ ...S.input, width: '150px' }}>
+            <option value="">Todas as unidades</option>
+            {unidadesCatalogo.map(u => <option key={u} value={u}>{u}</option>)}
+          </select>
+          <select aria-label="Filtrar por fonte" value={filtroFonte} onChange={e => setFiltroFonte(e.target.value)}
+            style={{ ...S.input, width: '150px' }}>
+            <option value="">Todas as fontes</option>
+            <option value="proorc">PROORC</option>
+            <option value="tod">TOD</option>
+          </select>
+        </div>
+        {buscaAplicada.trim() && resultadoBusca.total === 0 && (
+          <p style={{ fontFamily: F, fontSize: '12px', color: '#999', margin: '0 0 12px 0' }}>Nenhum material encontrado.</p>
+        )}
+        {resultadoBusca.truncado && (
+          <p role="status" style={{ fontFamily: F, fontSize: '12px', color: '#8B6D00', margin: '0 0 8px 0' }}>
+            {resultadoBusca.total} materiais encontrados; mostrando os primeiros {LIMITE_RESULTADOS}. Refine a busca.
+          </p>
+        )}
+        {encontrados.length > 0 && (
+          <div style={{ border: '1px solid #EEE', borderRadius: '8px', maxHeight: '260px', overflowY: 'auto', marginBottom: '14px' }}>
+            {encontrados.map(m => (
+              <div key={m.codigo} data-testid={`resultado-${m.codigo}`}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', borderBottom: '1px solid #F5F5F5' }}>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontFamily: F, fontSize: '12px', color: '#222', margin: 0 }}>
+                    <span style={S.mono}>{m.codigo}</span> — {m.descricao}
+                  </p>
+                  <p style={{ fontFamily: F, fontSize: '11px', color: '#999', margin: '3px 0 0 0', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px' }}>
+                    <span>{m.unidade} · {CLASSE_ROTULO[m.classe]}</span>
+                    {m.fontes.proorc && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <SeloFonte fonte="proorc" data={m.fontes.proorc.data} />
+                        <span style={S.mono}>{reais(m.fontes.proorc.precoUnitario)}</span>
+                      </span>
+                    )}
+                    {m.fontes.tod && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <SeloFonte fonte="tod" data={m.fontes.tod.data} />
+                        <span style={S.mono}>{reais(m.fontes.tod.precoUnitario)}</span>
+                      </span>
+                    )}
+                  </p>
+                  {m.diverge && (
+                    <p style={{ fontFamily: F, fontSize: '11px', color: '#B35C00', fontWeight: 700, margin: '3px 0 0 0' }}>
+                      ⚠ preço diverge entre PROORC e TOD
+                    </p>
+                  )}
+                </div>
+                <button style={S.btnCinza} onClick={() => adicionarMaterial(m)}>Incluir</button>
               </div>
-            )}
-          </>
+            ))}
+          </div>
         )}
 
         {materiais.length > 0 && (
@@ -209,6 +268,7 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
                 <th style={S.th}>Código</th>
                 <th style={S.th}>Descrição</th>
                 <th style={S.th}>Un.</th>
+                <th style={S.th}>Fonte</th>
                 <th style={{ ...S.th, width: '110px' }}>Quantidade</th>
                 <th style={{ ...S.th, textAlign: 'right' }}>Preço</th>
                 <th style={{ ...S.th, textAlign: 'right' }}>Total</th>
@@ -219,8 +279,32 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
               {materiais.map((m, i) => (
                 <tr key={m.codigo} style={{ background: i % 2 === 0 ? '#fff' : '#FAFAFA' }}>
                   <td style={{ ...S.td, ...S.mono }}>{m.codigo}</td>
-                  <td style={S.td}>{m.descricao}</td>
+                  <td style={S.td}>
+                    {m.descricao}
+                    {porCodigo.get(m.codigo)?.diverge && (
+                      <p style={{ fontSize: '11px', color: '#B35C00', fontWeight: 700, margin: '2px 0 0 0' }}>
+                        ⚠ preço diverge entre PROORC e TOD
+                      </p>
+                    )}
+                  </td>
                   <td style={S.td}>{m.unidade}</td>
+                  <td style={S.td}>
+                    {porCodigo.get(m.codigo)?.diverge ? (
+                      <select
+                        aria-label={`Fonte do preço de ${m.codigo}`}
+                        value={fonteDoMaterial(m)}
+                        onChange={e => trocarFonte(m.codigo, e.target.value)}
+                        style={{ ...S.input, padding: '4px 6px', fontSize: '11px', width: 'auto' }}
+                      >
+                        {FONTES_MATERIAL.map(f => {
+                          const preco = porCodigo.get(m.codigo).fontes[f];
+                          return <option key={f} value={f}>{rotuloFonte(f, preco.data)} · {reais(preco.precoUnitario)}</option>;
+                        })}
+                      </select>
+                    ) : (
+                      <SeloFonte fonte={fonteDoMaterial(m)} data={m.dataFonte} />
+                    )}
+                  </td>
                   <td style={S.td}>
                     <input
                       type="number" min="0" step="0.001" value={m.quantidade}
