@@ -222,8 +222,8 @@ describe('Etapa 6 — tela Criar Item', () => {
     render(<CriarItem anoReferencia="2024" />);
     fireEvent.change(screen.getByPlaceholderText('Ex: RDP 185 Dupla Camada'), { target: { value: 'Retirada de teste' } });
     fireEvent.change(screen.getByPlaceholderText('Quem está propondo o item'), { target: { value: 'Rômulo' } });
-    const selects = screen.getAllByRole('combobox');
-    fireEvent.change(selects[1], { target: { value: 'Rede' } });   // categoria
+    const categoria = screen.getAllByRole('combobox').find(el => within(el).queryByText('+ nova categoria'));
+    fireEvent.change(categoria, { target: { value: 'Rede' } });
     fireEvent.change(screen.getAllByRole('spinbutton')[0], { target: { value: '5' } }); // US de construção
 
     expect(screen.getByText('Salvar como proposta')).not.toBeDisabled();

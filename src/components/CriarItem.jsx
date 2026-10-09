@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   TABELA_CUSTOS, getCategorias, getSubcategorias, getCatalogoMateriais,
   getPrecosUS, getReferencia, chaveReferenciaAtual,
@@ -11,6 +11,7 @@ import { CLASSE_ROTULO } from '../proorc/explicarFormacao';
 import { MATERIAIS_TOD, TOD } from '../data/catalogoTod';
 import {
   montarCatalogoCombinado, dataDaReferenciaProorc, linhaDaComposicao, rotuloFonte,
+  buscarMateriais, unidadesDoCatalogo, LIMITE_RESULTADOS,
 } from '../utils/catalogoMateriais';
 import ComposicaoModal from './ComposicaoModal';
 import SeloFonte from './SeloFonte';
@@ -31,6 +32,9 @@ const S = {
 const reais = (n) => `R$ ${(parseFloat(n) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const mil = (n) => (parseFloat(n) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 5 });
 
+// Atraso entre a digitação e a busca no catálogo (ms)
+export const ATRASO_BUSCA = 250;
+
 const VAZIO = {
   tipo: '', categoria: '', categoriaNova: '', subcategoria: '', subcategoriaNova: '',
   unidade: 'poste', unidadesPorProjeto: 25, usConstrucao: '', usProjeto: '', tipoUS: 'USRDA', autor: '',
@@ -41,6 +45,9 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
   const [form, setForm] = useState(VAZIO);
   const [materiais, setMateriais] = useState([]);
   const [busca, setBusca] = useState('');
+  const [buscaAplicada, setBuscaAplicada] = useState('');
+  const [filtroUnidade, setFiltroUnidade] = useState('');
+  const [filtroFonte, setFiltroFonte] = useState('');
   const [propostas, setPropostas] = useState(lerPropostas);
   const [editandoId, setEditandoId] = useState(null);
   const [mensagem, setMensagem] = useState(null);
@@ -63,13 +70,17 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
 
   const set = (campo, valor) => { setForm(prev => ({ ...prev, [campo]: valor })); setMensagem(null); };
 
-  const encontrados = useMemo(() => {
-    const t = busca.trim().toLowerCase();
-    if (!t) return [];
-    return catalogoLista
-      .filter(m => m.codigo.includes(t) || m.descricao.toLowerCase().includes(t))
-      .slice(0, 25);
-  }, [busca, catalogoLista]);
+  useEffect(() => {
+    const t = setTimeout(() => setBuscaAplicada(busca), ATRASO_BUSCA);
+    return () => clearTimeout(t);
+  }, [busca]);
+
+  const unidadesCatalogo = useMemo(() => unidadesDoCatalogo(catalogoLista), [catalogoLista]);
+  const resultadoBusca = useMemo(
+    () => buscarMateriais(catalogoLista, { texto: buscaAplicada, unidade: filtroUnidade, fonte: filtroFonte }),
+    [catalogoLista, buscaAplicada, filtroUnidade, filtroFonte],
+  );
+  const encontrados = resultadoBusca.resultados;
 
   const calculo = useMemo(() => calcularProposta({
     materiais, usConstrucao: form.usConstrucao, usProjeto: form.usProjeto,
@@ -86,6 +97,7 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
       ? prev
       : [...prev, linhaDaComposicao(m)]);
     setBusca('');
+    setBuscaAplicada('');
     setMensagem(null);
   };
 
@@ -94,7 +106,7 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
 
   const removerMaterial = (codigo) => setMateriais(prev => prev.filter(m => m.codigo !== codigo));
 
-  const limpar = () => { setForm(VAZIO); setMateriais([]); setEditandoId(null); setBusca(''); };
+  const limpar = () => { setForm(VAZIO); setMateriais([]); setEditandoId(null); setBusca(''); setBuscaAplicada(''); };
 
   const guardar = (lista) => {
     setPropostas(lista);
@@ -179,12 +191,33 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
           {' + '}{rotuloFonte('tod', TOD.dataBase)} ({qtdTod} materiais) · {catalogoLista.length} códigos
         </p>
 
-        <input
-          value={busca}
-          onChange={e => setBusca(e.target.value)}
-          placeholder="Buscar material por código ou descrição"
-          style={{ ...S.input, marginBottom: '10px' }}
-        />
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '10px', flexWrap: 'wrap' }}>
+          <input
+            value={busca}
+            onChange={e => setBusca(e.target.value)}
+            placeholder="Buscar material por código ou descrição"
+            style={{ ...S.input, flex: '1 1 260px', width: 'auto' }}
+          />
+          <select aria-label="Filtrar por unidade" value={filtroUnidade} onChange={e => setFiltroUnidade(e.target.value)}
+            style={{ ...S.input, width: '150px' }}>
+            <option value="">Todas as unidades</option>
+            {unidadesCatalogo.map(u => <option key={u} value={u}>{u}</option>)}
+          </select>
+          <select aria-label="Filtrar por fonte" value={filtroFonte} onChange={e => setFiltroFonte(e.target.value)}
+            style={{ ...S.input, width: '150px' }}>
+            <option value="">Todas as fontes</option>
+            <option value="proorc">PROORC</option>
+            <option value="tod">TOD</option>
+          </select>
+        </div>
+        {buscaAplicada.trim() && resultadoBusca.total === 0 && (
+          <p style={{ fontFamily: F, fontSize: '12px', color: '#999', margin: '0 0 12px 0' }}>Nenhum material encontrado.</p>
+        )}
+        {resultadoBusca.truncado && (
+          <p role="status" style={{ fontFamily: F, fontSize: '12px', color: '#8B6D00', margin: '0 0 8px 0' }}>
+            {resultadoBusca.total} materiais encontrados; mostrando os primeiros {LIMITE_RESULTADOS}. Refine a busca.
+          </p>
+        )}
         {encontrados.length > 0 && (
           <div style={{ border: '1px solid #EEE', borderRadius: '8px', maxHeight: '260px', overflowY: 'auto', marginBottom: '14px' }}>
             {encontrados.map(m => (
