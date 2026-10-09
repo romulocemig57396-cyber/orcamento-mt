@@ -8,7 +8,12 @@ import {
   validarProposta, baixarPropostas, juntarPropostas,
 } from '../utils/propostas';
 import { CLASSE_ROTULO } from '../proorc/explicarFormacao';
+import { MATERIAIS_TOD, TOD } from '../data/catalogoTod';
+import {
+  montarCatalogoCombinado, dataDaReferenciaProorc, linhaDaComposicao, rotuloFonte,
+} from '../utils/catalogoMateriais';
 import ComposicaoModal from './ComposicaoModal';
+import SeloFonte from './SeloFonte';
 
 const F = "'Open Sans',sans-serif";
 const S = {
@@ -43,8 +48,15 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
 
   const referencia = getReferencia(anoReferencia);
   const precosUS = getPrecosUS(anoReferencia);
-  const catalogo = getCatalogoMateriais(anoReferencia);
-  const catalogoLista = useMemo(() => Object.values(catalogo), [catalogo]);
+  const dataProorc = dataDaReferenciaProorc(referencia);
+  const catalogoLista = useMemo(() => montarCatalogoCombinado({
+    catalogoProorc: getCatalogoMateriais(anoReferencia),
+    dataProorc,
+    materiaisTod: MATERIAIS_TOD,
+    dataTod: TOD.dataBase,
+  }), [anoReferencia, dataProorc]);
+  const qtdProorc = catalogoLista.filter(m => m.fontes.proorc).length;
+  const qtdTod = catalogoLista.filter(m => m.fontes.tod).length;
 
   const categoria = form.categoria === '__nova__' ? form.categoriaNova : form.categoria;
   const subcategoria = form.subcategoria === '__nova__' ? form.subcategoriaNova : form.subcategoria;
@@ -72,7 +84,7 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
   const adicionarMaterial = (m) => {
     setMateriais(prev => prev.some(x => x.codigo === m.codigo)
       ? prev
-      : [...prev, { ...m, quantidade: 1 }]);
+      : [...prev, linhaDaComposicao(m)]);
     setBusca('');
     setMensagem(null);
   };
@@ -154,8 +166,6 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
     }
   };
 
-  const semCatalogo = catalogoLista.length === 0;
-
   return (
     <div style={{ maxWidth: '960px' }}>
 
@@ -163,43 +173,52 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
       <div style={S.card}>
         <h2 style={S.title}>Materiais do item</h2>
         <p style={{ fontFamily: F, fontSize: '12px', color: '#888', margin: '0 0 14px 0' }}>
-          Catálogo da referência {referencia?.rotulo || anoReferencia} · {catalogoLista.length} materiais
+          Catálogo de materiais: {qtdProorc > 0
+            ? `${rotuloFonte('proorc', dataProorc)} (referência ${referencia?.rotulo || anoReferencia}, ${qtdProorc} materiais)`
+            : `a referência ${referencia?.rotulo || anoReferencia} não tem catálogo do PROORC`}
+          {' + '}{rotuloFonte('tod', TOD.dataBase)} ({qtdTod} materiais) · {catalogoLista.length} códigos
         </p>
 
-        {semCatalogo ? (
-          <div style={{ background: '#FFFBE6', border: '1px solid #FFE57A', borderRadius: '8px', padding: '12px 16px', marginBottom: '14px' }}>
-            <p style={{ fontFamily: F, fontSize: '12px', color: '#8B6D00', margin: 0, lineHeight: 1.6 }}>
-              Esta referência não tem catálogo de materiais. O catálogo é preenchido quando o responsável importa os
-              relatórios do PROORC e gera uma referência nova. Até lá, dá para montar um item só com US de mão de obra.
-            </p>
-          </div>
-        ) : (
-          <>
-            <input
-              value={busca}
-              onChange={e => setBusca(e.target.value)}
-              placeholder="Buscar material por código ou descrição"
-              style={{ ...S.input, marginBottom: '10px' }}
-            />
-            {encontrados.length > 0 && (
-              <div style={{ border: '1px solid #EEE', borderRadius: '8px', maxHeight: '220px', overflowY: 'auto', marginBottom: '14px' }}>
-                {encontrados.map(m => (
-                  <div key={m.codigo}
-                    style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', borderBottom: '1px solid #F5F5F5' }}>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ fontFamily: F, fontSize: '12px', color: '#222', margin: 0 }}>
-                        <span style={S.mono}>{m.codigo}</span> — {m.descricao}
-                      </p>
-                      <p style={{ fontFamily: F, fontSize: '11px', color: '#999', margin: '2px 0 0 0' }}>
-                        {m.unidade} · {CLASSE_ROTULO[m.classe]} · {reais(m.precoUnitario)}
-                      </p>
-                    </div>
-                    <button style={S.btnCinza} onClick={() => adicionarMaterial(m)}>Incluir</button>
-                  </div>
-                ))}
+        <input
+          value={busca}
+          onChange={e => setBusca(e.target.value)}
+          placeholder="Buscar material por código ou descrição"
+          style={{ ...S.input, marginBottom: '10px' }}
+        />
+        {encontrados.length > 0 && (
+          <div style={{ border: '1px solid #EEE', borderRadius: '8px', maxHeight: '260px', overflowY: 'auto', marginBottom: '14px' }}>
+            {encontrados.map(m => (
+              <div key={m.codigo} data-testid={`resultado-${m.codigo}`}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', borderBottom: '1px solid #F5F5F5' }}>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontFamily: F, fontSize: '12px', color: '#222', margin: 0 }}>
+                    <span style={S.mono}>{m.codigo}</span> — {m.descricao}
+                  </p>
+                  <p style={{ fontFamily: F, fontSize: '11px', color: '#999', margin: '3px 0 0 0', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px' }}>
+                    <span>{m.unidade} · {CLASSE_ROTULO[m.classe]}</span>
+                    {m.fontes.proorc && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <SeloFonte fonte="proorc" data={m.fontes.proorc.data} />
+                        <span style={S.mono}>{reais(m.fontes.proorc.precoUnitario)}</span>
+                      </span>
+                    )}
+                    {m.fontes.tod && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <SeloFonte fonte="tod" data={m.fontes.tod.data} />
+                        <span style={S.mono}>{reais(m.fontes.tod.precoUnitario)}</span>
+                      </span>
+                    )}
+                  </p>
+                  {m.diverge && (
+                    <p style={{ fontFamily: F, fontSize: '11px', color: '#B35C00', fontWeight: 700, margin: '3px 0 0 0' }}>
+                      ⚠ preço diverge entre PROORC e TOD
+                    </p>
+                  )}
+                </div>
+                <button style={S.btnCinza} onClick={() => adicionarMaterial(m)}>Incluir</button>
               </div>
-            )}
-          </>
+            ))}
+          </div>
         )}
 
         {materiais.length > 0 && (
@@ -209,6 +228,7 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
                 <th style={S.th}>Código</th>
                 <th style={S.th}>Descrição</th>
                 <th style={S.th}>Un.</th>
+                <th style={S.th}>Fonte</th>
                 <th style={{ ...S.th, width: '110px' }}>Quantidade</th>
                 <th style={{ ...S.th, textAlign: 'right' }}>Preço</th>
                 <th style={{ ...S.th, textAlign: 'right' }}>Total</th>
@@ -221,6 +241,7 @@ export default function CriarItem({ anoReferencia = chaveReferenciaAtual() }) {
                   <td style={{ ...S.td, ...S.mono }}>{m.codigo}</td>
                   <td style={S.td}>{m.descricao}</td>
                   <td style={S.td}>{m.unidade}</td>
+                  <td style={S.td}><SeloFonte fonte={m.fonte} data={m.dataFonte} /></td>
                   <td style={S.td}>
                     <input
                       type="number" min="0" step="0.001" value={m.quantidade}

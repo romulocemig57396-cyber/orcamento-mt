@@ -14,6 +14,7 @@ export const CLASSE_ROTULO = {
   patrimonial: 'UC/UAR',
   cabo: 'Cabo',
   consumo: 'Consumo',
+  naoInformada: 'Não informada',   // materiais da TOD: a lista não informa a classe
 };
 
 // Subtotais de materiais por classe

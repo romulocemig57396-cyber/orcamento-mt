@@ -206,10 +206,11 @@ describe('Etapa 6 — tela Criar Item', () => {
     fireEvent.change(screen.getByRole('combobox', { name: '' }), { target: { value: 'Extensão' } });
   };
 
-  test('avisa que a referência 2024 não tem catálogo de materiais', () => {
+  test('a referência 2024 não tem catálogo do PROORC, mas a busca usa a TOD', () => {
     render(<CriarItem anoReferencia="2024" />);
-    expect(screen.getByText(/Esta referência não tem catálogo de materiais/)).toBeInTheDocument();
-    expect(screen.queryByPlaceholderText('Buscar material por código ou descrição')).not.toBeInTheDocument();
+    expect(screen.getByText(/não tem catálogo do PROORC/)).toBeInTheDocument();
+    expect(screen.getByText(/TOD dez\/2024/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Buscar material por código ou descrição')).toBeInTheDocument();
   });
 
   test('o botão de salvar começa desabilitado', () => {
