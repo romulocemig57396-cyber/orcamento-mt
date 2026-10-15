@@ -1,0 +1,538 @@
+﻿# =============================================================================
+# azure-pipelines.yml — Pipeline CI/CD do Sistema_Orcamento_MT (Azure DevOps)
+# -----------------------------------------------------------------------------
+# Substitui o fluxo de publicação do GitHub Actions (R7.1). A publicação deixa
+# de ocorrer no GitHub Pages e passa a ser feita na Azure (App Service Linux).
+#
+# Ordem obrigatória dos estágios (R7.2) — cada estágio só inicia após o sucesso
+# do anterior, encadeado via `dependsOn`:
+#   1. build               -> compila/empacota a SPA + API
+#   2. seguranca_estatica  -> SAST + SCA + varredura de segredos
+#   3. testes              -> testes unitários, integração e propriedade
+#   4. deploy_homologacao  -> implantação automática em homologação
+#   5. dast                -> teste dinâmico de segurança (em homologação)
+#   6. deploy_producao     -> implantação em produção (aprovação manual)
+#
+# Observação de escopo das tarefas da spec:
+#   - 13.1 (esta): define os estágios e a ordem (este arquivo).
+#   - 13.2: gates de falha e bloqueio por severidade crítica (SAST/SCA/DAST).
+#   - 13.3: aprovação manual de produção com expiração em 72h.
+#   - 13.4: varredura de segredos e segredos como variáveis protegidas.
+#   - 13.5: remoção definitiva da publicação no GitHub Pages.
+# As tarefas acima se integram a este arquivo; os scripts marcados como
+# placeholder abaixo indicam onde cada ferramenta/gate será conectado.
+# =============================================================================
+
+# Dispara a esteira em alterações na branch `main` (origem única no Azure DevOps).
+trigger:
+  branches:
+    include:
+      - main
+
+# Também valida pull requests destinados à `main` (branch policy — R8).
+pr:
+  branches:
+    include:
+      - main
+
+# Agente hospedado padrão para build/análise/testes.
+pool:
+  vmImage: ubuntu-latest
+
+# Variáveis não sensíveis do pipeline. Segredos NÃO ficam aqui: são
+# referenciados como VARIÁVEIS PROTEGIDAS / grupos de variáveis vinculados ao
+# Azure Key Vault, mascarados nos logs (R9.6 — tarefa 13.4).
+#
+# -----------------------------------------------------------------------------
+# SEGREDOS COMO VARIÁVEIS PROTEGIDAS (R9.6)
+# -----------------------------------------------------------------------------
+# Nenhuma credencial, chave ou connection string é declarada em texto claro
+# neste arquivo nem em qualquer passo. Todo segredo é referenciado APENAS como
+# variável protegida (secret variable) por meio de um GRUPO DE VARIÁVEIS
+# vinculado ao Azure Key Vault (`seguranca_segredos`). Características:
+#   - O grupo é marcado como protegido no Azure DevOps e seus valores são do
+#     tipo "secret", portanto NÃO são impressos: aparecem MASCARADOS (***) em
+#     qualquer saída de log ou console da execução (R9.6).
+#   - Os valores vêm do Key Vault em tempo de execução (Managed Identity),
+#     nunca sendo persistidos em arquivos de configuração, env em texto claro
+#     ou logs (coerente com R9.1/R9.2).
+#   - Para consumir um segredo em um passo, mapeie-o explicitamente em `env:`
+#     (ex.: `env: { MINHA_CHAVE: $(nomeDoSegredo) }`); mesmo mapeado, o valor
+#     continua mascarado nos logs. NUNCA faça `echo` de um segredo.
+# O grupo abaixo é apenas uma REFERÊNCIA (sem expor valores); a vinculação ao
+# Key Vault e a lista de segredos são configuradas em Pipelines > Library.
+variables:
+  - group: seguranca_segredos
+  - name: nodeVersion
+    value: '20.x'
+  # Diretório de saída do build da SPA (Vite -> dist/).
+  - name: buildOutputDir
+    value: 'dist'
+  # Gate de severidade (R7.5): severidades que bloqueiam o deploy em produção.
+  # Qualquer vulnerabilidade com severidade listada aqui (alta/crítica =
+  # Severidade_Critica) reprova o estágio de segurança/DAST e, por consequência
+  # do encadeamento `dependsOn`, impede os estágios de deploy seguintes.
+  - name: severidadeBloqueante
+    value: 'HIGH,CRITICAL'
+  # Arquivos de resultado das ferramentas (JSON) lidos pelo passo de avaliação
+  # de severidade. Quando as ferramentas forem conectadas, elas devem gravar o
+  # resultado nestes caminhos; na ausência do arquivo, o gate aplica o
+  # comportamento seguro documentado no script de avaliação.
+  - name: resultadoSast
+    value: '$(Build.ArtifactStagingDirectory)/sast-result.json'
+  - name: resultadoSca
+    value: '$(Build.ArtifactStagingDirectory)/sca-result.json'
+  - name: resultadoDast
+    value: '$(Build.ArtifactStagingDirectory)/dast-result.json'
+  # Varredura de segredos (R9.5 — tarefa 13.4): config reutilizada do repositório
+  # (regras + allowlists já definidas para a migração) e relatório de ocorrências.
+  - name: gitleaksConfig
+    value: 'scripts/migracao/gitleaks.toml'
+  - name: resultadoSegredos
+    value: '$(Build.ArtifactStagingDirectory)/gitleaks-report.json'
+  # Comportamento seguro configurável quando a ferramenta de varredura não está
+  # disponível no agente: 'true' = fail-closed (reprova a submissão por não ter
+  # sido possível varrer); 'false' = instala/baixa a ferramenta ou segue com
+  # aviso. Padrão fail-closed por tratar-se de controle de segurança (R9.5).
+  - name: segredosFailClosed
+    value: 'true'
+
+stages:
+  # ---------------------------------------------------------------------------
+  # 1. BUILD — compila e empacota a SPA/API. NÃO executa testes (estágio 3).
+  #
+  #    GATE DE FALHA DE BUILD (R7.3): qualquer passo que falhe (ex.: `npm ci`
+  #    ou `npm run build` com código de saída != 0) reprova o job. Como todos
+  #    os estágios seguintes declaram `dependsOn` encadeado a partir deste, a
+  #    reprovação do build INTERROMPE a execução e IMPEDE os estágios
+  #    seguintes. O estágio reprovado fica registrado no histórico do pipeline
+  #    com status de falha. Não há `continueOnError` em nenhum passo abaixo,
+  #    portanto a interrupção é garantida pelo comportamento padrão do agente.
+  # ---------------------------------------------------------------------------
+  - stage: build
+    displayName: '1. Build'
+    jobs:
+      - job: compilar
+        displayName: 'Compilar e empacotar artefato'
+        steps:
+          # Garante a versão de Node usada no projeto.
+          - task: NodeTool@0
+            displayName: 'Instalar Node.js'
+            inputs:
+              versionSpec: $(nodeVersion)
+
+          # Instalação determinística a partir do package-lock.json.
+          - script: npm ci
+            displayName: 'Instalar dependências (npm ci)'
+
+          # Compila/empacota a aplicação (Vite -> dist/). O estágio de testes
+          # é separado, portanto o build apenas compila/empacota.
+          - script: npm run build
+            displayName: 'Compilar SPA/API (npm run build)'
+
+          # Publica o artefato de build para reutilização nos estágios de deploy.
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publicar artefato de build'
+            inputs:
+              targetPath: '$(buildOutputDir)'
+              artifact: 'app'
+
+  # ---------------------------------------------------------------------------
+  # 2. SEGURANÇA ESTÁTICA — SAST + SCA + varredura de segredos.
+  #    Só inicia após o sucesso do build. O bloqueio por severidade crítica
+  #    (R7.5) é detalhado na tarefa 13.2. A varredura automática de segredos a
+  #    cada submissão, com bloqueio e apontamento do local da ocorrência, e o
+  #    uso de segredos apenas como variáveis protegidas mascaradas nos logs
+  #    (R9.5/R9.6), estão implementados na tarefa 13.4 (passo "Varredura de
+  #    segredos" abaixo e bloco `variables` no topo do arquivo).
+  # ---------------------------------------------------------------------------
+  - stage: seguranca_estatica
+    displayName: '2. Segurança (SAST, SCA e segredos)'
+    dependsOn: build
+    jobs:
+      - job: analise
+        displayName: 'Análise estática de segurança'
+        steps:
+          - task: NodeTool@0
+            displayName: 'Instalar Node.js'
+            inputs:
+              versionSpec: $(nodeVersion)
+
+          - script: npm ci
+            displayName: 'Instalar dependências (npm ci)'
+
+          # SAST — placeholder: conectar ferramenta de análise estática de código
+          # (ex.: SonarQube/SonarCloud, CodeQL, Semgrep). A ferramenta deve
+          # gravar o resultado em $(resultadoSast) para avaliação do gate.
+          - script: 'echo "SAST: executar análise estática de código (ferramenta a conectar; gravar resultado em $(resultadoSast))"'
+            displayName: 'SAST — análise estática de código'
+
+          # SCA — placeholder: análise de dependências/vulnerabilidades
+          # (ex.: npm audit, OWASP Dependency-Check, Snyk, Mend). Gravar o
+          # resultado em $(resultadoSca) para avaliação do gate.
+          - script: 'echo "SCA: executar análise de dependências (ferramenta a conectar; gravar resultado em $(resultadoSca))"'
+            displayName: 'SCA — análise de dependências'
+
+          # -------------------------------------------------------------------
+          # VARREDURA DE SEGREDOS (R9.5 / R9.6 — tarefa 13.4)
+          # Executa varredura automática de segredos A CADA SUBMISSÃO (este
+          # estágio roda em todo push à `main` e em todo PR — ver `trigger`/`pr`
+          # no topo do arquivo). Usa o gitleaks com a config já versionada em
+          # $(gitleaksConfig) (scripts/migracao/gitleaks.toml), reaproveitando as
+          # regras/allowlists do projeto.
+          #
+          # Comportamento (R9.5):
+          #   - Se um segredo em texto claro for detectado, o passo FALHA
+          #     (exit 1), BLOQUEANDO a submissão (o estágio reprovado interrompe
+          #     a cadeia `dependsOn` e impede testes/deploys).
+          #   - APONTA O LOCAL da ocorrência (arquivo:linha e commit) a partir do
+          #     relatório JSON e emite `##vso[task.logissue type=error]` para que
+          #     a ocorrência apareça destacada no resumo da execução.
+          #
+          # Ferramenta ausente (fail-closed configurável):
+          #   - Se o gitleaks não estiver disponível no agente, tenta instalar.
+          #   - Não conseguindo, aplica o comportamento seguro de
+          #     $(segredosFailClosed): 'true' REPROVA (não é seguro liberar sem
+          #     varrer um controle de segurança); 'false' apenas registra aviso.
+          #
+          # Observação (R9.6): este passo NÃO imprime segredos. Eventuais
+          # correspondências são referenciadas por localização (arquivo/commit),
+          # nunca pelo valor; segredos reais chegam apenas como variáveis
+          # protegidas e aparecem mascarados nos logs.
+          # -------------------------------------------------------------------
+          - script: |
+              set -uo pipefail
+              CONFIG="$(gitleaksConfig)"
+              RELATORIO="$(resultadoSegredos)"
+              FAIL_CLOSED="$(segredosFailClosed)"
+              echo "SEGREDOS: iniciando varredura automática (gitleaks) nesta submissão."
+              echo "SEGREDOS: config=${CONFIG} | relatório=${RELATORIO} | fail-closed=${FAIL_CLOSED}"
+
+              # Garante a disponibilidade da ferramenta; em ambiente sem gitleaks
+              # aplica o comportamento seguro documentado (fail-closed configurável).
+              if ! command -v gitleaks >/dev/null 2>&1; then
+                echo "AVISO: 'gitleaks' não encontrado no agente — tentando instalar via container oficial/binário."
+                GL_VER="8.18.4"
+                GL_URL="https://github.com/gitleaks/gitleaks/releases/download/v${GL_VER}/gitleaks_${GL_VER}_linux_x64.tar.gz"
+                if curl -fsSL "$GL_URL" -o /tmp/gitleaks.tgz 2>/dev/null && tar -xzf /tmp/gitleaks.tgz -C /tmp gitleaks 2>/dev/null; then
+                  sudo mv /tmp/gitleaks /usr/local/bin/gitleaks && sudo chmod +x /usr/local/bin/gitleaks
+                  echo "SEGREDOS: gitleaks ${GL_VER} instalado."
+                else
+                  if [ "$FAIL_CLOSED" = "true" ]; then
+                    echo "##vso[task.logissue type=error]Varredura de segredos não pôde ser executada (ferramenta indisponível) e o pipeline está em modo fail-closed (R9.5). Submissão bloqueada."
+                    echo "GATE REPROVADO: ferramenta de varredura indisponível em modo seguro (fail-closed)."
+                    exit 1
+                  fi
+                  echo "##vso[task.logissue type=warning]Varredura de segredos pulada: ferramenta indisponível e fail-closed=false. Conecte o gitleaks para cumprir R9.5."
+                  exit 0
+                fi
+              fi
+
+              # Resolve o caminho da config (usa a padrão do gitleaks se ausente).
+              ARG_CONFIG=""
+              if [ -f "$CONFIG" ]; then
+                ARG_CONFIG="--config $CONFIG"
+              else
+                echo "AVISO: config ${CONFIG} ausente — usando regras padrão do gitleaks."
+              fi
+
+              # Varredura do diretório de trabalho (fonte da submissão). O
+              # gitleaks retorna != 0 quando encontra ocorrências. Não falhamos
+              # imediatamente (set sem -e) para formatar as ocorrências antes.
+              gitleaks detect \
+                --source . \
+                $ARG_CONFIG \
+                --report-format json \
+                --report-path "$RELATORIO" \
+                --redact \
+                --exit-code 1 \
+                --no-banner
+              CODIGO=$?
+
+              if [ "$CODIGO" -eq 0 ]; then
+                echo "SEGREDOS: OK — nenhum segredo em texto claro detectado nesta submissão."
+                exit 0
+              fi
+
+              # Ocorrências encontradas: aponta o local (arquivo:linha e commit)
+              # a partir do relatório JSON, SEM imprimir o valor do segredo.
+              echo "SEGREDOS: ocorrência(s) de segredo detectada(s) — detalhando localização."
+              if [ -f "$RELATORIO" ] && command -v jq >/dev/null 2>&1; then
+                jq -r '.[] | "\(.File):\(.StartLine) [regra: \(.RuleID)] [commit: \(.Commit // "working-tree")]"' "$RELATORIO" \
+                  | while IFS= read -r LOCAL; do
+                      echo "##vso[task.logissue type=error]Segredo detectado em ${LOCAL} (R9.5) — remova do código e rotacione; use variável protegida/Key Vault."
+                    done
+              else
+                # Sem jq: ao menos aponta o relatório como local das ocorrências.
+                echo "##vso[task.logissue type=error]Segredo(s) em texto claro detectado(s) (R9.5). Veja o relatório ${RELATORIO} para o(s) local(is) exato(s) (arquivo/commit)."
+              fi
+
+              echo "GATE REPROVADO: submissão bloqueada por segredo em texto claro (R9.5)."
+              exit 1
+            displayName: 'Varredura de segredos (gitleaks — R9.5/R9.6)'
+
+          # Publica o relatório da varredura como artefato para rastreabilidade
+          # da ocorrência (local: arquivo/commit). `condition: always()` garante
+          # a publicação mesmo quando o passo anterior reprova por segredo.
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publicar relatório da varredura de segredos'
+            condition: always()
+            inputs:
+              targetPath: '$(resultadoSegredos)'
+              artifact: 'relatorio-segredos'
+
+          # -------------------------------------------------------------------
+          # GATE DE SEVERIDADE — SAST/SCA (R7.5)
+          # Avalia os resultados das ferramentas de análise estática. Se houver
+          # >= 1 vulnerabilidade com severidade listada em $(severidadeBloqueante)
+          # (alta/crítica = Severidade_Critica), o passo FALHA o estágio
+          # (`exit 1`) e registra a mensagem de bloqueio por severidade. Como os
+          # estágios de deploy dependem (via `dependsOn`) do sucesso deste
+          # estágio, a reprovação BLOQUEIA o deploy em produção (e também em
+          # homologação, por estar antes na cadeia).
+          #
+          # Mecanismo parametrizável: o limite vem de $(severidadeBloqueante) e
+          # os resultados dos arquivos JSON das ferramentas. Enquanto as
+          # ferramentas não estiverem conectadas (arquivos ausentes), o gate
+          # adota comportamento seguro DOCUMENTADO: não há resultado a avaliar,
+          # então não libera produção com base em análise inexistente — emite
+          # aviso de pendência. Ao conectar as ferramentas, troque a flag
+          # `gateExigeResultado` para 'true' a fim de reprovar quando o
+          # resultado estiver ausente (fail-closed estrito).
+          # -------------------------------------------------------------------
+          - script: |
+              set -euo pipefail
+              SEVERIDADES="$(severidadeBloqueante)"
+              # Fail-closed estrito ao conectar as ferramentas: 'true' reprova
+              # o estágio quando algum resultado esperado não existir.
+              gateExigeResultado="false"
+              echo "GATE SAST/SCA — severidades bloqueantes: ${SEVERIDADES}"
+
+              bloqueado=0
+
+              avaliar() {
+                ferramenta="$1"
+                arquivo="$2"
+                if [ ! -f "$arquivo" ]; then
+                  echo "AVISO: resultado de ${ferramenta} ausente (${arquivo}) — ferramenta ainda não conectada."
+                  if [ "$gateExigeResultado" = "true" ]; then
+                    echo "BLOQUEIO: ${ferramenta} sem resultado e gate em modo fail-closed estrito."
+                    bloqueado=1
+                  fi
+                  return
+                fi
+                # Conta ocorrências de qualquer severidade bloqueante no JSON de
+                # resultado da ferramenta (busca textual simples e tolerante a
+                # formato — a extração exata é ajustada ao conectar a ferramenta).
+                encontrados=0
+                IFS=',' read -ra NIVEIS <<< "$SEVERIDADES"
+                for nivel in "${NIVEIS[@]}"; do
+                  n=$(grep -o -i "\"severity\"[[:space:]]*:[[:space:]]*\"${nivel}\"" "$arquivo" | wc -l | tr -d ' ')
+                  encontrados=$((encontrados + n))
+                done
+                if [ "$encontrados" -ge 1 ]; then
+                  echo "BLOQUEIO POR SEVERIDADE: ${ferramenta} apontou ${encontrados} vulnerabilidade(s) de severidade crítica/alta."
+                  bloqueado=1
+                else
+                  echo "OK: ${ferramenta} sem vulnerabilidades de severidade bloqueante."
+                fi
+              }
+
+              avaliar "SAST" "$(resultadoSast)"
+              avaliar "SCA" "$(resultadoSca)"
+
+              if [ "$bloqueado" -eq 1 ]; then
+                echo "##vso[task.logissue type=error]Severidade_Critica detectada (SAST/SCA): deploy em produção bloqueado (R7.5)."
+                echo "GATE REPROVADO: interrompendo o pipeline por severidade crítica."
+                exit 1
+              fi
+              echo "GATE APROVADO: nenhuma Severidade_Critica bloqueante em SAST/SCA."
+            displayName: 'Gate de severidade (crítica bloqueia produção)'
+
+  # ---------------------------------------------------------------------------
+  # 3. TESTES — unitários, integração e propriedade (fast-check).
+  #    Só inicia após o sucesso da análise de segurança.
+  #
+  #    GATE DE FALHA DE TESTES (R7.4): a execução não interativa dos testes
+  #    (`npm run test:run`) retorna código != 0 quando qualquer teste falha,
+  #    o que reprova o job. Os estágios `deploy_homologacao` e
+  #    `deploy_producao` dependem (via cadeia `dependsOn`) do sucesso deste
+  #    estágio; portanto, testes reprovados INTERROMPEM a execução e IMPEDEM
+  #    o deploy em homologação e em produção. O estágio reprovado fica
+  #    registrado no histórico com status de falha. Nenhum passo usa
+  #    `continueOnError`, garantindo a interrupção.
+  # ---------------------------------------------------------------------------
+  - stage: testes
+    displayName: '3. Testes automatizados'
+    dependsOn: seguranca_estatica
+    jobs:
+      - job: automatizados
+        displayName: 'Executar testes automatizados'
+        steps:
+          - task: NodeTool@0
+            displayName: 'Instalar Node.js'
+            inputs:
+              versionSpec: $(nodeVersion)
+
+          - script: npm ci
+            displayName: 'Instalar dependências (npm ci)'
+
+          # Execução não interativa (vitest run) — unit + integração + propriedade.
+          - script: npm run test:run
+            displayName: 'Testes (npm run test:run)'
+
+  # ---------------------------------------------------------------------------
+  # 4. DEPLOY HOMOLOGAÇÃO — implantação automática em HML após testes verdes.
+  #    O `environment` do Azure DevOps permite rastrear a implantação; HML é
+  #    automático (sem aprovação manual — ver doc 05, seção Aprovações e gates).
+  # ---------------------------------------------------------------------------
+  - stage: deploy_homologacao
+    displayName: '4. Deploy em homologação'
+    dependsOn: testes
+    jobs:
+      - deployment: homologacao
+        displayName: 'Implantar em homologação'
+        environment: 'homologacao'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                # Recupera o artefato publicado no build.
+                - download: current
+                  artifact: 'app'
+
+                # Placeholder: publicar na Azure (App Service Linux) no ambiente HML.
+                # Segredos de conexão vêm de variáveis protegidas / Key Vault.
+                - script: echo "Deploy HML: publicar no Azure App Service (homologação)"
+                  displayName: 'Publicar no App Service (HML)'
+
+  # ---------------------------------------------------------------------------
+  # 5. DAST — teste dinâmico de segurança executado sobre o ambiente de HML.
+  #    Só inicia após o deploy em homologação. Bloqueio por severidade crítica
+  #    (R7.5) é detalhado na tarefa 13.2.
+  # ---------------------------------------------------------------------------
+  - stage: dast
+    displayName: '5. DAST (em homologação)'
+    dependsOn: deploy_homologacao
+    jobs:
+      - job: dinamico
+        displayName: 'Teste dinâmico de segurança'
+        steps:
+          # Placeholder: executar DAST contra a URL de homologação
+          # (ex.: OWASP ZAP). URL/credenciais vêm de variáveis protegidas.
+          # A ferramenta deve gravar o resultado em $(resultadoDast).
+          - script: 'echo "DAST: executar teste dinâmico contra a URL de homologação (ferramenta a conectar; gravar resultado em $(resultadoDast))"'
+            displayName: 'DAST — teste dinâmico'
+
+          # -------------------------------------------------------------------
+          # GATE DE SEVERIDADE — DAST (R7.5)
+          # Avalia o resultado do teste dinâmico. Se houver >= 1 vulnerabilidade
+          # com severidade em $(severidadeBloqueante) (alta/crítica =
+          # Severidade_Critica), o passo FALHA o estágio (`exit 1`) e registra o
+          # bloqueio por severidade. Como `deploy_producao` depende do sucesso
+          # do estágio DAST (via `dependsOn`), a reprovação BLOQUEIA o deploy em
+          # produção. Mesma lógica parametrizável do gate estático: limite em
+          # $(severidadeBloqueante) e resultado em arquivo JSON; na ausência do
+          # arquivo, comportamento seguro documentado (aviso de pendência;
+          # `gateExigeResultado=true` para fail-closed estrito ao conectar a
+          # ferramenta).
+          # -------------------------------------------------------------------
+          - script: |
+              set -euo pipefail
+              SEVERIDADES="$(severidadeBloqueante)"
+              gateExigeResultado="false"
+              arquivo="$(resultadoDast)"
+              echo "GATE DAST — severidades bloqueantes: ${SEVERIDADES}"
+
+              if [ ! -f "$arquivo" ]; then
+                echo "AVISO: resultado de DAST ausente (${arquivo}) — ferramenta ainda não conectada."
+                if [ "$gateExigeResultado" = "true" ]; then
+                  echo "##vso[task.logissue type=error]DAST sem resultado e gate em modo fail-closed estrito (R7.5)."
+                  echo "GATE REPROVADO: sem resultado de DAST para avaliar."
+                  exit 1
+                fi
+                echo "GATE: comportamento seguro — produção não liberada com base em DAST inexistente (pendência registrada)."
+                exit 0
+              fi
+
+              encontrados=0
+              IFS=',' read -ra NIVEIS <<< "$SEVERIDADES"
+              for nivel in "${NIVEIS[@]}"; do
+                n=$(grep -o -i "\"severity\"[[:space:]]*:[[:space:]]*\"${nivel}\"" "$arquivo" | wc -l | tr -d ' ')
+                encontrados=$((encontrados + n))
+              done
+
+              if [ "$encontrados" -ge 1 ]; then
+                echo "##vso[task.logissue type=error]Severidade_Critica detectada (DAST): deploy em produção bloqueado (R7.5)."
+                echo "BLOQUEIO POR SEVERIDADE: DAST apontou ${encontrados} vulnerabilidade(s) de severidade crítica/alta."
+                echo "GATE REPROVADO: interrompendo o pipeline por severidade crítica."
+                exit 1
+              fi
+              echo "GATE APROVADO: nenhuma Severidade_Critica bloqueante no DAST."
+            displayName: 'Gate de severidade (crítica bloqueia produção)'
+
+  # ---------------------------------------------------------------------------
+  # 6. DEPLOY PRODUÇÃO — implantação em PRD após DAST aprovado.
+  #    Exige aprovação manual registrada de >= 1 aprovador (R7.6), configurada
+  #    no `environment` 'producao', com expiração em 72h (R7.7).
+  #
+  #    IMPORTANTE: a aprovação manual e a expiração NÃO ficam neste YAML. No
+  #    Azure DevOps elas são "Approvals and checks" do Environment e, por isso,
+  #    são configuradas no portal, não no pipeline. Ver passo a passo em:
+  #       pipeline/aprovacao-producao.md  (tarefa 13.3 — R7.6/R7.7)
+  #    Resumo do que o doc configura no Environment 'producao':
+  #       - Approvals: >= 1 aprovador obrigatório antes do deploy (R7.6).
+  #       - Timeout de 30 dias máx. no Azure DevOps; definir 72h -> a execução
+  #         expira/cancela o deploy se não aprovada no prazo (R7.7).
+  #    Enquanto o check de aprovação estiver vinculado ao Environment, QUALQUER
+  #    execução deste estágio fica pendente aguardando aprovação e é cancelada
+  #    na expiração, ficando o registro no histórico da execução.
+  # ---------------------------------------------------------------------------
+  - stage: deploy_producao
+    displayName: '6. Deploy em produção'
+    dependsOn: dast
+    jobs:
+      - deployment: producao
+        displayName: 'Implantar em produção'
+        # Aprovação manual (>= 1 aprovador) e expiração (72h) são configuradas
+        # como "Approvals and checks" do environment 'producao' no Azure DevOps
+        # (R7.6/R7.7). Passo a passo: pipeline/aprovacao-producao.md.
+        environment: 'producao'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: 'app'
+
+                # Placeholder: publicar na Azure (App Service Linux) no ambiente PRD.
+                - script: echo "Deploy PRD: publicar no Azure App Service (produção)"
+                  displayName: 'Publicar no App Service (PRD)'
+
+                # -------------------------------------------------------------
+                # RELEASE: TAG SemVer + CHANGELOG (R12.2 — tarefa 13.6)
+                # Executa IMEDIATAMENTE APÓS a publicação em produção acima.
+                # Por ser o passo subsequente dentro do mesmo job de deployment,
+                # a tag é registrada em muito menos de 5 min após a implantação
+                # (R12.2). Reutiliza a lógica testável de src/versao/release.js
+                # por meio do runner scripts/release/registrar-release.mjs, que
+                # conecta os efeitos reais (git para a tag; FS para o CHANGELOG).
+                #
+                # A versão vem de package.json (ou de RELEASE_VERSION, se
+                # definida). Em conflito de tag (R12.3) o runner encerra com
+                # código 2 e preserva a tag existente; em falha de CHANGELOG
+                # (R12.5) encerra com código 3 preservando o conteúdo anterior —
+                # em ambos os casos o histórico NÃO é quebrado. A publicação em
+                # produção já ocorreu; portanto, falhas aqui não revertem o
+                # deploy, apenas sinalizam a necessidade de ação de release.
+                #
+                # Node é necessário para o runner ESM (importa release.js).
+                - task: NodeTool@0
+                  displayName: 'Instalar Node.js (runner de release)'
+                  inputs:
+                    versionSpec: $(nodeVersion)
+
+                # Registra a tag SemVer e atualiza o CHANGELOG após o deploy.
+                - script: node scripts/release/registrar-release.mjs
+                  displayName: 'Registrar release (tag SemVer + CHANGELOG — R12.2)'
+

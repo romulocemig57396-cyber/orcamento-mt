@@ -7,6 +7,15 @@ import { normalizarChaveReferencia } from '../data/biblioteca';
    migracao.js — converte orçamentos salvos em formatos antigos no localStorage
    ───────────────────────────────────────────────────────────────────────────── */
 
+// Versão atual do schema de dados do orçamento. É incrementada sempre que
+// `migrarOrcamento` ganha uma nova etapa de conversão de formato antigo.
+// Etapas acumuladas até aqui: A1/A3 (importação), A6 (obrasVinculadas),
+// Etapa 4 (anoReferencia), R4 (materiaisAuxiliares) e A9 (datas/tipoAtendimento).
+// Este número é a fonte única de `versaoSchema` do documento persistido
+// (ver src/persistencia/modelo.js), garantindo que a migração existente e o
+// envelope corporativo compartilhem a mesma noção de versão.
+export const VERSAO_SCHEMA = 3;
+
 // A1: itens detectados guardavam o `tipo` da biblioteca; agora guardam o `id`.
 // A3: tipo de atendimento gravado por extenso ("Ligação Nova") → código (LN).
 const migrarImportacao = (importacao) => {

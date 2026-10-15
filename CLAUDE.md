@@ -1,4 +1,4 @@
-# Orçamento MT — contexto do projeto
+﻿# Orçamento MT — contexto do projeto
 
 Sistema web da Cemig para elaborar orçamentos de obras de Média Tensão (MT) em pedidos de conexão de clientes. Usado pela equipe de análise de pedidos de conexão em MT.
 
@@ -7,7 +7,7 @@ Sistema web da Cemig para elaborar orçamentos de obras de Média Tensão (MT) e
 - jsPDF + jspdf-autotable (PDF), SheetJS `xlsx` (Excel e leitura dos relatórios do PROORC).
 - Persistência: `localStorage`. Chave `orcamento_mt_app` (um orçamento por navegador) e `orcamento_mt_propostas` (propostas de itens, separadas do orçamento).
 - Testes: Vitest + jsdom + Testing Library (`src/test/`).
-- Deploy: GitHub Pages, `base: '/orcamento-mt/'`. A publicação é automática a cada push na `main` (`.github/workflows/deploy.yml`, que roda testes e build antes); `npm run deploy` publica à mão.
+- Deploy: Azure App Service (Linux) com entrada por Private Endpoint e saída por VNet Integration, `base: '/'` (SPA servida na raiz). A publicação ocorre pelo pipeline corporativo no Azure DevOps; o GitHub Pages foi descontinuado como ambiente de publicação.
 
 ## Comandos
 - `npm run dev` — servidor local
@@ -98,3 +98,4 @@ Sistema web da Cemig para elaborar orçamentos de obras de Média Tensão (MT) e
 - Não adicionar dependências sem perguntar.
 - Não alterar `vite.config.js`, `package.json` (scripts/deploy) nem as chaves do `localStorage`.
 - Não fazer `git push` nem `npm run deploy` — o responsável faz após revisar.
+

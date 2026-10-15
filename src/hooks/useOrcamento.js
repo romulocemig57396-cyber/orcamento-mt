@@ -6,10 +6,12 @@ import {
   calcularRateioERD,
   calcularTotaisItens
 } from '../utils/calculos';
-import { migrarOrcamento } from '../utils/migracao';
 import { hojeISO, diasEntre } from '../utils/datas';
-
-const STORAGE_KEY = 'orcamento_mt_app';
+import {
+  criarClientePersistenciaFront,
+  CHAVE_CACHE as STORAGE_KEY,
+} from '../persistencia/clienteFront';
+import { obterTokenApp } from '../auth/sessaoApp';
 
 // Datas como texto AAAA-MM-DD (ver utils/datas.js)
 const initialState = {
@@ -67,29 +69,59 @@ const novoEstado = () => {
   return { ...initialState, dataBase: hoje, dataValidade: calcularValidade(hoje) };
 };
 
-// Lê o orçamento salvo no localStorage, aplicando as migrações de formato
-const carregarSalvo = () => {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    try {
-      const parsed = migrarOrcamento(JSON.parse(saved));
-      const dataBase = parsed.dataBase || hojeISO();
-      return {
-        ...parsed,
-        dataBase,
-        dataValidade: calcularValidade(dataBase),
-        importacao: parsed.importacao || initialState.importacao,
-      };
-    } catch (e) {
-      console.error('Erro ao carregar dados salvos:', e);
-      return novoEstado();
-    }
+// Cliente de persistência: fala com a API quando configurada e usa o
+// localStorage como cache local/offline. Em ambiente local (sem API
+// configurada) opera SOMENTE com o localStorage, preservando o comportamento
+// atual do app. A configuração vem das variáveis de ambiente do Vite; na
+// ausência delas, `baseUrl` fica vazio ⇒ API desabilitada (degradação graciosa).
+const lerEnv = (chave) => {
+  try {
+    return (typeof import.meta !== 'undefined' && import.meta.env)
+      ? import.meta.env[chave]
+      : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const clientePadrao = criarClientePersistenciaFront({
+  baseUrl: lerEnv('VITE_API_BASE_URL') || '',
+  ambiente: lerEnv('VITE_AMBIENTE') || 'dev',
+  // Liga o provedor de token da camada de auth (MSAL) ao cliente de
+  // persistência: quando a API/Entra estão configurados, as chamadas vão
+  // autenticadas (Bearer); sem configuração, `obterTokenApp` devolve null e o
+  // cliente opera somente com o localStorage (degradação graciosa).
+  obterToken: () => obterTokenApp(),
+});
+
+// Dá forma ao estado de orçamento vindo do cliente (datas/importação), ou cria
+// um estado novo quando não há nada salvo. O cliente já aplica a migração.
+const comporEstado = (dados) => {
+  if (dados && typeof dados === 'object') {
+    const dataBase = dados.dataBase || hojeISO();
+    return {
+      ...dados,
+      dataBase,
+      dataValidade: calcularValidade(dataBase),
+      importacao: dados.importacao || initialState.importacao,
+    };
   }
   return novoEstado();
 };
 
-export const useOrcamento = () => {
-  const [orcamento, setOrcamento] = useState(carregarSalvo);
+// Lê o orçamento do cache local de forma síncrona (inicialização do hook).
+// A migração de formato é aplicada pelo cliente de persistência.
+const carregarSalvo = (cliente = clientePadrao) => {
+  try {
+    return comporEstado(cliente.carregarCacheSync());
+  } catch (e) {
+    console.error('Erro ao carregar dados salvos:', e);
+    return novoEstado();
+  }
+};
+
+export const useOrcamento = (cliente = clientePadrao) => {
+  const [orcamento, setOrcamento] = useState(() => carregarSalvo(cliente));
 
   // Outra aba alterou o orçamento: suspende o salvamento automático desta aba
   // até o usuário escolher qual versão fica, para uma não apagar a outra.
@@ -105,11 +137,14 @@ export const useOrcamento = () => {
 
   useEffect(() => {
     if (salvamentoSuspenso) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(orcamento));
-  }, [orcamento, salvamentoSuspenso]);
+    // Grava via cliente: cache local SEMPRE (síncrono) e, quando a API estiver
+    // configurada, sincroniza com o servidor em segundo plano. Em ambiente local
+    // isso equivale ao `localStorage.setItem` de antes.
+    cliente.salvar(orcamento);
+  }, [orcamento, salvamentoSuspenso, cliente]);
 
   const carregarVersaoOutraAba = () => {
-    setOrcamento(carregarSalvo());
+    setOrcamento(carregarSalvo(cliente));
     setSalvamentoSuspenso(false);
   };
 
@@ -210,7 +245,7 @@ export const useOrcamento = () => {
 
   const resetOrcamento = () => {
     setOrcamento(novoEstado());
-    localStorage.removeItem(STORAGE_KEY);
+    cliente.remover();
   };
 
   return {

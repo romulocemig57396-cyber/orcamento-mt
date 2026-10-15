@@ -1,0 +1,61 @@
+# gitleaks.toml
+# ----------------------------------------------------------------------------
+# Configuração da varredura de segredos para a migração do repositório
+# (spec adequacao-diretrizes-cemig, Tarefa 1.2 / Requirement 9.4).
+#
+# Estende o conjunto de regras padrão do gitleaks e adiciona regras/allowlists
+# específicas do Sistema_Orcamento_MT. Usado por varrer-segredos-historico.sh
+# para analisar TODO o histórico de commits antes do push definitivo para o
+# Azure DevOps.
+#
+# Referência de formato: https://github.com/gitleaks/gitleaks#configuration
+# ----------------------------------------------------------------------------
+
+# Herda todas as regras embutidas do gitleaks (AWS, Azure, GCP, tokens, chaves
+# privadas, connection strings etc.). Mantemos a base e apenas complementamos.
+[extend]
+useDefault = true
+
+# --- Regras adicionais específicas da solução -------------------------------
+
+[[rules]]
+id = "azure-connection-string"
+description = "Azure connection string (AccountKey / SharedAccessKey)"
+regex = '''(?i)(AccountKey|SharedAccessKey|SharedAccessSignature)\s*=\s*[A-Za-z0-9+/=]{20,}'''
+tags = ["azure", "connection-string"]
+
+[[rules]]
+id = "cosmos-db-key"
+description = "Cosmos DB primary/secondary key"
+regex = '''(?i)(cosmos[_-]?db[_-]?key|primarymasterkey|secondarymasterkey)\s*[:=]\s*['"]?[A-Za-z0-9+/=]{64,}['"]?'''
+tags = ["azure", "cosmos"]
+
+[[rules]]
+id = "generic-secret-assignment"
+description = "Atribuição genérica de senha/segredo/token em texto claro"
+regex = '''(?i)\b(senha|password|passwd|secret|segredo|token|api[_-]?key|client[_-]?secret)\b\s*[:=]\s*['"][^'"\s]{8,}['"]'''
+tags = ["generic", "secret"]
+# Reduz ruído de valores claramente de exemplo/placeholder.
+[rules.allowlist]
+regexes = [
+  '''(?i)(exemplo|example|placeholder|changeme|troque[_-]?aqui|preencher|dummy|xxxxx|<[^>]+>|\$\{[^}]+\})''',
+]
+
+# --- Allowlist global --------------------------------------------------------
+# Caminhos e padrões que NÃO devem gerar ocorrência (dados de exemplo,
+# dependências e documentação). Ajuste conforme a necessidade do projeto.
+[allowlist]
+description = "Caminhos e padrões ignorados globalmente"
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)dist/''',
+  '''(^|/)package-lock\.json$''',
+  '''\.lock$''',
+  # A própria config e o README do procedimento contêm padrões de exemplo.
+  '''(^|/)scripts/migracao/gitleaks\.toml$''',
+  '''(^|/)scripts/migracao/README-varredura-segredos\.md$''',
+]
+regexes = [
+  # Valores claramente de exemplo/placeholder usados na documentação.
+  '''(?i)(EXEMPLO|EXAMPLE|PLACEHOLDER|CHANGEME|DUMMY)''',
+]

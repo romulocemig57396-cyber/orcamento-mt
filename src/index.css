@@ -297,3 +297,127 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #C8C8C8; border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--verde); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Responsividade (R13) — layout utilizável sem rolagem horizontal em
+   celular (≤480 px), tablet (481–1024 px) e desktop (>1024 px), com conteúdo
+   legível e acionável abaixo de 320 px.
+
+   Observação de arquitetura: a UI usa majoritariamente estilos inline. Como
+   estilos inline têm precedência sobre regras de classe, as adaptações de
+   layout abaixo usam `!important` deliberadamente para sobrescrever apenas
+   propriedades de layout (grid/flex/largura/padding). Nenhuma regra altera
+   lógica de negócio ou cálculos.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Guardas globais: nunca permitir que a página gere rolagem horizontal. */
+html, body, #root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Qualquer tabela deve rolar dentro do seu contêiner, nunca estourar a tela. */
+.card table,
+table {
+  max-width: 100%;
+}
+
+/* Contêineres com overflow-x:auto (wrappers de tabela) continuam roláveis;
+   garantimos que caibam na largura disponível. */
+.card {
+  max-width: 100%;
+}
+
+/* O wrapper de conteúdo da área principal nunca deve ultrapassar a viewport. */
+.app-main-content {
+  max-width: 960px;
+  width: 100%;
+}
+
+/* ── Tablet e abaixo (≤1024 px) ──────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  /* Grids de formulário com muitas colunas fixas passam a 2 colunas. */
+  .app-main-content [style*="grid-template-columns"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* ── Celular (≤480 px) ───────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  /* Shell: a barra lateral vira cabeçalho de navegação no topo e o conteúdo
+     ocupa toda a largura, empilhado verticalmente. */
+  .app-shell {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+  }
+
+  .app-sidebar {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* A navegação vira uma faixa horizontal rolável, sem quebrar o layout. */
+  .app-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    overflow-x: auto !important;
+    gap: 6px;
+    padding: 10px 12px !important;
+  }
+  .app-nav > p { display: none; }
+  .app-nav button {
+    width: auto !important;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .app-sidebar-footer { display: none !important; }
+
+  .app-main {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Reduz o respiro lateral grande (32 px) para caber telas estreitas. */
+  .app-header,
+  .app-admin-bar,
+  .app-alert-bar {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+  .app-page {
+    padding: 16px 12px !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Cards com respiro interno menor em telas pequenas. */
+  .card { padding: 1rem !important; }
+
+  /* Todos os grids de formulário/estatística colapsam para uma coluna. */
+  .app-main-content [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Barras de ação com botões empilham para manter os controles acionáveis. */
+  .app-alert-bar { align-items: stretch !important; }
+
+  /* Wrappers de tabela com margem negativa horizontal (extravasam a borda do
+     card no desktop) não devem gerar rolagem horizontal da página no celular. */
+  .card [style*="overflow-x: auto"][style*="margin: 0px -24px"],
+  .card [style*="overflow-x:auto"][style*="margin: 0px -24px"] {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* ── Abaixo de 320 px: conteúdo legível e controles acionáveis ───────────── */
+@media (max-width: 320px) {
+  .app-page { padding: 12px 8px !important; }
+  .card { padding: 0.75rem !important; }
+  .app-header { padding-left: 10px !important; padding-right: 10px !important; }
+}

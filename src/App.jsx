@@ -47,10 +47,10 @@ function App() {
   const abaAtual = abasVisiveis.find(a => a.id === abaAtiva);
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#F5F5F5' }}>
+    <div className="app-shell" style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#F5F5F5' }}>
 
       {/* ── Sidebar Cemig ── */}
-      <aside style={{
+      <aside className="app-sidebar" style={{
         width: '224px',
         minWidth: '224px',
         background: 'linear-gradient(120deg, #0a5c34, #137a45 70%, #1a8a4f)',
@@ -82,7 +82,7 @@ function App() {
         </div>
 
         {/* Nav */}
-        <nav style={{ flex: 1, padding: '12px 10px', overflowY: 'auto' }}>
+        <nav className="app-nav" style={{ flex: 1, padding: '12px 10px', overflowY: 'auto' }}>
           <p style={{
             fontSize: '9px', fontWeight: 700, textTransform: 'uppercase',
             letterSpacing: '0.15em', color: 'rgba(255,255,255,0.4)',
@@ -129,7 +129,7 @@ function App() {
         </nav>
 
         {/* Footer */}
-        <div style={{
+        <div className="app-sidebar-footer" style={{
           padding: '12px 16px',
           borderTop: '1px solid rgba(255,255,255,0.1)',
           flexShrink: 0,
@@ -141,10 +141,10 @@ function App() {
       </aside>
 
       {/* ── Main area ── */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div className="app-main" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
         {/* Top bar */}
-        <header style={{
+        <header className="app-header" style={{
           background: '#fff',
           borderBottom: '1px solid #E8E8E8',
           padding: '0 32px',
@@ -193,7 +193,7 @@ function App() {
 
         {/* Faixa do modo administrador (ligado por ?admin=1 na URL) */}
         {modoAdmin && (
-          <div style={{
+          <div className="app-admin-bar" style={{
             background: '#FFFBE6', borderBottom: '1px solid #FFE57A', padding: '8px 32px',
             display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0,
           }}>
@@ -208,7 +208,7 @@ function App() {
 
         {/* Aviso: orçamento alterado em outra aba */}
         {salvamentoSuspenso && (
-          <div role="alert" style={{
+          <div role="alert" className="app-alert-bar" style={{
             background: '#FFFBE6', borderBottom: '1px solid #FFE57A', padding: '10px 32px',
             display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', flexShrink: 0,
           }}>
@@ -227,8 +227,8 @@ function App() {
         )}
 
         {/* Page content */}
-        <main style={{ flex: 1, overflowY: 'auto', padding: '28px 32px', background: '#F5F5F5' }}>
-          <div style={{ maxWidth: '960px', width: '100%' }}>
+        <main className="app-page" style={{ flex: 1, overflowY: 'auto', padding: '28px 32px', background: '#F5F5F5' }}>
+          <div className="app-main-content" style={{ maxWidth: '960px', width: '100%' }}>
 
             {abaAtiva === 'atendimento' && (
               <DadosAtendimento dados={orcamento} updateField={updateField} />
