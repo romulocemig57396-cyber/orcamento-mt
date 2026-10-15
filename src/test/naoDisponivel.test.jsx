@@ -3,8 +3,9 @@ import { render, screen, within, fireEvent } from '@testing-library/react';
 
 /* Biblioteca com um item extra que só existe na referência 2024 — como um item
    criado a partir de um projeto do PROORC numa referência nova (R9).        */
-vi.mock('../data/biblioteca.json', async (original) => {
-  const real = (await original()).default;
+vi.mock('../data/biblioteca.json', async () => {
+  // Parte da biblioteca fixa dos testes (ver src/test/setup.js), não do arquivo instalado
+  const real = (await import('./fixtures/biblioteca-base.json')).default;
   const novo = {
     id: 'equip_item_so_2024', categoria: 'Equipamentos', subcategoria: 'Instalação', tipo: 'Item só em 2024',
     unidade: 'ponto', status: 'oficial',

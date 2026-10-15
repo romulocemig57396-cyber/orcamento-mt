@@ -88,6 +88,7 @@ Sistema web da Cemig para elaborar orçamentos de obras de Média Tensão (MT) e
 - Valores monetários internos em R$ (reais); a biblioteca está em R$ mil e é multiplicada por 1000 ao entrar no orçamento.
 - A referência de custos usada por um item fica gravada nele (`anoReferencia`); nada deve fixar `2024` no código.
 - Leitura de relatório e cálculo ficam em funções puras testáveis (`src/proorc/`); os componentes só exibem.
+- **Testes não dependem do `biblioteca.json` instalado**, que cresce a cada atualização (referências e itens novos). `src/test/setup.js` substitui o arquivo, em todos os testes, pela biblioteca fixa `src/test/fixtures/biblioteca-base.json` (a da `main` no commit 5826a17). Só `src/test/bibliotecaInstalada.test.js` lê o arquivo instalado do disco, e confere apenas regras permanentes: 2024/2022/2021 idênticas à fixture, ids únicos, origens válidas, mapeamento do PROORC íntegro, uma única referência atual, item presente na atual e ausente só nas referências anteriores à sua criação, fórmulas consistentes em cada referência — sem contagens fixas.
 - Teste que depende de `docs/proorc/` usa `describe.skipIf`, e a leitura dos arquivos tem que ficar dentro de `beforeAll` ou do próprio teste: o corpo do `describe` roda mesmo quando os testes são pulados, e a falta dos arquivos quebraria a coleta no CI.
 - Formatação sempre pt-BR (`Intl.NumberFormat('pt-BR')`, `Intl.DateTimeFormat('pt-BR')`).
 - A fonte padrão do jsPDF não tem os símbolos "≈" e "→": nos PDFs usar "aprox." e "p/".
